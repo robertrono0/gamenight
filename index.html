@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Who's the Imposter? Thanksgiving Edition</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Special+Elite&family=Fredoka:wght@400..700&family=Patrick+Hand&display=swap">
 <style>
 :root{--ink:#3a2410;--cream:#fff4e0;--pump:#f28c28;--dor:#d9601a;--cran:#b8323f;--must:#f2c14e;--brown:#6b3e1f;--sage:#9cbf7a;--plum:#c8607a}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -108,13 +108,73 @@ button:disabled{opacity:.4;cursor:default}
 .back .tip{font-family:'Patrick Hand',cursive;font-size:20px;line-height:1.2}
 .warn{font-family:'Patrick Hand',cursive;font-size:20px;max-width:330px}
 .err{font-size:22px;max-width:330px}
+
+/* ===== THANKSGIVING NOIR: mystery theme ===== */
+:root{--ink:#0e0a12;--gold:#e8b44a;--ember:#e8632a;--blood:#c3283b;--paper:#efe3c8}
+html,body{background:#0b0810!important;color:var(--paper)!important}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:
+ radial-gradient(ellipse 60% 45% at 50% 42%,rgba(232,99,42,.16),transparent 70%),
+ radial-gradient(ellipse at 50% 120%,rgba(195,40,59,.22),transparent 55%),
+ radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.75) 100%);animation:candle 3.2s ease-in-out infinite alternate}
+@keyframes candle{0%{opacity:.85}35%{opacity:1}55%{opacity:.9}80%{opacity:1}100%{opacity:.88}}
+body::after{content:"";position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .9s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}100%{transform:translate(1%,3%)}}
+.fog{position:fixed;inset:-20% -40%;z-index:1;pointer-events:none;opacity:.35;background:
+ radial-gradient(ellipse 30% 18% at 20% 80%,rgba(200,190,210,.18),transparent 70%),radial-gradient(ellipse 35% 20% at 80% 85%,rgba(200,190,210,.14),transparent 70%),radial-gradient(ellipse 25% 15% at 50% 95%,rgba(200,190,210,.16),transparent 70%);animation:fog 26s linear infinite alternate}
+@keyframes fog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+.candle{position:fixed;bottom:2vh;font-size:9vh;z-index:2;pointer-events:none;filter:drop-shadow(0 0 2vh rgba(255,170,60,.9));animation:flick 1.7s ease-in-out infinite alternate}
+.candle.c1{left:2vw}.candle.c2{right:2vw;animation-delay:-.8s}
+@keyframes flick{0%{filter:drop-shadow(0 0 1.4vh rgba(255,170,60,.7))}50%{filter:drop-shadow(0 0 3vh rgba(255,170,60,1))}100%{filter:drop-shadow(0 0 2vh rgba(255,150,40,.8))}}
+#player .candle,.deco{display:none!important}
+#host,#player{position:relative;z-index:3}
+.bubble{color:transparent!important;-webkit-text-stroke:0!important;text-shadow:none!important;font-family:'Bungee','Fredoka',sans-serif!important;font-weight:400!important;letter-spacing:.02em;
+ background:linear-gradient(180deg,#fff2c9 0%,#e8b44a 45%,#e8632a 80%,#9a2a10 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 .35vh 0 #2a0a05) drop-shadow(0 0 1.6vh rgba(232,140,60,.45))}
+.htitle h1{animation:titleflick 6s infinite}
+@keyframes titleflick{0%,92%,100%{opacity:1}93%{opacity:.55}94%{opacity:1}96%{opacity:.7}97%{opacity:1}}
+.pill{font-family:'Special Elite',monospace!important;background:transparent!important;color:var(--blood)!important;border:.3vh solid var(--blood)!important;transform:rotate(-2deg)!important;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 1.2vh rgba(195,40,59,.35)}
+.sub,.lead,.pnum,.warn,.codebox,.note,.hand,.lbl,.tip{font-family:'Special Elite',monospace!important;-webkit-text-stroke:0!important;text-shadow:none!important;color:var(--paper)!important}
+.sub{font-size:2.8vh!important;letter-spacing:.06em;opacity:.85}
+.blob:before{background:radial-gradient(ellipse at 50% 40%,rgba(40,24,30,.92),rgba(14,9,16,.94) 70%)!important;border-radius:3vh!important;box-shadow:0 0 0 1px rgba(232,180,74,.35),0 0 6vh rgba(232,99,42,.18),inset 0 0 8vh rgba(0,0,0,.6)}
+.card{background:linear-gradient(180deg,rgba(38,24,30,.95),rgba(16,10,18,.95))!important;border:1px solid rgba(232,180,74,.4)!important;box-shadow:0 0 6vh rgba(232,99,42,.15),0 2vh 4vh rgba(0,0,0,.6)!important;color:var(--paper)}
+.card h3{color:var(--gold)!important;font-family:'Bungee',sans-serif!important;font-weight:400;letter-spacing:.03em}
+button{font-family:'Fredoka',sans-serif;background:rgba(255,255,255,.06)!important;color:var(--paper)!important;border:1px solid rgba(232,180,74,.55)!important;box-shadow:0 .4vh 1.2vh rgba(0,0,0,.5)!important;-webkit-text-stroke:0!important;transition:transform .12s,box-shadow .2s,background .2s!important}
+button:hover:not(:disabled){background:rgba(232,180,74,.16)!important;box-shadow:0 0 2vh rgba(232,180,74,.35)!important;transform:translateY(-1px)}
+.big{background:linear-gradient(180deg,#e8632a,#a8261c)!important;color:#fff!important;border:1px solid #ffb27a!important;box-shadow:0 0 2.4vh rgba(232,99,42,.55),0 .6vh 1.4vh rgba(0,0,0,.5)!important;letter-spacing:.02em}
+.seg button.on,.order span.first,#nums button:hover{background:linear-gradient(180deg,#e8b44a,#c47f1c)!important;color:#1a0f08!important;border-color:#ffe2a0!important}
+.order span{background:rgba(255,255,255,.06)!important;color:var(--paper)!important;border:1px solid rgba(232,180,74,.45)!important}
+input{background:rgba(0,0,0,.4)!important;color:var(--paper)!important;border:1px solid rgba(232,180,74,.5)!important}
+.qrbox{border:0!important;box-shadow:0 0 0 .6vh var(--gold),0 0 5vh rgba(232,180,74,.45)!important}
+.codebox{background:rgba(0,0,0,.35)!important;border:1px dashed rgba(232,180,74,.6)!important}
+.codebox b{color:var(--gold)!important;text-shadow:0 0 1.5vh rgba(232,180,74,.7)}
+.clock{font-family:'Bungee',sans-serif!important;font-weight:400!important;color:#ffd9a0!important;-webkit-text-stroke:0!important;text-shadow:0 0 2vh rgba(232,99,42,.9),0 0 5vh rgba(195,40,59,.6)!important}
+.secret{background:rgba(0,0,0,.45)!important;color:var(--paper)!important;border:1px solid rgba(232,180,74,.6)!important;box-shadow:0 0 3vh rgba(232,180,74,.3)!important;font-family:'Special Elite',monospace}
+.revealName{background:linear-gradient(180deg,#ffd0d0,#ff4d5e 45%,#a8121f)!important;-webkit-background-clip:text!important;background-clip:text!important;filter:drop-shadow(0 0 2.4vh rgba(255,40,60,.75)) drop-shadow(0 .4vh 0 #2a0005)!important}
+#rflash{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,40,60,.55),rgba(120,0,10,.2) 60%,transparent)}
+#rflash.go{animation:rf 1.1s ease-out}
+@keyframes rf{0%{opacity:1}100%{opacity:0}}
+/* phone dossier card */
+.face{border:0!important;border-radius:22px!important;box-shadow:0 0 0 2px rgba(232,180,74,.6),0 2vh 4vh rgba(0,0,0,.7)!important;color:#1d140c}
+.front{background:linear-gradient(160deg,#d9b77a,#b88d4f)!important;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0 2px,transparent 2px 6px),linear-gradient(160deg,#d9b77a,#b88d4f)!important}
+.front .t,.front .hand{color:#1d140c!important;font-family:'Special Elite',monospace!important}
+.stampx{font-family:'Special Elite',monospace;font-size:28px;letter-spacing:.15em;color:#a8121f;border:4px solid #a8121f;border-radius:8px;padding:4px 14px;transform:rotate(-8deg);opacity:.85;margin-bottom:6px}
+.back.word{background:linear-gradient(160deg,#f3ead6,#d8c9a6)!important}
+.back.word .w{font-family:'Bungee',sans-serif!important;color:#1d140c!important}
+.back.word .lbl,.back.word .tip{color:#3a2a1a!important}
+.back.imp{background:radial-gradient(circle at 50% 40%,#3a0a10,#12030a)!important;box-shadow:0 0 0 2px #ff4d5e,0 0 4vh rgba(255,40,60,.6)!important}
+.back.imp .lbl,.back.imp .tip{color:#ffd0d0!important}
+.back.imp .w{font-family:'Bungee',sans-serif!important;color:#ff4d5e!important;text-shadow:0 0 18px rgba(255,40,60,.9)}
+.glitch{position:relative;animation:gl 2.4s infinite}
+@keyframes gl{0%,88%,100%{transform:none;text-shadow:0 0 18px rgba(255,40,60,.9)}90%{transform:translate(-2px,1px);text-shadow:3px 0 #00e5ff,-3px 0 #ff2050}92%{transform:translate(2px,-1px);text-shadow:-3px 0 #00e5ff,3px 0 #ff2050}94%{transform:none}}
+.leaf.q{color:var(--gold);text-shadow:0 0 1.4vh rgba(232,180,74,.8);font-family:'Bungee',sans-serif;line-height:1}
+#player h1{font-size:34px}
+@media (prefers-reduced-motion:reduce){body::after,.htitle h1,.glitch{animation:none}}
 </style>
 </head>
 <body>
 
 <!-- ============ PLAYER VIEW (opened from the QR code) ============ -->
 <div id="player" class="hidden">
-  <div><span class="pill">Thanksgiving Edition 🦃</span></div>
+  <div><span class="pill">🔍 Case file · Thanksgiving edition</span></div>
   <h1 class="bubble">Who's the Imposter?</h1>
   <div class="pnum" id="pNum"></div>
   <div id="join" class="hidden" style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%">
@@ -139,7 +199,7 @@ button:disabled{opacity:.4;cursor:default}
   </div>
   <div class="flip" id="flip">
     <div class="flipin">
-      <div class="face front"><div class="q">🤫</div><div class="t">Tap to see your secret</div><div class="hand" style="font-size:18px">Make sure nobody is looking!</div></div>
+      <div class="face front"><div class="stampx">TOP SECRET</div><div class="q">🔒</div><div class="t">Tap to open your file</div><div class="hand" style="font-size:18px">Make sure nobody is looking...</div></div>
       <div class="face back" id="back"></div>
     </div>
   </div>
@@ -147,12 +207,13 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 
 <!-- ============ HOST VIEW (TV / laptop) ============ -->
+<div id="rflash"></div><div class="fog"></div><div class="candle c1">🕯️</div><div class="candle c2">🕯️</div>
 <div id="host" class="hidden">
   <div class="tools"><button id="songBtn" title="Spy music on/off">🎵 Music</button><button id="musicBtn" title="Sound effects on/off">🔔</button><button id="fsBtn" title="Full screen">⛶</button><button id="homeBtn" title="Back to setup">⚙️</button></div>
   <div class="htitle">
-    <span class="pill">Thanksgiving Edition 🦃</span>
+    <span class="pill">🔍 Case file · Thanksgiving edition</span>
     <h1 class="bubble">Who's the Imposter?</h1>
-    <div class="sub">Everyone gets the secret word... except the imposter! 🕵️</div>
+    <div class="sub">Someone at this table is lying... 🕯️</div>
   </div>
 
   <!-- setup -->
@@ -194,7 +255,7 @@ button:disabled{opacity:.4;cursor:default}
     <div class="h2 bubble" id="passWho"></div>
     <div class="flip" id="passFlip" style="width:min(44vh,80vw);height:min(52vh,70vh)">
       <div class="flipin">
-        <div class="face front"><div class="q" style="font-size:12vh">🤫</div><div class="t" style="font-size:3vh">Tap to see your secret</div><div class="hand" style="font-size:2.2vh">Make sure nobody is looking!</div></div>
+        <div class="face front"><div class="stampx">TOP SECRET</div><div class="q" style="font-size:12vh">🔒</div><div class="t" style="font-size:3vh">Tap to open your file</div><div class="hand" style="font-size:2.2vh">Make sure nobody is looking!</div></div>
         <div class="face back" id="passBack"></div>
       </div>
     </div>
@@ -2558,6 +2619,17 @@ const CATS={
  home:{name:'Things at home 🏠',words:['bed','couch','TV','fridge','phone','toothbrush','pillow','lamp','mirror','door','window','shower','oven','chair','table','clock','blanket','remote control','washing machine','carpet']},
  jobs:{name:'Jobs 👷',words:['doctor','teacher','police officer','chef','pilot','firefighter','dentist','farmer','barber','mechanic','nurse','lawyer','singer','soccer player','taxi driver','photographer','baker','engineer','firefighter','waiter'].filter((v,i,a)=>a.indexOf(v)===i)},
  sports:{name:'Sports & games ⚽',words:['soccer','basketball','swimming','tennis','boxing','football','baseball','bowling','chess','cards','running','volleyball','golf','dancing','karate','skiing','bingo','video games','hide and seek','yoga']},
+
+ arabfood:{name:'Arab food 🧆',words:['hummus','falafel','shawarma','kebab','baklava','kunafa','dolma','tabbouleh','fattoush','mansaf','maqluba','kibbeh','pita bread','labneh',"za'atar",'shish tawook','kleicha','biryani','Arabic coffee','grape leaves']},
+ celebs:{name:'Celebrities ⭐',words:['Taylor Swift','Cristiano Ronaldo','Messi','Beyoncé','Kim Kardashian','Drake','The Rock','Shakira','Michael Jackson','Mr. Bean','Jackie Chan','Rihanna','Will Smith','Justin Bieber','Haifa Wehbe','Amr Diab','Nancy Ajram','Mohamed Salah','Oprah','Elon Musk']},
+ movies:{name:'Movies 🎬',words:['Titanic','Frozen','The Lion King','Aladdin','Toy Story','Home Alone','Shrek','Harry Potter','Spider-Man','Fast & Furious','Avatar','Finding Nemo','Barbie','Jaws','Star Wars','Minions','Cars','Coco','The Avengers','Batman']},
+ reality:{name:'Reality TV 📺',words:['Love Is Blind','The Bachelor','Survivor','Shark Tank','Love Island','The Voice','Dancing with the Stars','Real Housewives','The Kardashians','Selling Sunset','Big Brother','Kitchen Nightmares','American Idol','The Masked Singer','90 Day Fiancé','Too Hot to Handle',"Hell's Kitchen",'Below Deck','Jersey Shore','Project Runway']},
+ parties:{name:'Parties & holidays 🎉',words:['wedding','birthday','Christmas','Easter','New Year\'s Eve','Halloween','baby shower','graduation','engagement party','Thanksgiving','Eid','Valentine\'s Day','Fourth of July','bachelor party','anniversary','barbecue','picnic','prom','family reunion','game night']},
+ clothes:{name:'Clothes 👗',words:['jeans','dress','suit','tie','sneakers','hat','scarf','gloves','jacket','hoodie','pajamas','sunglasses','socks','high heels','swimsuit','belt','watch','necklace','sandals','boots']},
+ countries:{name:'Countries 🌍',words:['Iraq','Lebanon','Egypt','Jordan','Mexico','Italy','France','Japan','Brazil','Canada','Turkey','Greece','India','China','Spain','Saudi Arabia','Morocco','England','Germany','Australia']},
+ travel:{name:'Ways to travel 🚗',words:['car','bus','train','airplane','bicycle','motorcycle','boat','taxi','helicopter','truck','scooter','subway','ambulance','fire truck','skateboard','cruise ship','tractor','limousine','rocket','horse']},
+ fruit:{name:'Fruits & veggies 🍉',words:['apple','banana','watermelon','grapes','orange','strawberry','pineapple','mango','lemon','tomato','potato','carrot','onion','cucumber','pomegranate','dates','figs','avocado','cherry','coconut']},
+ brands:{name:'Brands 🛍️',words:["McDonald's",'Starbucks','Apple','Nike','Amazon','Coca-Cola','Target','Costco','Netflix','Instagram','TikTok','Walmart','Disney','In-N-Out','Tesla','Gucci','Adidas','Uber','Google','IKEA']},
  mix:{name:'Mix it up! 🎲',words:[]}};
 CATS.mix.words=Object.keys(CATS).filter(k=>k!=='mix').flatMap(k=>CATS[k].words);
 const CK=Object.keys(CATS);
@@ -2613,9 +2685,9 @@ function renderRole(seed,seat,n,k,cat,hint,name){
  const d=deal(seed,n,k,cat),imp=d.imps.includes(seat);
  $('pNum').textContent=name?`You are ${name}`:`You are player #${seat+1}`;
  $('back').className='face back '+(imp?'imp':'word');
- $('back').innerHTML=imp?`<div class="em">🕵️🦃</div><div class="lbl">Shhh... you are the</div><div class="w">IMPOSTER!</div><div class="tip">${hint?`The category is <b>${esc(CATS[cat].name)}</b>.<br>`:''}Listen closely, blend in, and don't get caught! 😈</div>`
-  :`<div class="em">🤫</div><div class="lbl">The secret word is</div><div class="w">${esc(d.word)}</div><div class="tip">Give clues, but not too obvious... the imposter is listening! 👀</div>`;
- $('flip').onclick=()=>{$('flip').classList.toggle('open');try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}}
+ $('back').innerHTML=imp?`<div class="em">🕵️</div><div class="lbl">Shhh... you are the</div><div class="w glitch" data-t="IMPOSTER">IMPOSTER</div><div class="tip">${hint?`The category is <b>${esc(CATS[cat].name)}</b>.<br>`:''}Listen closely, blend in, and don't get caught! 😈</div>`
+  :`<div class="em">🔍</div><div class="lbl">Your secret word</div><div class="w">${esc(d.word)}</div><div class="tip">Give clues, but not too obvious... the imposter is listening! 👀</div>`;
+ $('flip').onclick=()=>{$('flip').classList.toggle('open');try{navigator.vibrate&&navigator.vibrate(imp&&$('flip').classList.contains('open')?[60,40,160]:30)}catch(e){}}}
 
 // ================= HOST =================
 let H={players:[],cat:'food',k:1,hint:true,time:120,seed:null,cur:0,seen:[]};
@@ -2680,7 +2752,7 @@ function reveal(){const d=deal(H.seed,H.players.length,K(),H.cat);show('sReveal'
  $('revName').textContent=all?'🕵️ EVERYONE was the imposter! 😂':'🕵️ '+d.imps.map(i=>H.players[i]).join(' & ');
  $('revWord').textContent=all?'There was no secret word... you were ALL bluffing! 🤣':`The secret word was: ${d.word}`;
  $('revTip').textContent=d.imps.length>1?'Imposters: guess the word now to steal the win! 😈':'Imposter: if you can guess the secret word now, you steal the win! 😈';
- ['revName','revWord'].forEach(id=>{const e=$(id);e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')});
+ ['revName','revWord'].forEach(id=>{const e=$(id);e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')});{const f=$('rflash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go')}
  leaves()}
 $('againBtn').onclick=startRound;$('setupBtn').onclick=()=>{show('sSetup');setMood('groove');renderSetup()};$('homeBtn').onclick=()=>{clearInterval(tmr);show('sSetup');renderSetup()};
 $('startBtn').onclick=()=>{if(H.players.length>=3)startRound()};
@@ -2753,9 +2825,8 @@ function drumroll(){if(!ctx())return;const t=ac.currentTime;for(let i=0;i<40;i++
  const s=ac.createBufferSource(),g=ac.createGain();s.buffer=b;g.gain.value=.08+i*.004;s.connect(g).connect(ac.destination);s.start(t+i*.05)}}
 function fanfare(){if(!ctx())return;const t=ac.currentTime;[[523,0],[659,.12],[784,.24],[1047,.42]].forEach(([f,d],i)=>tone(f,t+d,i===3?1.4:.4,.09,'triangle'))}
 $('musicBtn').onclick=()=>{soundOn=!soundOn;$('musicBtn').textContent=soundOn?'🔔':'🔕'};
-function leaves(){const cols=['#b8323f','#f28c28','#f2c14e','#d9601a','#9cbf7a','#c8607a'];for(let i=0;i<40;i++){const s=document.createElement('div');s.className='leaf';const w=3+Math.random()*4;
- s.style.cssText=`left:${Math.random()*100}vw;width:${w}vh;height:${w*1.1}vh;--r:${(Math.random()*720-360)|0}deg;animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1}s`;
- s.innerHTML=`<svg viewBox="0 0 100 110" width="100%" height="100%"><path d="M50 4 C82 24 92 62 50 94 C8 62 18 24 50 4 Z" fill="${cols[i%6]}" stroke="#3a2410" stroke-width="5"/><path d="M50 14 L50 106" stroke="#3a2410" stroke-width="4"/></svg>`;document.body.appendChild(s);setTimeout(()=>s.remove(),6000)}}
+function leaves(){const syms=['?','?','?','🔍','🕵️','?','🗝️','?'];for(let i=0;i<34;i++){const s=document.createElement('div');s.className='leaf q';const w=3+Math.random()*4;
+ s.style.cssText=`left:${Math.random()*100}vw;font-size:${w}vh;--r:${(Math.random()*240-120)|0}deg;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*1.2}s`;s.textContent=syms[i%syms.length];document.body.appendChild(s);setTimeout(()=>s.remove(),8000)}}
 // decorations like the slide deck
 (function(){const L=(c,x,y,w,r)=>`<svg class="deco" style="left:${x};top:${y};width:${w}vh;transform:rotate(${r}deg)" viewBox="0 0 100 110"><path d="M50 4 C82 24 92 62 50 94 C8 62 18 24 50 4 Z" fill="${c}" stroke="#3a2410" stroke-width="5"/><path d="M50 14 L50 106 M50 44 L68 32 M50 44 L32 32 M50 64 L72 50 M50 64 L28 50" stroke="#3a2410" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;
  const P=(x,y,w)=>`<svg class="deco" style="left:${x};top:${y};width:${w}vh" viewBox="0 0 200 160"><rect x="92" y="14" width="16" height="30" rx="5" fill="#5a7a2e" stroke="#3a2410" stroke-width="4"/><ellipse cx="58" cy="98" rx="46" ry="54" fill="#d9601a" stroke="#3a2410" stroke-width="5"/><ellipse cx="142" cy="98" rx="46" ry="54" fill="#d9601a" stroke="#3a2410" stroke-width="5"/><ellipse cx="100" cy="98" rx="50" ry="58" fill="#f28c28" stroke="#3a2410" stroke-width="5"/><circle cx="84" cy="88" r="7" fill="#3a2410"/><circle cx="116" cy="88" r="7" fill="#3a2410"/><path d="M84 108 Q100 120 116 108" stroke="#3a2410" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`;

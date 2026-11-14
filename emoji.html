@@ -238,4 +238,25 @@ function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score
  $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
 shellInit({game:'Emoji Decode',style:'funk',rain:['😎','🦃','🍂','🤔'],onNew:()=>{timer&&timer.stop();S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){if(S.phase==='play')S.phase='ready';$('#setupOv').classList.add('hidden');if(S.i>=S.q.length)end();else render()}
+</script><script>/*TGBUZZ*/(function(){
+const names=()=>S&&S.teams?S.teams.flatMap(t=>t.m):(window.tgRoster?tgRoster():[]);
+const tI=n=>S&&S.teams?S.teams.findIndex(t=>t.m.includes(n)):-1;
+let key='';
+function hl(){$$('[data-ok],[data-no]').forEach(e=>e.style.outline='');const f=window.TGB&&TGB.first();if(!f)return;const i=tI(f);$$(`[data-ok="${i}"]`).forEach(e=>{e.style.outline='.5vh solid #ffcc3d';e.style.boxShadow='0 0 3vh #ffcc3d'})}
+function hv(){if(!window.TGB)return;if(!S){TGB.host({title:'😎 Emoji Decode',note:'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
+ const q=S.q[S.i];if(!q)return;const d=P[q.c];
+ if(S.phase==='ready')TGB.host({title:`Puzzle ${S.i+1} of ${S.q.length} · ${d.e} ${d.n}`,a:q.a,note:'Answer shown only to you',actions:[{id:'go',label:'👀 Show the emojis',k:'y'}],noBuzzBtns:true});
+ else if(S.phase==='play')TGB.host({title:`Puzzle ${S.i+1} · ${d.e} ${d.n} · worth ${S.hint?150:300}`,q:q.e,a:q.a,actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'none',label:'🤷 Nobody'}]});
+ else TGB.host({title:`Puzzle ${S.i+1} done`,q:q.e,a:q.a,actions:[{id:'next',label:S.i+1>=S.q.length?'🏆 Final results':'Next puzzle ➜',k:'y'}],noBuzzBtns:true})}
+function sync(){if(!window.TGB)return;if(S){const k=S.i+':'+S.phase;if(k!==key){key=k;if(S.phase==='play'){TGB.reset();TGB.openIn(4)}else if(S.phase==='ready')TGB.reset();else TGB.lock()}}hl();hv()}
+const oR=render;render=function(){oR.apply(this,arguments);sync()};
+const oRev=reveal;reveal=function(w){oRev.apply(this,arguments);if(window.TGB&&w>=0)TGB.right(S.teams[w].m)};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-no]');if(b&&window.TGB&&S){TGB.out(S.teams[+b.dataset.no].m);timer&&timer.pause(false);hl()}},true);
+function boot(){TGB.init({game:'Emoji Decode',names,teamOf:n=>{const i=tI(n);return i<0?null:{label:S.teams[i].name,color:S.teams[i].c.startsWith('var')?'#ffcc3d':S.teams[i].c}},
+ onBuzz:(n,r)=>{if(r===1){timer&&timer.pause(true)}hl();hv()},
+ onAct:id=>{if(!S)return;const f=TGB.first(),w=f?tI(f):-1;
+  if(id==='go'){const b=$('#bGo');b&&b.click()}else if(id==='right'){if(w<0){toast('Nobody has buzzed yet');return}reveal(w)}
+  else if(id==='wrong'){if(w<0){toast('Nobody has buzzed yet');return}const b=$(`[data-no="${w}"]`);b&&b.click()}
+  else if(id==='none')reveal(-1);else if(id==='next'){const b=$('#bNext');b&&b.click()}}});sync()}
+const s=document.createElement('script');s.src='buzzer.js';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

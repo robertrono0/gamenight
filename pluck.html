@@ -197,6 +197,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
   <div class="hc"><span class="i">💡</span>Think you know it? <b>Solve it!</b> Right = <b>+300 bonus + 100 for every hidden letter</b>. Wrong = lose a feather.</div>
   <div class="hc"><span class="i">⏱</span><b>10 seconds</b> to call a letter or you lose your turn! Get <b>3 right in a row</b> and you're 🔥 ON FIRE: letters pay <b>2×</b>.</div>
   <div class="hc"><span class="i">🌟</span>A <b>golden letter</b> hides in every puzzle (3×), and one puzzle is a <b>💰 DOUBLE MONEY</b> puzzle!</div>
+ <div class="hc"><span class="i">💸</span>Careful! A wrong letter costs <b>$100</b>, a wrong solve costs <b>$300</b>, and the hidden <b>💀 bad apple</b> letter costs <b>$250</b>. You can go negative!</div>
   <div class="hc"><span class="i">🦃</span>All 7 feathers gone? the turkey is <b>NAKED</b> 🫣 and nobody gets the bonus. Most money at the end wins!</div>
  </div>
  <div class="ctr"><button class="big-btn" id="bHowClose">LET'S PLUCK! 🦃</button></div>
@@ -326,7 +327,7 @@ $('#bSpin').onclick=()=>{$('#bSpin').classList.add('hidden');const cols=$$('#dra
  const go=()=>{cols.forEach(x=>x.classList.remove('lit'));cols[i%L].classList.add('lit');SFX.tick();if(--n<=0){S.turn=win;save();SFX.solve();const r=cols[win].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,90);
    $('#drawSub').innerHTML=`<b style="color:${S.teams[win].c};font-size:3.4vh">${esc(S.teams[win].name)}</b> goes first!`;setTimeout(()=>{$('#drawOv').classList.add('hidden');render()},2200);return}i++;d=Math.min(d*1.09,420);setTimeout(go,d)};go()};
 // ---------- game ----------
-function newPuzzle(){const P=S.puzzles[S.i],ls=[...new Set(P.p.replace(/[^A-Z]/g,''))];S.cur={p:P.p,cat:P.cat,shown:[],wrong:[],feathers:FEATHERS,done:false,outcome:null,dbl:S.i===S.dbl,gold:ls.length>2?pick(ls):null,streak:{i:-1,n:0}}}
+function newPuzzle(){const P=S.puzzles[S.i],ls=[...new Set(P.p.replace(/[^A-Z]/g,''))];S.cur={p:P.p,cat:P.cat,shown:[],wrong:[],feathers:FEATHERS,done:false,outcome:null,dbl:S.i===S.dbl,gold:ls.length>2?pick(ls):null,bad:(()=>{const pool=[...'RSTLNDHMCPBGKWY'].filter(x=>!ls.includes(x));return pool.length?pick(pool):null})(),streak:{i:-1,n:0}}}
 const letters=p=>[...new Set(p.replace(/[^A-Z]/g,''))];
 function hiddenCount(){const c=S.cur;return [...c.p].filter(ch=>/[A-Z]/.test(ch)&&!c.shown.includes(ch)).length}
 function render(flipLetter){const c=S.cur;if(!c)return;
@@ -335,7 +336,7 @@ function render(flipLetter){const c=S.cur;if(!c)return;
  $('#words').innerHTML=words.map(w=>`<div class="word">${[...w].map(ch=>/[A-Z]/.test(ch)?`<div class="tile${c.shown.includes(ch)||c.done?'':' hid'}${flipLetter===ch?' flip':''}${(c.shown.includes(ch)||c.done)&&ch===c.gold?' goldt':''}">${c.shown.includes(ch)||c.done?ch:''}</div>`:`<div class="tile sym">${esc(ch)}</div>`).join('')}</div>`).join('');
  $('#used').innerHTML=c.wrong.length?'Not in it: '+c.wrong.map(l=>`<s>${l}</s>`).join(''):'';
  const t=S.teams[S.turn];$('#turn').style.setProperty('--tc',t.c);const st=c.streak||{i:-1,n:0},hot=st.i===S.turn&&st.n>=2;
- $('#turn').innerHTML=c.done?'':`🎯 <b>${esc(t.name)}</b>, call a letter!${S.clock?' <span class="tring" id="tring">'+S.clock+'</span>':''}<div class="flags">${c.dbl?'<span class="flag dbl">💰 DOUBLE MONEY PUZZLE</span>':''}${c.gold?'<span class="flag gold">🌟 A golden letter is hiding: worth 3×!</span>':''}${hot?'<span class="flag fire">🔥 ON FIRE! Letters are worth 2×</span>':st.i===S.turn&&st.n===1?'<span class="flag">🔥 One more right for a streak!</span>':''}</div>`;
+ $('#turn').innerHTML=c.done?'':`🎯 <b>${esc(t.name)}</b>, call a letter!${S.clock?' <span class="tring" id="tring">'+S.clock+'</span>':''}<div class="flags">${c.dbl?'<span class="flag dbl">💰 DOUBLE MONEY PUZZLE</span>':''}${c.gold?'<span class="flag gold">🌟 A golden letter is hiding: worth 3×!</span>':''}${c.bad&&!c.badHit?'<span class="flag" style="background:linear-gradient(#5a1a1a,#2a0808);color:#ff9a9a">💀 A bad apple letter costs $250</span>':''}${hot?'<span class="flag fire">🔥 ON FIRE! Letters are worth 2×</span>':st.i===S.turn&&st.n===1?'<span class="flag">🔥 One more right for a streak!</span>':''}</div>`;
  $('#keys').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`<button class="key${c.shown.includes(l)?' hit':c.wrong.includes(l)?' miss':''}" data-l="${l}" ${c.shown.includes(l)||c.wrong.includes(l)||c.done?'disabled':''}>${l}</button>`).join('');
  $$('#keys .key').forEach(k=>k.onclick=()=>guess(k.dataset.l));
  $('#actions').classList.toggle('hidden',c.done);$('#solveAsk').classList.add('hidden');$('#nextRow').classList.toggle('hidden',!c.done);
@@ -359,9 +360,9 @@ function guess(l){const c=S.cur;if(c.done||c.shown.includes(l)||c.wrong.includes
   if(gold||fire){burst(innerWidth/2,innerHeight*.3,gold?90:50);flashGold()}
   banner(`✅ ${n} ${l}${n>1?"'s":''}!<small>${esc(S.teams[i].name)} +${money(pts)}${tags?' · '+tags:''}, go again!</small>`,1600);if(rnd(2))tkSay('hit');
   if(hiddenCount()===0)finish('solved',i,true)}
- else{c.wrong.push(l);c.feathers--;c.streak={i:-1,n:0};SFX.pluck();const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}
+ else{c.wrong.push(l);c.feathers--;c.streak={i:-1,n:0};SFX.pluck();const isBad=l===c.bad,loss=(isBad?250:100)*(c.dbl?2:1);S.teams[i].score-=loss;floatAt(i,'-'+money(loss),'#ff6b6b');if(isBad){c.badHit=true;burst(innerWidth/2,innerHeight*.3,40,true)}const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}
   if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}
-  nextTurn();tkSay(c.feathers<=2?'low':'pluck');setTimeout(()=>{render();banner(`🪶 No ${l}! Pluck!<small>${esc(S.teams[S.turn].name)}'s turn</small>`,1500)},700)}
+  nextTurn();tkSay(c.feathers<=2?'low':'pluck');setTimeout(()=>{render();banner(isBad?`💀 BAD APPLE! ${l} costs ${money(loss)}!<small>${esc(S.teams[i].name)} loses ${money(loss)}. ${esc(S.teams[S.turn].name)}'s turn</small>`:`🪶 No ${l}! −${money(loss)}<small>${esc(S.teams[S.turn].name)}'s turn</small>`,isBad?2200:1500)},700)}
  save()}
 function finish(outcome,i,byLetters){const c=S.cur;c.done=true;c.outcome=outcome;
  stopClock();if(outcome==='solved'){const bonus=(300+(byLetters?0:100*hiddenCount()))*(c.dbl?2:1);S.teams[i].score+=bonus;S.turn=i;
@@ -372,7 +373,7 @@ function finish(outcome,i,byLetters){const c=S.cur;c.done=true;c.outcome=outcome
 $('#bSolve').onclick=()=>{stopClock();$('#actions').classList.add('hidden');$('#solveAsk').classList.remove('hidden');SFX.click()};
 $('#sCancel').onclick=()=>render();
 $('#sYes').onclick=()=>{pushUndo();const i=S.turn,h=hiddenCount();finish('solved',i,false)};
-$('#sNo').onclick=()=>{pushUndo();const c=S.cur;c.feathers--;c.streak={i:-1,n:0};SFX.pluck();{const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}}$('#solveAsk').classList.add('hidden');if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}nextTurn();tkSay('pluck');setTimeout(render,700);banner(`❌ Not quite!<small>A feather is plucked. ${esc(S.teams[S.turn].name)}'s turn</small>`,1600);save()};
+$('#sNo').onclick=()=>{pushUndo();const c=S.cur;{const loss=300*(c.dbl?2:1);S.teams[S.turn].score-=loss;floatAt(S.turn,'-'+money(loss),'#ff6b6b')}c.feathers--;c.streak={i:-1,n:0};SFX.pluck();{const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}}$('#solveAsk').classList.add('hidden');if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}nextTurn();tkSay('pluck');setTimeout(render,700);banner(`❌ Not quite! −${money(300*(c.dbl?2:1))}<small>A feather is plucked. ${esc(S.teams[S.turn].name)}'s turn</small>`,1600);save()};
 $('#bPass').onclick=()=>{pushUndo();S.cur.streak={i:-1,n:0};nextTurn();save();render();SFX.click()};
 $('#bReveal').onclick=()=>{pushUndo();finish('turkey')};
 $('#bNext').onclick=()=>{$('#banner').classList.remove('on');if(S.i>=S.puzzles.length-1){stopClock();gameEnd();return}S.i++;newPuzzle();nextTurn();save();render();SFX.click();if(S.cur.dbl){SFX.solve();flashGold();burst(innerWidth/2,innerHeight*.3,120);banner('💰 DOUBLE MONEY PUZZLE!<small>Every letter and the solve bonus are worth 2×</small>',2600)}};

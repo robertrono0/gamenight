@@ -1066,4 +1066,25 @@ $('#names').addEventListener('change',()=>LS.set('tg-jeop-last-names',$('#names'
 <script>/*TGHOOK*/(function(){tgHome('left:14px;bottom:14px');const el=document.getElementById('names'),r=tgRoster();
  if(el&&r.length&&!S){el.value=r.join('\n');try{LS.set('tg-jeop-last-names',el.value)}catch(e){}renderSetup()}
  if(el)el.addEventListener('input',()=>tgSetRoster(tgNamesFromText(el.value)));
- const og=gameEnd;gameEnd=function(){og.apply(this,arguments);try{tgNight('Jeopardy',tgPlaces(totals().map(x=>({names:[x.n],v:x.v}))))}catch(e){}}})();</script></body></html>
+ const og=gameEnd;gameEnd=function(){og.apply(this,arguments);try{tgNight('Jeopardy',tgPlaces(totals().map(x=>({names:[x.n],v:x.v}))))}catch(e){}}})();</script><script>/*TGBUZZ*/(function(){
+const css=document.createElement('style');css.textContent='#cTeams .tbtn.tgbz{outline:.5vh solid #ffcc3d;box-shadow:0 0 4vh #ffcc3d;transform:scale(1.06);position:relative}#cTeams .tbtn.tgbz::before{content:"🔔";position:absolute;top:-2.4vh;left:50%;transform:translateX(-50%);font-size:3vh}';document.head.appendChild(css);
+const names=()=>S&&S.players&&S.players.length?S.players:(window.tgRoster?tgRoster():[]);
+const tIdx=n=>{if(!S||!S.teams)return -1;const pi=S.players.indexOf(n);return S.teams.findIndex(t=>(t.m||[]).includes(pi))};
+const mem=i=>(S.teams[i].m||[]).map(p=>S.players[p]);
+function hi(){$$('#cTeams .tbtn').forEach(e=>e.classList.remove('tgbz'));const f=TGB.first();if(!f||!C)return;const i=tIdx(f);const el=$(`#cTeams .tbtn[data-i="${i}"]`);if(el)el.classList.add('tgbz')}
+function hv(){if(!window.TGB)return;if(!C){TGB.host({title:'🎯 Board',note:S&&S.teams?'Pick a clue on the TV. '+S.teams.map(t=>t.name+' '+money(t.score)).join(' · '):'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
+ const a=C.ph?(C.cl.name||C.cl.a):C.cl.a;TGB.host({title:`${C.cat.emoji} ${C.cat.name} · ${C.dd?'DAILY DOUBLE ':''}${money(C.val)}`,q:C.ph?'📸 Whose forehead?':C.cl.q,a,note:C.dd?'Daily Double: only '+S.teams[C.team].name+' answers':C.all?'Everyone-answers mode: judge each team on the TV':'',
+  actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'reveal',label:'👀 Reveal'},{id:'board',label:'Board ➜',k:'y'}],noBuzzBtns:C.dd||C.all})}
+let ansTouched=false;$$('#segAns button').forEach(b=>b.addEventListener('click',e=>{if(e.isTrusted)ansTouched=true}));
+function boot(){TGB.init({game:'Jeopardy',names,onJoin:()=>{if(!S&&!ansTouched){const b=$('#segAns button[data-v="buzz"]');if(b&&!b.classList.contains('on')){b.click();toast('📱 Phone buzzers connected: switched to Buzz-in mode')}}},teamOf:n=>{const i=tIdx(n);if(i<0)return null;const t=S.teams[i];return{label:t.name,color:t.c}},
+ onBuzz:(n,r)=>{if(r===1){stopTimer();hi();const i=tIdx(n);toast('🔔 '+n+(i>=0&&S.teams[i].name!==n?' ('+S.teams[i].name+')':'')+' buzzed first!')}hv()},
+ onAct:id=>{if(!C){return}const who=C.dd?C.team:tIdx(TGB.first()||'');
+  if(id==='right'||id==='wrong'){if(who<0){toast('Nobody has buzzed yet');return}const el=$(`#cTeams .tbtn[data-i="${who}"]`);if(!el||el.classList.contains('done')){toast('Already judged');return}judge(who,id==='right')}
+  else if(id==='reveal'){reveal();hv()}else if(id==='board'){if(!C.shown)reveal();closeClue()}}});hv()}
+const oShow=showClue;showClue=function(){oShow.apply(this,arguments);if(window.TGB){TGB.reset();if(!C.dd&&!C.all)TGB.openIn(4,$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i).flatMap(mem));hv()}};
+
+const oJudge=judge;judge=function(i,ok){oJudge.apply(this,arguments);if(!window.TGB)return;const m=mem(i);if(ok){TGB.right(m)}else{TGB.out(m);if(!C.dd&&!C.all&&C.won==null&&!C.shown&&!TGB.isOpen()){const el=$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i);if(el.length)TGB.reopen()}}hi();hv()};
+const oRev=reveal;reveal=function(){oRev.apply(this,arguments);if(window.TGB){TGB.lock();hv()}};
+const oClose=closeClue;closeClue=function(){oClose.apply(this,arguments);if(window.TGB){TGB.reset();hv()}};
+const s=document.createElement('script');s.src='buzzer.js';s.onload=boot;document.head.appendChild(s)})();
+</script></body></html>

@@ -105,7 +105,22 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
  <div class="hc"><span class="i">🏆</span>At the end, everyone gets their trophies and we crown the <b>MVP</b>.</div>
 </div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script>"use strict";
+<script>(function(){
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
+window.tgSetRoster=a=>{const seen=new Set();const out=(a||[]).map(x=>String(x).trim()).filter(x=>x&&!seen.has(x.toLowerCase())&&seen.add(x.toLowerCase()));if(out.length)s('tg-roster',out)};
+window.tgNamesFromText=t=>String(t||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+// places: [[names for 1st],[2nd],[3rd]] ; 5 / 3 / 1 points
+window.tgNight=(game,places,id)=>{const N=g('tg-night')||{log:[]};id=game+':'+(id||JSON.stringify(places));if(N.log.some(x=>x.id===id))return;
+ const P=[5,3,1],aw={};places.forEach((ns,i)=>{if(P[i])(ns||[]).forEach(n=>{if(n)aw[n]=(aw[n]||0)+P[i]})});if(!Object.keys(aw).length)return;
+ N.log.push({id,game,t:Date.now(),aw});s('tg-night',N);
+ const d=document.createElement('div');d.textContent='🏅 Points added to the Game Night leaderboard';d.style.cssText='position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99999;background:#ffcc3d;color:#2a0d12;font:700 16px system-ui,sans-serif;padding:10px 18px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.4);pointer-events:none';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)};
+// group a sorted list into places by equal score: items [{names:[..],v}]
+window.tgPlaces=items=>{const sorted=items.slice().sort((a,b)=>b.v-a.v),out=[];let last=null;sorted.forEach(x=>{if(last===null||x.v!==last){out.push([]);last=x.v}out[out.length-1].push(...x.names)});return out};
+window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document.createElement('a');a.id='tgHome';a.href='index.html';a.title='All games';a.textContent='🏠';a.style.cssText='position:fixed;'+(pos||'left:14px;bottom:14px')+';z-index:9999;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:24px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);backdrop-filter:blur(4px)';document.body.appendChild(a)};
+})();
+
+"use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function rnd(n){const a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a},pick=a=>a[rnd(a.length)];
@@ -169,21 +184,23 @@ const TNAMES=[['The Gravy Boats','The Pie Hards','The Stuffing Squad','The Cranb
 const parseNames=txt=>{const seen=new Set();return txt.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))};
 function splitTeams(names,n){const sh=shuffle(names),t=Array.from({length:n},()=>[]);sh.forEach((x,i)=>t[i%n].push(x));return t}
 // standard setup block: <div id="teamSetup"></div>
-function teamSetup(host,key,opts={}){const st=LS.get(key+'-setup',{names:'',n:2,tn:TNAMES[0].slice()});let groups=[];
+function teamSetup(host,key,opts={}){const st=LS.get(key+'-setup',{names:'',n:2,tn:TNAMES[0].slice()});let groups=[];const R=tgRoster();if(R.length)st.names=R.join('\n');
  host.innerHTML=`<h3>Players <span class="hint">(one per line or commas)</span></h3><textarea class="field" id="tsNames" placeholder="Fadi&#10;Rita&#10;Anita&#10;Rob&#10;...">${esc(st.names)}</textarea>
  <div style="display:flex;gap:1vw;align-items:center;flex-wrap:wrap;margin-top:1vh"><b style="font-size:1.9vh">Teams:</b><div class="seg" id="tsN">${[2,3,4].map(n=>`<button data-v="${n}" class="${n===st.n?'on':''}">${n}</button>`).join('')}</div><button class="chip" id="tsMix">🎲 Shuffle teams</button><span class="hint" id="tsCount"></span></div>
  <div class="teamsPrev" id="tsPrev"></div>`;
  const draw=()=>{$('#tsPrev').innerHTML=Array.from({length:st.n},(_,i)=>`<div style="--tc:${TC[i]}"><input class="field" data-tn="${i}" value="${esc(st.tn[i]||TNAMES[0][i])}" style="font-weight:700;margin-bottom:.5vh;padding:.5vh 1vh"><span>${(groups[i]||[]).map(esc).join(', ')||'<i class="hint">add names above</i>'}</span></div>`).join('');$$('[data-tn]').forEach(e=>e.oninput=()=>{st.tn[+e.dataset.tn]=e.value;LS.set(key+'-setup',st)});$('#tsCount').textContent=parseNames(st.names).length+' players'};
  const re=()=>{groups=splitTeams(parseNames(st.names),st.n);draw()};
- $('#tsNames').oninput=e=>{st.names=e.target.value;LS.set(key+'-setup',st);re()};$('#tsMix').onclick=()=>{re();SFX.click()};
+ $('#tsNames').oninput=e=>{st.names=e.target.value;LS.set(key+'-setup',st);tgSetRoster(parseNames(st.names));re()};$('#tsMix').onclick=()=>{re();SFX.click()};
  $$('#tsN button').forEach(b=>b.onclick=()=>{$$('#tsN button').forEach(x=>x.classList.remove('on'));b.classList.add('on');st.n=+b.dataset.v;LS.set(key+'-setup',st);re()});re();
  return{teams(){const names=parseNames(st.names);if(groups.flat().length!==names.length)re();return Array.from({length:st.n},(_,i)=>({name:st.tn[i]||TNAMES[0][i],m:groups[i]||[],score:0,c:TC[i]}))},names:()=>parseNames(st.names)}}
 function scoreBar(teams,cur){return teams.map((t,i)=>`<div class="sc${i===cur?' on':''}" id="sc${i}" style="--tc:${t.c}"><div style="min-width:0"><div class="n">${esc(t.name)}</div><div class="m">${t.m.map(esc).join(', ')}</div></div><div class="s">${t.score}</div></div>`).join('')}
 function bumpScore(i){const e=$('#sc'+i);if(e){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
-function podium(teams,label='points'){const order=teams.map((t,i)=>({...t,i})).sort((a,b)=>b.score-a.score),md=['🥇','🥈','🥉','🏅'],h=[46,36,28,22];const vis=[order[1],order[0],order[2],order[3]].filter(Boolean);
+let GAME='game';
+function podium(teams,label='points'){try{tgNight(GAME,tgPlaces(teams.map(t=>({names:t.m,v:t.score}))))}catch(e){}const order=teams.map((t,i)=>({...t,i})).sort((a,b)=>b.score-a.score),md=['🥇','🥈','🥉','🏅'],h=[46,36,28,22];const vis=[order[1],order[0],order[2],order[3]].filter(Boolean);
  return`<div class="podium">${vis.map(t=>{const r=order.indexOf(t);return`<div class="pod" style="--tc:${t.c};height:${h[r]}vh;animation-delay:${(3-r)*.3}s"><div class="md">${md[r]}</div><h4>${esc(t.name)}</h4><div class="s">${t.score}</div><p>${t.m.map(esc).join(', ')}</p></div>`}).join('')}</div>`}
 // ---------------- SHELL ----------------
-function shellInit(o){fxInit();setStyle(o.style||'funk');
+function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.title;
+ const bs=$('#bStart');if(bs)bs.addEventListener('click',()=>setTimeout(()=>{let seen=null;try{seen=sessionStorage.getItem('tg-rules-'+GAME)}catch(e){}if(!seen&&$('#setupOv').classList.contains('hidden')&&$('#howOv')){$('#howOv').classList.remove('hidden');try{sessionStorage.setItem('tg-rules-'+GAME,'1')}catch(e){}}},150));
  $$('.musicBtn').forEach(b=>b.onclick=toggleMusic);$$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on));
  const fb=$('#bFull');if(fb)fb.onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
  $$('[data-how]').forEach(b=>b.onclick=()=>$('#howOv').classList.remove('hidden'));const hc=$('#howClose');if(hc)hc.onclick=()=>$('#howOv').classList.add('hidden');
@@ -195,7 +212,7 @@ const MLT=['cry at a wedding','show up late to their own party','eat the last pi
 const WYR=[['Eat only turkey for a year','Never eat turkey again'],['Have dinner with Taylor Swift','Have dinner with Cristiano Ronaldo'],['Be able to fly','Be invisible'],['Always be 10 minutes late','Always be 20 minutes early'],['Lose your phone for a week','Lose your wallet'],['Live in Dubai','Live in New York'],['Give up pizza forever','Give up shawarma forever'],['Know every language','Play every instrument'],['Only eat dessert','Never eat dessert again'],['Be famous on TikTok','Be rich but unknown'],['Have Teta\'s cooking every day','Have a private chef'],['Fight 1 horse-sized turkey','Fight 100 turkey-sized horses'],['Read minds','See the future'],['Have no Wi-Fi for a month','No AC all summer'],['Go back in time','Go to the future'],['Sing at an Arab wedding','Give a speech at a wedding'],['Never use social media again','Never watch TV again'],['Be the funniest person in the room','Be the smartest person in the room'],['Win the lottery','Live twice as long'],['Pumpkin pie','Kunafa'],['Mashed potatoes','Hummus'],['Live without music','Live without movies'],['Have a pet dinosaur','Have a pet dragon'],['Text only in emojis','Only talk in voice notes'],['Always say what you think','Never speak again'],['Be stuck on an island alone','Be stuck with someone annoying'],['Travel the world for free','Never pay rent again'],['Black Friday shopping','Sleep in all day'],['Dance dabke for an hour','Sing karaoke for an hour'],['Be on Love Is Blind','Be on Survivor'],['Never sweat','Never be cold'],['Only wear sweatpants','Only wear suits'],['Work from home forever','Never work again for half the money'],['Have Messi\'s skills','Have LeBron\'s skills'],['Eat a spoon of hot sauce','Eat a spoon of mayo'],['Be a famous singer','Be a famous actor'],['Have a rewind button','Have a pause button'],['Live in the mountains','Live by the beach'],['Get caught singing in the car','Get caught dancing in the mirror'],['Turkish coffee','Starbucks']];
 setStyle('swing');
 let S=LS.get('tg-likely',null);const save=()=>LS.set('tg-likely',S);
-let cfg=LS.get('tg-likely-cfg',{m:'mix',n:15,names:''});$('#names').value=cfg.names;$('#names').oninput=e=>{cfg.names=e.target.value;LS.set('tg-likely-cfg',cfg)};
+let cfg=LS.get('tg-likely-cfg',{m:'mix',n:15,names:''});if(tgRoster().length)cfg.names=tgRoster().join('\n');$('#names').value=cfg.names;$('#names').oninput=e=>{cfg.names=e.target.value;LS.set('tg-likely-cfg',cfg);tgSetRoster(parseNames(cfg.names))};
 ['segM:m','segN:n'].forEach(x=>{const[id,k]=x.split(':');$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(y=>y.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set('tg-likely-cfg',cfg);SFX.click()}})});
 $('#bStart').onclick=()=>{const names=parseNames(cfg.names);if(names.length<3){toast('Add at least 3 people 🙂');return}ac();
  const cm=[],cw=[];$('#custom').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach(l=>{if(/^wyr:/i.test(l)){const p=l.slice(4).split('|').map(x=>x.trim());if(p.length===2)cw.push(p)}else cm.push(l.replace(/^(who'?s )?most likely to /i,''))});
@@ -217,11 +234,11 @@ function render(){const c=S.cards[S.i],st=$('#stage'),prog=`<div class="prog">Ca
   else $('#bNext').onclick=nextCard}}
 function crown(){const c=S.cards[S.i];S.sel.forEach(n=>S.titles[n].push(c.t));S.phase='crowned';save();SFX.roll(900);setTimeout(()=>{SFX.win();burst(innerWidth/2,innerHeight/3,140,['👑','👉','🦃','⭐'])},900);render()}
 function nextCard(){S.i++;S.sel=[];S.side=null;S.phase='show';if(S.i>=S.cards.length){end();return}save();render();SFX.whoosh()}
-function end(){music('party');SFX.win();const arr=S.names.map(n=>[n,S.titles[n]]).sort((a,b)=>b[1].length-a[1].length);const mvp=arr[0][1].length?arr.filter(a=>a[1].length===arr[0][1].length).map(a=>a[0]):[];
+function end(){music('party');SFX.win();const arr=S.names.map(n=>[n,S.titles[n]]).sort((a,b)=>b[1].length-a[1].length);try{tgNight('Most Likely To',tgPlaces(arr.filter(x=>x[1].length).map(x=>({names:[x[0]],v:x[1].length}))))}catch(e){}const mvp=arr[0][1].length?arr.filter(a=>a[1].length===arr[0][1].length).map(a=>a[0]):[];
  $('#endWrap').innerHTML=`<div class="bigT">🏆 TROPHY TIME</div>${mvp.length?`<div class="subT" style="font-size:3vh;margin:1vh 0 2vh">👑 MVP${mvp.length>1?'s':''}: <b style="color:var(--gold)">${mvp.map(esc).join(' & ')}</b> with ${arr[0][1].length} titles</div>`:''}
  <div class="awards">${arr.map(([n,t])=>`<div class="aw"><h4>${t.length?'👑 ':''}${esc(n)}</h4>${t.length?`<ul>${t.map(x=>`<li>Most likely to ${esc(x)}</li>`).join('')}</ul>`:'<div class="hint">Flew under the radar 🥷</div>'}</div>`).join('')}</div>
  <div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['👑','🏆','⭐']);
  $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
-shellInit({style:'swing',rain:['👉','👑','🦃','🍂'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
+shellInit({game:'Most Likely To',style:'swing',rain:['👉','👑','🦃','🍂'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){$('#setupOv').classList.add('hidden');if(S.i>=S.cards.length)end();else render()}
 </script></body></html>

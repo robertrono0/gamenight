@@ -74,11 +74,25 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .et{border-radius:2.4vh;padding:2.4vh;border:.5vh solid var(--tc);background:rgba(255,255,255,.07)}.et.win{background:color-mix(in srgb,var(--tc) 30%,transparent);box-shadow:0 0 6vh var(--tc);transform:scale(1.04)}
 .et h4{font-family:var(--fd);font-size:3.4vh;color:var(--tc)}.et .s{font-family:var(--fd);font-size:7vh}.et p{font-size:2.2vh;font-weight:600}
 #toast{position:fixed;left:50%;bottom:12vh;transform:translateX(-50%) translateY(20vh);background:var(--gold);color:var(--ink);font-weight:700;font-size:2.4vh;padding:1.2vh 2.6vh;border-radius:3vh;z-index:90;transition:.4s}#toast.on{transform:translateX(-50%)}
-</style></head><body>
+</style></head><body><script>(function(){
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
+window.tgSetRoster=a=>{const seen=new Set();const out=(a||[]).map(x=>String(x).trim()).filter(x=>x&&!seen.has(x.toLowerCase())&&seen.add(x.toLowerCase()));if(out.length)s('tg-roster',out)};
+window.tgNamesFromText=t=>String(t||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+// places: [[names for 1st],[2nd],[3rd]] ; 5 / 3 / 1 points
+window.tgNight=(game,places,id)=>{const N=g('tg-night')||{log:[]};id=game+':'+(id||JSON.stringify(places));if(N.log.some(x=>x.id===id))return;
+ const P=[5,3,1],aw={};places.forEach((ns,i)=>{if(P[i])(ns||[]).forEach(n=>{if(n)aw[n]=(aw[n]||0)+P[i]})});if(!Object.keys(aw).length)return;
+ N.log.push({id,game,t:Date.now(),aw});s('tg-night',N);
+ const d=document.createElement('div');d.textContent='🏅 Points added to the Game Night leaderboard';d.style.cssText='position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99999;background:#ffcc3d;color:#2a0d12;font:700 16px system-ui,sans-serif;padding:10px 18px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.4);pointer-events:none';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)};
+// group a sorted list into places by equal score: items [{names:[..],v}]
+window.tgPlaces=items=>{const sorted=items.slice().sort((a,b)=>b.v-a.v),out=[];let last=null;sorted.forEach(x=>{if(last===null||x.v!==last){out.push([]);last=x.v}out[out.length-1].push(...x.names)});return out};
+window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document.createElement('a');a.id='tgHome';a.href='index.html';a.title='All games';a.textContent='🏠';a.style.cssText='position:fixed;'+(pos||'left:14px;bottom:14px')+';z-index:9999;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:24px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);backdrop-filter:blur(4px)';document.body.appendChild(a)};
+})();
+</script>
 <div id="bg"></div><canvas id="fx"></canvas>
 <div id="app">
  <header><div class="title">🗣️ FAMILY FEUD!</div>
-  <div class="tools"><button class="ib" id="bHow" title="How to play">❓</button><button class="ib" id="bMusic" title="Music">🎵</button><button class="ib" id="bUndo" title="Undo">↩️</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></header>
+  <div class="tools"><a class="ib" href="index.html" title="All games" style="text-decoration:none">🏠</a><button class="ib" id="bHow" title="How to play">❓</button><button class="ib" id="bMusic" title="Music">🎵</button><button class="ib" id="bUndo" title="Undo">↩️</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></header>
  <div class="topRow">
   <div class="team" id="teamA" style="--tc:var(--a)" data-t="0"><div><div class="tn" id="tnA">Team A</div><div class="tm" id="tmA"></div><div class="xs" id="xsA"></div></div><div class="ts" id="tsA">0</div></div>
   <div class="bank"><div class="bl">ROUND BANK</div><div class="bv" id="bankV">0</div><div class="mult hidden" id="multV"></div></div>
@@ -128,6 +142,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="endOv"><div class="wrapc" id="endWrap"></div></div>
 <div id="toast"></div>
+<div class="ov hidden" id="fmOv" style="z-index:70"><div class="wrapc" id="fmWrap"></div></div>
 <script>
 "use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -209,13 +224,14 @@ let S=LS.get('tg-feud',null);const save=()=>LS.set('tg-feud',S);
 let fam=[[],[]];
 function parseNames(){const seen=new Set();return $('#names').value.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))}
 function split(){const n=shuffle(parseNames());fam=[[],[]];n.forEach((x,i)=>fam[i%2].push(x));$('#mA').textContent=fam[0].join(', ');$('#mB').textContent=fam[1].join(', ');$('#nCount').textContent=n.length+' players'}
-$('#names').oninput=()=>{LS.set('tg-feud-names',$('#names').value);split()};$('#bMix').onclick=()=>{split();SFX.click()};
+$('#names').oninput=()=>{LS.set('tg-feud-names',$('#names').value);tgSetRoster(parseNames());split()};$('#bMix').onclick=()=>{split();SFX.click()};
 let nR=5;$$('#segR button').forEach(b=>b.onclick=()=>{$$('#segR button').forEach(x=>x.classList.remove('on'));b.classList.add('on');nR=+b.dataset.v});
 const mult=(r,n)=>r===n-1&&n>=3?3:r===3&&n>=5?2:1;
 $('#bStart').onclick=()=>{if(parseNames().length<2){toast('Add at least 2 players 🙂');return}if(!fam[0].length)split();ac();
  const custom=$('#custom').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length>=3).map(p=>[p[0],p.slice(1).map(x=>{const m=x.match(/^(.*?)\s+(\d+)$/);return m?[m[1],+m[2],m[1]]:[x,10,x]}).sort((a,b)=>b[1]-a[1]).slice(0,8)]);
  const qs=shuffle(custom).concat(shuffle(Q)).slice(0,nR);
- S={teams:[{name:$('#nA').value||'Family 1',m:fam[0],score:0},{name:$('#nB').value||'Family 2',m:fam[1],score:0}],qs,r:0,undo:[]};newRound();save();$('#setupOv').classList.add('hidden');render();music('play');t2(`ROUND 1<small>${esc(S.qs[0][0])}</small>`,2600)};
+ S={teams:[{name:$('#nA').value||'Family 1',m:fam[0],score:0},{name:$('#nB').value||'Family 2',m:fam[1],score:0}],qs,r:0,undo:[]};newRound();save();$('#setupOv').classList.add('hidden');render();music('play');
+ let seen=null;try{seen=sessionStorage.getItem('tg-rules-feud')}catch(e){}if(!seen){$('#howOv').classList.remove('hidden');try{sessionStorage.setItem('tg-rules-feud','1')}catch(e){}}else t2(`ROUND 1<small>${esc(S.qs[0][0])}</small>`,2600)};
 function newRound(){S.cur={open:[],bank:0,ctrl:-1,strikes:0,phase:'faceoff',done:false,missed:false}}
 function pushUndo(){S.undo.push(JSON.stringify({teams:S.teams,cur:S.cur,r:S.r}));if(S.undo.length>40)S.undo.shift()}
 function render(){const q=S.qs[S.r],c=S.cur,m=mult(S.r,S.qs.length);
@@ -261,15 +277,47 @@ $('#bCheck').onclick=check;$('#ans').addEventListener('keydown',e=>{if(e.key==='
 $('#bStrike').onclick=()=>{if(!S||S.cur.phase==='done')return;pushUndo();strike()};
 $$('.team').forEach(e=>e.onclick=()=>{});
 $('#bUndo').onclick=()=>{const u=S&&S.undo.pop();if(!u){toast('Nothing to undo');return}const o=JSON.parse(u);S.teams=o.teams;S.cur=o.cur;S.r=o.r;save();render();toast('↩️ Undone')};
-function gameEnd(){music('party');const [a,b]=S.teams,w=a.score===b.score?-1:a.score>b.score?0:1;
+
+// ---------- FAST MONEY ----------
+const FMQ=[['Name a food people eat at the movies',[['Popcorn',52,'popcorn'],['Candy',18,'candy','skittles','m&ms'],['Nachos',12,'nachos'],['Hot dog',8,'hot dog','hotdog'],['Soda',6,'soda','drink','coke']]],
+ ['Name something you put on a hot dog',[['Ketchup',34,'ketchup'],['Mustard',30,'mustard'],['Relish',14,'relish'],['Onions',10,'onion','onions'],['Chili',8,'chili']]],
+ ['Name a reason you would be late to work',[['Traffic',40,'traffic'],['Overslept',30,'overslept','slept in','alarm','sleep'],['Car trouble',12,'car','flat tire','car broke'],['Kids',8,'kids','children','school drop off'],['Weather',6,'weather','rain']]],
+ ['Name something people do at the beach',[['Swim',40,'swim','swimming'],['Tan',26,'tan','sunbathe','lay out','tanning'],['Build sandcastles',12,'sandcastle','sand castle','sand'],['Surf',10,'surf','surfing'],['Play volleyball',6,'volleyball']]],
+ ['Name a Thanksgiving side dish',[['Mashed potatoes',36,'mashed potatoes','potatoes','potato'],['Stuffing',26,'stuffing','dressing'],['Green bean casserole',14,'green beans','green bean casserole','casserole'],['Mac and cheese',12,'mac and cheese','mac'],['Cranberry sauce',8,'cranberry','cranberries']]],
+ ['Name something you find in a purse',[['Wallet',30,'wallet','money','cash'],['Makeup / lipstick',26,'lipstick','makeup','lip gloss'],['Keys',20,'keys','key'],['Phone',14,'phone','cell phone'],['Gum',6,'gum','mints']]],
+ ['Name an animal you see at the zoo',[['Lion',30,'lion'],['Elephant',26,'elephant'],['Monkey',20,'monkey','ape','gorilla'],['Giraffe',14,'giraffe'],['Zebra',6,'zebra']]],
+ ['Name an Arab dessert',[['Baklava',40,'baklava'],['Kunafa',30,'kunafa','knafeh','kanafeh'],['Klecha / maamoul',12,'klecha','kleicha','maamoul'],['Basbousa',10,'basbousa','harissa'],['Halawa',6,'halawa','halva']]],
+ ['Name something people are afraid of',[['Spiders',36,'spider','spiders'],['Heights',24,'heights','falling'],['Snakes',18,'snake','snakes'],['Dying',10,'death','dying'],['Clowns',8,'clown','clowns']]],
+ ['Name a breakfast food',[['Eggs',38,'eggs','egg','omelet'],['Pancakes',22,'pancakes','pancake'],['Bacon',16,'bacon'],['Cereal',12,'cereal'],['Waffles',8,'waffle','waffles']]]];
+let F=null,fmT=null;
+function fmStart(fam){F={fam,qs:shuffle(FMQ).slice(0,5),p:0,i:0,a:[[],[]],phase:'intro',shown:[0,0]};$('#endOv').classList.add('hidden');$('#fmOv').classList.remove('hidden');music('play');fmRender()}
+function fmTotal(){return F.a.flat().filter(Boolean).reduce((s,x)=>s+(x.revealed?x.pts:0),0)}
+function fmRender(){const W=$('#fmWrap'),fam=S.teams[F.fam],tot=fmTotal();
+ const board=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2vw;margin:2vh 0">${[0,1].map(p=>`<div style="display:flex;flex-direction:column;gap:1vh">${F.qs.map((q,i)=>{const x=F.a[p][i];const show=x&&x.revealed&&!(F.phase==='play'&&F.p===1&&p===0);return`<div style="display:flex;justify-content:space-between;align-items:center;gap:1vw;border-radius:1.2vh;padding:1.2vh 1.4vw;font-family:var(--fd);font-size:2.6vh;background:${show?'linear-gradient(180deg,#fff7e6,#ffd98f)':'linear-gradient(180deg,#2a6fdb,#123a8a)'};color:${show?'var(--ink)':'#fff'}"><span>${show?esc(x.text||'—'):'&nbsp;'}</span><span style="background:#2a0d12;color:var(--gold);border-radius:1vh;padding:.3vh 1vh;min-width:6vh;text-align:center">${show?x.pts:''}</span></div>`}).join('')}</div>`).join('')}</div>`;
+ const head=`<div class="bigT" style="font-size:5vh">⚡ FAST MONEY ⚡</div><div class="subT">${esc(fam.name)} · Get <b style="color:var(--gold)">200 points</b> together to win!</div><div style="font-family:var(--fd);font-size:5vh;color:var(--gold)">TOTAL: ${tot}</div>`;
+ if(F.phase==='intro'){W.innerHTML=head+`<div class="q" style="margin:2vh 0">Pick 2 players from ${esc(fam.name)}. <b>Player 2 leaves the room</b> (or wears headphones) so they can't hear Player 1's answers!</div><div class="ctr"><button class="bb gold" id="fmGo">🎤 PLAYER 1 GO! (20 seconds)</button></div>`;$('#fmGo').onclick=()=>fmPlay(0)}
+ else if(F.phase==='play'){const q=F.qs[F.i];W.innerHTML=head+`<div class="kicker" style="font-weight:700;letter-spacing:.3em;color:var(--gold)">PLAYER ${F.p+1} · QUESTION ${F.i+1} OF 5 · <span id="fmClock"></span></div><div class="q" style="margin:2vh 0;font-size:4.6vh">${esc(q[0])}</div>
+  <div class="inputRow" style="margin:0 auto"><input id="fmIn" placeholder="Type their answer, Enter" autocomplete="off"><button class="bb gold" id="fmOk">✔</button><button class="bb ghost" id="fmPass">PASS</button></div>${board}`;
+  const go=()=>fmAnswer($('#fmIn').value.trim());$('#fmOk').onclick=go;$('#fmIn').onkeydown=e=>{if(e.key==='Enter')go()};$('#fmPass').onclick=()=>fmAnswer('');setTimeout(()=>$('#fmIn')&&$('#fmIn').focus(),30);fmTick()}
+ else if(F.phase==='reveal'){const left=F.a[F.p].some(x=>x&&!x.revealed);W.innerHTML=head+board+`<div class="ctr">${left?`<button class="bb gold" id="fmRev">👀 REVEAL NEXT ANSWER</button>`:F.p===0?`<button class="bb" id="fmP2">🎤 BRING IN PLAYER 2 (25 seconds)</button>`:''}${!left&&F.p===1?`<button class="bb gold" id="fmEnd">🏁 THE RESULT</button>`:''}</div>`;
+  if(left)$('#fmRev').onclick=()=>{const x=F.a[F.p].find(y=>y&&!y.revealed);x.revealed=true;x.pts>0?SFX.ding():SFX.buzz();fmRender()};
+  const p2=$('#fmP2');if(p2)p2.onclick=()=>fmPlay(1);const e=$('#fmEnd');if(e)e.onclick=()=>{F.phase='done';fmRender()}}
+ else if(F.phase==='done'){const won=tot>=200;W.innerHTML=head+board+`<div class="bigT">${won?'🎉 YOU WIN FAST MONEY! 🎉':'😬 SO CLOSE!'}</div><div class="ctr"><button class="bb gold" id="fmBack">🏆 Back to final scores</button></div>`;if(won){SFX.win();music('party');burst(innerWidth/2,innerHeight/3,240)}else SFX.buzz();
+  $('#fmBack').onclick=()=>{$('#fmOv').classList.add('hidden');$('#endOv').classList.remove('hidden')}}}
+function fmPlay(p){F.p=p;F.i=0;F.phase='play';F.left=p?25:20;F.until=Date.now()+F.left*1000;clearInterval(fmT);fmT=setInterval(fmTick,200);fmRender()}
+function fmTick(){if(!F||F.phase!=='play')return;const l=Math.max(0,Math.ceil((F.until-Date.now())/1000)),c=$('#fmClock');if(c){c.textContent='⏱️ '+l+'s';c.style.color=l<=5?'#ff5d5d':''}if(l<=5&&l>0&&F._last!==l){F._last=l;SFX.click()}if(l<=0){clearInterval(fmT);SFX.buzz();for(let i=0;i<5;i++)if(!F.a[F.p][i])F.a[F.p][i]={text:'',pts:0,idx:-1};F.phase='reveal';fmRender()}}
+function fmAnswer(v){const q=F.qs[F.i];let idx=v?match(v,q[1]):-1;
+ if(F.p===1&&v&&idx>=0&&F.a[0][F.i]&&F.a[0][F.i].idx===idx){SFX.buzz();toast('🔁 Already said! Try another answer');$('#fmIn').value='';return}
+ F.a[F.p][F.i]={text:v,pts:idx>=0?q[1][idx][1]:0,idx};SFX.click();F.i++;if(F.i>=5){clearInterval(fmT);F.phase='reveal'}fmRender()}
+function gameEnd(){music('party');const [a,b]=S.teams,w=a.score===b.score?-1:a.score>b.score?0:1;try{tgNight('Family Feud',w<0?[[...a.m,...b.m]]:[S.teams[w].m,S.teams[1-w].m])}catch(e){}
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${w<0?"IT'S A TIE!":esc(S.teams[w].name)+' WIN!'}</div><div class="subT">Final scores</div>
  <div class="endTeams">${S.teams.map((t,i)=>`<div class="et${i===w?' win':''}" style="--tc:var(--${i?'b':'a'})"><h4>${i===w?'👑 ':''}${esc(t.name)}</h4><div class="s">${t.score}</div><p>${t.m.map(esc).join(', ')}</p></div>`).join('')}</div>
- <div class="ctr"><button class="bb gold" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');SFX.win();burst(innerWidth/2,innerHeight/3,220);
- $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')}}
+ <div class="ctr"><button class="bb" id="eFM" style="font-size:2.6vh">⚡ FAST MONEY BONUS ROUND</button><button class="bb gold" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');SFX.win();burst(innerWidth/2,innerHeight/3,220);
+ $('#eFM').onclick=()=>fmStart(w<0?0:w);$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')}}
 const showHow=()=>$('#howOv').classList.remove('hidden');$('#bHow').onclick=showHow;$('#bHow2').onclick=showHow;$('#bHowClose').onclick=()=>$('#howOv').classList.add('hidden');
 $('#bMusic').onclick=()=>{A.on=!A.on;LS.set('tg-feud-music',A.on);$('#bMusic').classList.toggle('off',!A.on);music(A.mode==='off'?'play':A.mode)};$('#bMusic').classList.toggle('off',!A.on);
 $('#bFull').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
 let nArm=0;$('#bNew').onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')};
-$('#names').value=LS.get('tg-feud-names','');split();
+$('#names').value=tgRoster().length?tgRoster().join('\n'):LS.get('tg-feud-names','');split();
 if(S&&S.cur){$('#setupOv').classList.add('hidden');render();document.addEventListener('pointerdown',()=>music('play'),{once:true})}
 </script></body></html>

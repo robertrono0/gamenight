@@ -504,7 +504,21 @@ button:active:not(:disabled){transform:translateY(.35vh);box-shadow:0 .15vh 0 rg
 .timer svg circle:first-child{stroke:rgba(58,36,16,.25)}
 </style>
 </head>
-<body>
+<body><script>(function(){
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
+window.tgSetRoster=a=>{const seen=new Set();const out=(a||[]).map(x=>String(x).trim()).filter(x=>x&&!seen.has(x.toLowerCase())&&seen.add(x.toLowerCase()));if(out.length)s('tg-roster',out)};
+window.tgNamesFromText=t=>String(t||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+// places: [[names for 1st],[2nd],[3rd]] ; 5 / 3 / 1 points
+window.tgNight=(game,places,id)=>{const N=g('tg-night')||{log:[]};id=game+':'+(id||JSON.stringify(places));if(N.log.some(x=>x.id===id))return;
+ const P=[5,3,1],aw={};places.forEach((ns,i)=>{if(P[i])(ns||[]).forEach(n=>{if(n)aw[n]=(aw[n]||0)+P[i]})});if(!Object.keys(aw).length)return;
+ N.log.push({id,game,t:Date.now(),aw});s('tg-night',N);
+ const d=document.createElement('div');d.textContent='🏅 Points added to the Game Night leaderboard';d.style.cssText='position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99999;background:#ffcc3d;color:#2a0d12;font:700 16px system-ui,sans-serif;padding:10px 18px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.4);pointer-events:none';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)};
+// group a sorted list into places by equal score: items [{names:[..],v}]
+window.tgPlaces=items=>{const sorted=items.slice().sort((a,b)=>b.v-a.v),out=[];let last=null;sorted.forEach(x=>{if(last===null||x.v!==last){out.push([]);last=x.v}out[out.length-1].push(...x.names)});return out};
+window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document.createElement('a');a.id='tgHome';a.href='index.html';a.title='All games';a.textContent='🏠';a.style.cssText='position:fixed;'+(pos||'left:14px;bottom:14px')+';z-index:9999;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:24px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);backdrop-filter:blur(4px)';document.body.appendChild(a)};
+})();
+</script>
 <svg class="deco" style="left:2vw;top:1.5vh;width:12vh;height:9.5vh" viewBox="0 0 200 160"><rect x="92" y="14" width="16" height="30" rx="5" fill="#5a7a2e" stroke="#3a2410" stroke-width="4"/><ellipse cx="58" cy="98" rx="46" ry="54" fill="#d9601a" stroke="#3a2410" stroke-width="5"/><ellipse cx="142" cy="98" rx="46" ry="54" fill="#d9601a" stroke="#3a2410" stroke-width="5"/><ellipse cx="100" cy="98" rx="50" ry="58" fill="#f28c28" stroke="#3a2410" stroke-width="5"/><circle cx="84" cy="88" r="7" fill="#3a2410"/><circle cx="116" cy="88" r="7" fill="#3a2410"/><path d="M84 108 Q100 120 116 108" stroke="#3a2410" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
 
 <svg class="drip" id="drip" viewBox="0 0 1920 140" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -1384,5 +1398,8 @@ document.body.appendChild(btn);const css=document.createElement('style');css.tex
 setStyle('pop');btn.classList.toggle('off',!A.on);
 btn.onclick=e=>{e.stopPropagation();A.on=!A.on;LS.set('tg-music',A.on);music(A.mode==='off'?'play':A.mode);if(A.on&&A.mus)A.mus.gain.setTargetAtTime(.3,A.ctx.currentTime,.3)};
 document.addEventListener('pointerdown',()=>{if(A.mode==='off')music('chill')},{once:true});
-window.bgMusic=music;})();</script></body>
+window.bgMusic=music;})();</script><script>/*TGHOOK*/(function(){tgHome('left:14px;bottom:76px');const r=tgRoster();
+ if(G&&G.players&&!G.players.length&&r.length){r.forEach(n=>G.players.push({name:n.slice(0,24),out:false,outRound:null,ll:{first:true,second:true,phone:true}}));saveG();renderSetup();renderAll()}
+ const sb=document.getElementById('startBtn');if(sb)sb.addEventListener('click',()=>tgSetRoster(G.players.map(p=>p.name)));
+ const oc=champion;champion=function(){oc.apply(this,arguments);try{tgNight('Spelling Bee',[[G.players[G.champ].name],G.runnerUp!=null?[G.players[G.runnerUp].name]:[]])}catch(e){}}})();</script></body>
 </html>

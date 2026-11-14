@@ -27,6 +27,18 @@ label:hover{background:rgba(255,255,255,.06)}
 input[type=checkbox]{width:20px;height:20px;accent-color:var(--gold);flex:none;margin-top:1px}
 label:has(input:checked){opacity:.5;text-decoration:line-through}
 .buzz{margin:0 0 6px;background:rgba(255,204,61,.12);border:2px dashed rgba(255,204,61,.6);border-radius:14px;padding:12px 16px;font-size:16px;line-height:1.4}.buzz b{color:var(--gold)}
+.night{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;margin-bottom:10px}@media(max-width:760px){.night{grid-template-columns:1fr}}
+.nbox{background:rgba(255,255,255,.07);border:2px solid rgba(255,204,61,.45);border-radius:18px;padding:16px}
+.hint2{font-size:14px;opacity:.8;margin:2px 0 8px}
+#roster{width:100%;min-height:150px;border-radius:12px;border:2px solid #e8b77a;padding:10px;font:600 16px 'Fredoka',system-ui;color:#2a0d12;background:#fff8e8}
+.lbr{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;margin-bottom:6px;background:rgba(0,0,0,.25);font-size:18px}
+.lbr .pts{font-family:'Bungee',sans-serif;color:var(--gold);font-size:20px}.lbr.top{background:linear-gradient(90deg,rgba(255,204,61,.35),rgba(255,204,61,.08));box-shadow:0 0 0 2px var(--gold)}
+.lbr .md{font-size:24px;text-align:center}.lbr small{opacity:.7;font-size:12px;display:block}
+.man{margin-top:10px}.man summary{cursor:pointer;font-weight:700;color:var(--gold)}
+.mchips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.mchips button{border:2px solid #e8b77a;background:#fff8e8;color:#2a0d12;font:700 15px 'Fredoka',system-ui;padding:6px 12px;border-radius:20px;cursor:pointer}.mchips button.on{background:#ff7a1a;color:#fff;border-color:#c2410c}
+.mrow{display:flex;gap:8px}.mrow button,.rst{font:700 16px 'Fredoka',system-ui;padding:8px 16px;border-radius:12px;border:0;background:linear-gradient(var(--gold),var(--gold2));color:#2a0d12;cursor:pointer}.rst{margin-top:10px;background:rgba(255,255,255,.15);color:var(--cream)}
+.hrow{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1)}.hrow button{background:none;border:0;color:#ff8a8a;cursor:pointer;font-size:14px}
+.empty{opacity:.7;font-size:15px;padding:10px 0}
 .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .tip{background:rgba(255,255,255,.07);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.45}
 .tip b{color:var(--gold)}
@@ -34,6 +46,24 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 <h1>THANKSGIVING<br>GAME NIGHT</h1>
 <div class="sub">🦃 11 games, one place 🦃</div>
 
+<div class="night">
+ <div class="nbox">
+  <h2 style="margin-top:0">👥 Tonight's players</h2>
+  <p class="hint2">Type everyone once. Every game fills in these names for you.</p>
+  <textarea id="roster" placeholder="Fadi&#10;Rita&#10;Anita&#10;Rob&#10;..."></textarea>
+  <div class="hint2" id="rCount"></div>
+ </div>
+ <div class="nbox">
+  <h2 style="margin-top:0">🏆 Game Night leaderboard</h2>
+  <p class="hint2">Games add points by themselves: 🥇 5 · 🥈 3 · 🥉 1. Imposter round winners get 1 each.</p>
+  <div id="lb"></div>
+  <details class="man"><summary>➕ Add points by hand (Bingo, bonus, anything)</summary>
+   <div id="manNames" class="mchips"></div>
+   <div class="mrow"><button data-p="1">+1</button><button data-p="3">+3</button><button data-p="5">+5</button><button data-p="-1">−1</button></div>
+  </details>
+  <details class="man"><summary>📜 History</summary><div id="hist"></div><button id="lbReset" class="rst">🗑️ Reset the leaderboard</button></details>
+ </div>
+</div>
 <div class="buzz">🔔 <b>Buzzer games</b> (Jeopardy, Family Feud, Emoji Decode): everyone opens <b>Multibuzzer</b> on their phone and joins your room. First buzz answers.</div>
 <h2>🏆 The big shows</h2>
 <div class="games">
@@ -55,7 +85,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
  <a class="g" href="tictac.html"><div class="e">❌⭕</div><h3>Tic-Tac-Turkey</h3><p>Trivia tic-tac-toe. Answer right to claim a square, wrong and the other team can steal.</p><span class="t">~10-20 min · 2 teams</span></a>
  <a class="g" href="pluck.html"><div class="e">🦃</div><h3>Pluck the Turkey</h3><p>Hangman with a 10-second clock, streaks and golden letters. Lose and the turkey is NAKED 🫣</p><span class="t">~10-20 min · any size</span></a>
 </div>
-<a class="key" href="https://claude.ai/artifact/7NQz1ZzJwb4cW4dZh1d4Q2" target="_blank" rel="noopener"><span style="font-size:30px">📱</span><span><b>Host answer key for Jeopardy</b><br>Open this on your phone during the game.</span></a>
+<a class="key" href="answers.html"><span style="font-size:30px">📱</span><span><b>Host answer key for Jeopardy</b><br>Open this on your phone during the game. Searchable, and always matches the game.</span></a>
 
 <h2>🗓️ Suggested running order</h2>
 <div class="show">
@@ -73,7 +103,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
  <label><input type="checkbox">Sound check: tap 🎵 in each game and set the TV volume</label>
  <label><input type="checkbox">Screen sharing? Turn on "share sound" so the music comes through</label>
  <label><input type="checkbox">Open everything from robertrono0.github.io/gamenight so the Imposter QR works on every phone</label>
- <label><input type="checkbox">Type everyone's names into Jeopardy and the Spelling Bee</label>
+ <label><input type="checkbox">Type everyone's names in "Tonight's players" at the top of this page</label>
  <label><input type="checkbox">Cardboard bingo cards + markers (or candy corn!) for everyone</label>
  <label><input type="checkbox">Paper and pens for Jeopardy answers and Final Wager bets</label>
  <label><input type="checkbox">Prize cash ready: $100 for Bingo (split by round) + any Jeopardy prize</label>
@@ -94,4 +124,34 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 const boxes=[...document.querySelectorAll('#chk input')];let saved=[];try{saved=JSON.parse(localStorage.getItem('tg-hub')||'[]')}catch(e){}
 boxes.forEach((b,i)=>{b.checked=!!saved[i];b.onchange=()=>{try{localStorage.setItem('tg-hub',JSON.stringify(boxes.map(x=>x.checked)))}catch(e){}}});
 </script>
-</body></html>
+<script>(function(){
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
+window.tgSetRoster=a=>{const seen=new Set();const out=(a||[]).map(x=>String(x).trim()).filter(x=>x&&!seen.has(x.toLowerCase())&&seen.add(x.toLowerCase()));if(out.length)s('tg-roster',out)};
+window.tgNamesFromText=t=>String(t||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+// places: [[names for 1st],[2nd],[3rd]] ; 5 / 3 / 1 points
+window.tgNight=(game,places,id)=>{const N=g('tg-night')||{log:[]};id=game+':'+(id||JSON.stringify(places));if(N.log.some(x=>x.id===id))return;
+ const P=[5,3,1],aw={};places.forEach((ns,i)=>{if(P[i])(ns||[]).forEach(n=>{if(n)aw[n]=(aw[n]||0)+P[i]})});if(!Object.keys(aw).length)return;
+ N.log.push({id,game,t:Date.now(),aw});s('tg-night',N);
+ const d=document.createElement('div');d.textContent='🏅 Points added to the Game Night leaderboard';d.style.cssText='position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99999;background:#ffcc3d;color:#2a0d12;font:700 16px system-ui,sans-serif;padding:10px 18px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.4);pointer-events:none';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)};
+// group a sorted list into places by equal score: items [{names:[..],v}]
+window.tgPlaces=items=>{const sorted=items.slice().sort((a,b)=>b.v-a.v),out=[];let last=null;sorted.forEach(x=>{if(last===null||x.v!==last){out.push([]);last=x.v}out[out.length-1].push(...x.names)});return out};
+window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document.createElement('a');a.id='tgHome';a.href='index.html';a.title='All games';a.textContent='🏠';a.style.cssText='position:fixed;'+(pos||'left:14px;bottom:14px')+';z-index:9999;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:24px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);backdrop-filter:blur(4px)';document.body.appendChild(a)};
+})();
+
+(function(){const $=id=>document.getElementById(id),g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const R=$('roster');R.value=tgRoster().join('\n');const rc=()=>{const n=tgNamesFromText(R.value).length;$('rCount').textContent=n?n+' players ready ✅':''};rc();
+R.oninput=()=>{const a=tgNamesFromText(R.value);if(a.length)tgSetRoster(a);else try{localStorage.removeItem('tg-roster')}catch(e){};rc();drawMan()};
+let sel=[];
+function drawMan(){const names=[...new Set([...tgRoster(),...Object.keys(totals())])];$('manNames').innerHTML=names.map(n=>`<button class="${sel.includes(n)?'on':''}" data-n="${esc(n)}">${esc(n)}</button>`).join('')||'<span class="empty">Add players first</span>';
+ $('manNames').querySelectorAll('button').forEach(b=>b.onclick=()=>{const n=b.dataset.n;sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];drawMan()})}
+function totals(){const N=g('tg-night')||{log:[]},t={};N.log.forEach(e=>Object.entries(e.aw).forEach(([n,p])=>t[n]=(t[n]||0)+p));return t}
+function draw(){const t=totals(),arr=Object.entries(t).sort((a,b)=>b[1]-a[1]),md=['🥇','🥈','🥉'];const N=g('tg-night')||{log:[]};
+ $('lb').innerHTML=arr.length?arr.map(([n,p],i)=>{const games=N.log.filter(e=>e.aw[n]>0).length;return`<div class="lbr${i===0?' top':''}"><div class="md">${md[i]||i+1}</div><div>${i===0?'👑 ':''}${esc(n)}<small>${games} game${games===1?'':'s'} scored</small></div><div class="pts">${p}</div></div>`}).join(''):'<div class="empty">No points yet. Play a game! 🎮</div>';
+ $('hist').innerHTML=N.log.slice().reverse().map(e=>`<div class="hrow"><span><b>${esc(e.game)}</b>: ${Object.entries(e.aw).map(([n,p])=>esc(n)+' +'+p).join(', ')}</span><button data-id="${esc(e.id)}" title="Remove">✕</button></div>`).join('')||'<div class="empty">Nothing yet</div>';
+ $('hist').querySelectorAll('button').forEach(b=>b.onclick=()=>{const N=g('tg-night')||{log:[]};N.log=N.log.filter(e=>e.id!==b.dataset.id);s('tg-night',N);draw()});drawMan()}
+document.querySelectorAll('.mrow button').forEach(b=>b.onclick=()=>{if(!sel.length)return;const p=+b.dataset.p,N=g('tg-night')||{log:[]},aw={};sel.forEach(n=>aw[n]=p);N.log.push({id:'manual:'+Date.now(),game:'Bonus',t:Date.now(),aw});s('tg-night',N);sel=[];draw()});
+let arm=0;$('lbReset').onclick=()=>{if(Date.now()-arm>3000){arm=Date.now();$('lbReset').textContent='Tap again to reset everything';return}s('tg-night',{log:[]});$('lbReset').textContent='🗑️ Reset the leaderboard';draw()};
+addEventListener('storage',draw);addEventListener('focus',draw);draw()})();
+</script></body></html>

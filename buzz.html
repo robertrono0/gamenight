@@ -89,6 +89,7 @@ setTimeout(()=>{if(!connectedOnce){$('connMsg').innerHTML='Still trying...<br>�
 $('retry').onclick=()=>{location.reload()};
 function onMsg(d){lastMsg=Date.now();
  if(d.t==='names'){names=d.names||[];$('game').textContent=d.game?'🎮 '+d.game:'';if(ROLE==='player'){if(!NAME){drawPick();show('sPick')}else show('sBuzz')}}
+ else if(d.t==='st'&&d.s==='pick'&&ROLE==='player'){if(d.names)names=d.names;if(d.why==='notInGame'){$('sPick').querySelector('.sub').textContent='Pick YOUR name for this game 👇'}NAME='';ls.s('tg-bz-name','');drawPick();show('sPick')}
  else if(d.t==='st'){S=d;if(d.game)$('game').textContent='🎮 '+d.game;if(ROLE==='player'&&NAME)show('sBuzz');drawBuzz()}
  else if(d.t==='denied'){HKEY='';try{localStorage.removeItem('tg-bz-hk-'+HOSTID)}catch(e){}ROLE='player';hostBtn();alert('Host access ended. To host again, scan the HOST QR on the TV.');toPlayer()}
  else if(d.t==='host'){show('host');$('net').classList.add('hidden');drawHost(d)}

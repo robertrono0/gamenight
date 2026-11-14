@@ -2308,14 +2308,14 @@ var qrcode = function() {
 ;/* Thanksgiving Game Night: phone buzzers + host remote (TV side) */
 (function(){
 "use strict";
-const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
+const BUILD='1794677556';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
 function peerOpts(){if(!PEERP)return{debug:0};const[h,p]=PEERP.split(':');return{host:h,port:+p||9000,path:'/',secure:false,debug:0}}
 const ls={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const rid=n=>{const a='abcdefghijkmnpqrstuvwxyz23456789';let s='';const r=new Uint32Array(n);crypto.getRandomValues(r);for(const x of r)s+=a[x%a.length];return s};
 let ID=ls.g('tg-buzz-id');if(!ID){ID='tgnight-'+rid(8);ls.s('tg-buzz-id',ID)}
 let HKEY=ls.g('tg-buzz-hkey');if(!HKEY){HKEY=rid(6);ls.s('tg-buzz-hkey',HKEY)}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const O={game:'Game',names:()=>[],teamOf:()=>null,onBuzz:null,onAct:null};
+const O={hostOnly:false,game:'Game',names:()=>[],teamOf:()=>null,onBuzz:null,onAct:null};
 const P=new Map();               // conn.peer -> {c,name,pid,role}
 let peer=null,ready=false,tries=0;const HOSTS=new Set();
 const st={cd:0,cdI:null,open:false,q:[],out:new Set(),elig:null,res:{},opened:false,hostView:null};
@@ -2334,7 +2334,7 @@ addEventListener('pagehide',()=>{try{peer&&peer.destroy()}catch(e){}});
 const send=(c,m)=>{try{c.open&&c.send(m)}catch(e){}};
 function allNames(){let n=[];try{n=O.names()||[]}catch(e){}if(!n.length&&window.tgRoster)n=tgRoster();return[...new Set(n)]}
 function onData(c,d){let p=P.get(c.peer);if(!p){p={c,name:null,role:'player'};P.set(c.peer,p)}
- if(d.t==='join'){p.name=String(d.name||'').slice(0,24);p.pid=d.pid;
+ if(d.t==='join'){let nm=String(d.name||'').trim().slice(0,24);const al=allNames(),hit=al.find(x=>x.toLowerCase()===nm.toLowerCase());if(hit)nm=hit;p.name=nm;p.pid=d.pid;
   for(const[k,o]of P)if(k!==c.peer&&o.pid===d.pid&&o.role==='player'){try{o.c.close()}catch(e){}P.delete(k)}
   if(p.role==='host'){p.role='player';HOSTS.delete(c.peer)}push(p);draw();try{O.onJoin&&O.onJoin(p.name)}catch(e){}return}
  if(d.t==='role'&&d.r==='player'){p.role='player';HOSTS.delete(c.peer);push(p);draw();return}
@@ -2347,12 +2347,12 @@ function onData(c,d){let p=P.get(c.peer);if(!p){p={c,name:null,role:'player'};P.
 const live=()=>st.q.filter(n=>!st.out.has(n));
 function buzz(name){if(!st.open||st.out.has(name)||st.q.includes(name))return;if(st.elig&&!st.elig.has(name))return;
  st.q.push(name);const r=live().indexOf(name)+1;sBuzz(r===1);if(r===1)flash(name);try{O.onBuzz&&O.onBuzz(name,r)}catch(e){console.error(e)}pushAll();draw();pushHost()}
-function stateFor(name){if(!name)return{s:'pick'};const team=O.teamOf(name);
+function stateFor(name){if(!name)return{s:'pick'};const al=allNames();if(al.length&&!al.includes(name))return{s:'pick',why:'notInGame'};const team=O.teamOf(name);
  if(st.res[name])return{s:st.res[name],team};if(st.out.has(name))return{s:'out',team};
  const r=live().indexOf(name);if(r>=0)return{s:'rank',rank:r+1,team};
  if(st.open&&(!st.elig||st.elig.has(name)))return{s:'open',team};
  if(st.open)return{s:'notyou',team};return{s:'wait',team,cd:st.cd}}
-function push(p){if(p.role==='player')send(p.c,{t:'st',...stateFor(p.name),game:O.game,me:p.name})}
+function push(p){if(p.role!=='player')return;const x=stateFor(p.name);if(x.s==='pick')x.names=allNames();send(p.c,{t:'st',...x,game:O.game,me:p.name})}
 function pushAll(){for(const p of P.values())push(p)}
 function pushHost(){if(!HOSTS.size)return;const lv=live();const m={t:'host',game:O.game,view:st.hostView,open:st.open,q:st.q.map(n=>({n,out:st.out.has(n),team:O.teamOf(n)})),first:lv[0]||null,noBuzz:st.opened&&!st.open?connectedNames().filter(n=>!st.q.includes(n)&&(!st.elig||st.elig.has(n))):[],players:connectedNames()};for(const h of HOSTS){const p=P.get(h);if(p)send(p.c,m)}}
 function connectedNames(){return[...new Set([...P.values()].filter(p=>p.role==='player'&&p.name).map(p=>p.name))]}
@@ -2404,9 +2404,11 @@ function ui(){if($b)return;const css=document.createElement('style');css.textCon
  $b=document.createElement('button');$b.id='tgbBtn';$b.onclick=()=>TGB.showPanel();document.body.appendChild($b);
  $s=document.createElement('div');$s.id='tgbStrip';document.body.appendChild($s);
  $f=document.createElement('div');$f.id='tgbFlash';document.body.appendChild($f);$p=document.createElement('div');$p.id='tgbPanel';$p.className='tgb-hide';$p.onclick=e=>{if(e.target===$p)$p.classList.add('tgb-hide')};document.body.appendChild($p);draw()}
-function link(role){const base=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'')+'buzz.html';return base+(PEERP?'?peer='+encodeURIComponent(PEERP):'')+'#'+ID+(role==='host'?'~'+HKEY:'')}
+function link(role){const base=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'')+'buzz.html';return base+'?v='+BUILD+(PEERP?'&peer='+encodeURIComponent(PEERP):'')+'#'+ID+(role==='host'?'~'+HKEY:'')}
 function qr(t){try{const q=qrcode(0,'M');q.addData(t);q.make();return q.createSvgTag({cellSize:6,margin:2,scalable:true})}catch(e){return''}}
 function drawPanel(){const n=connectedNames(),h=HOSTS.size;
+ if(O.hostOnly){$p.innerHTML=`<div class="in" style="max-width:560px"><h2>🎤 Host remote</h2><div class="sub">Scan with the host's phone camera. Your phone shows the answers privately, with ✅ / ❌ buttons. No buzzers needed in this game.</div><div class="qb h" style="max-width:360px;margin:0 auto">${qr(link('host'))}<div style="font-weight:800;margin-top:6px">${h?`✅ ${h} host remote${h>1?'s':''} connected`:'Not connected yet'}</div></div><div class="st">${ready?'🟢 Ready':'🟡 Connecting... (needs internet)'}</div><div class="row"><button id="tgbClose">✓ Done</button><button class="g" id="tgbKick">🔄 New host QR</button></div></div>`;
+  $p.querySelector('#tgbClose').onclick=()=>$p.classList.add('tgb-hide');$p.querySelector('#tgbKick').onclick=()=>{HKEY=rid(6);ls.s('tg-buzz-hkey',HKEY);for(const k of [...HOSTS]){const o=P.get(k);if(o){o.role='player';send(o.c,{t:'denied',why:'key'})}HOSTS.delete(k)}drawPanel()};return}
  $p.innerHTML=`<div class="in"><h2>📱 Phone buzzers</h2><div class="sub">Everyone on the <b>same Wi-Fi</b>, scan with your camera, tap your name. Done!</div>
  <div class="qs"><div class="qb"><h3>📱 PLAYERS: scan me</h3>${qr(link('p'))}<div class="url">${esc(link('p'))}</div></div>
  <div class="qb h"><h3>🎤 HOST ONLY</h3><div style="font-size:14px;margin-bottom:6px">Your private remote: answers, ✅ / ❌ buttons</div>${qr(link('host'))}<div style="font-weight:800;margin-top:6px">${h?`✅ ${h} host remote${h>1?'s':''} connected`:'Not connected yet'}<div style="font-size:13px;margin-top:4px">New host? They scan this, or tap 🎤 on their phone if they hosted before.</div></div></div></div>
@@ -2418,7 +2420,7 @@ function drawPanel(){const n=connectedNames(),h=HOSTS.size;
  $p.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>promote(b.dataset.pr));$p.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>demote(b.dataset.dm));
  $p.querySelector('#tgbRnd').onclick=()=>{const c=[...P.entries()].filter(([k,p])=>p.role==='player'&&p.name);if(!c.length)return;[...HOSTS].forEach(demote);const[k,p]=c[Math.floor(Math.random()*c.length)];promote(k);flashMsg('🎤 '+p.name,'IS THE HOST!')};
  $p.querySelector('#tgbKick').onclick=()=>{HKEY=rid(6);ls.s('tg-buzz-hkey',HKEY);for(const h of [...HOSTS]){const o=P.get(h);if(o){o.role='player';send(o.c,{t:'denied',why:'key'})}HOSTS.delete(h)}drawPanel()}}
-function draw(){if(!$b)return;const n=connectedNames().length;$b.className=ready?'ok':'';$b.innerHTML=`<i></i>📱 Buzzers · ${n}`;
+function draw(){if(!$b)return;const n=connectedNames().length;$b.className=ready?'ok':'';$b.innerHTML=O.hostOnly?`<i></i>🎤 Host remote${HOSTS.size?' ✅':''}`:`<i></i>📱 Buzzers · ${n}`;if(O.hostOnly){if(!$p.classList.contains('tgb-hide'))drawPanel();$s.innerHTML='';return}
  if(!$p.classList.contains('tgb-hide'))drawPanel();
  const lv=live();let h='';
  if(lv.length){const f=lv[0],t=O.teamOf(f);h+=`<span class="b1">🔔 ${esc(f)}${t&&t.label&&t.label!==f?` · ${esc(t.label)}`:''}</span>`;lv.slice(1,6).forEach((x,i)=>{const t2=O.teamOf(x);h+=`<span class="bn" style="--c:${t2&&t2.color||'#fff'}">${i+2}. ${esc(x)}</span>`})}

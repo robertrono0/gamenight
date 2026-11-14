@@ -402,4 +402,15 @@ if(S&&S.cur){$('#setupOv').classList.add('hidden');render();document.addEventLis
 <script>/*TGHOOK*/(function(){tgHome('left:14px;bottom:14px');const el=document.getElementById('names'),r=tgRoster();
  if(el&&r.length&&!S){el.value=r.join('\n');renderSetup()}
  if(el)el.addEventListener('input',()=>tgSetRoster(tgNamesFromText(el.value)));
- const og=gameEnd;gameEnd=function(){og.apply(this,arguments);try{tgNight('Pluck the Turkey',tgPlaces(S.teams.map(t=>({names:t.m,v:t.score}))))}catch(e){}}})();</script></body></html>
+ const og=gameEnd;gameEnd=function(){og.apply(this,arguments);try{tgNight('Pluck the Turkey',tgPlaces(S.teams.map(t=>({names:t.m,v:t.score}))))}catch(e){}}})();</script><script>/*TGBUZZ*/(function(){
+function hv(){if(!window.TGB)return;if(!S||!S.cur){TGB.host({title:'🦃 Pluck the Turkey',note:'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
+ const c=S.cur,t=S.teams[S.turn],asking=!$('#solveAsk').classList.contains('hidden');let a=[];
+ if(c.done)a=[{id:'next',label:S.i>=S.puzzles.length-1?'🏆 Final scores':'Next puzzle ➜',k:'y'}];
+ else if(asking)a=[{id:'yes',label:'✅ Solved it!',k:'ok'},{id:'no',label:'❌ Wrong',k:'no'}];
+ else a=[{id:'solve',label:'💡 '+t.name+' wants to solve',k:'b'},{id:'pass',label:'⏭ Skip turn'},{id:'reveal',label:'👀 Give up & reveal'}];
+ TGB.host({title:`${c.cat} · Puzzle ${S.i+1} of ${S.puzzles.length} · ${t.name}'s turn`,a:c.p,note:`Bad apple: ${c.bad||'-'} · Golden: ${c.gold||'-'} · Feathers left: ${c.feathers}`,actions:a,noBuzzBtns:true})}
+const oR=render;render=function(){oR.apply(this,arguments);hv()};
+const cl=s=>{const e=$(s);if(e)e.click()};
+function boot(){TGB.init({game:'Pluck the Turkey',hostOnly:true,names:()=>[],onAct:id=>{({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]&&cl(({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]);setTimeout(hv,50)}});hv()}
+const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
+</script></body></html>

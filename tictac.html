@@ -243,4 +243,16 @@ function end(){music('party');SFX.win();const w=S.teams[0].score===S.teams[1].sc
  $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
 shellInit({game:'Tic-Tac-Turkey',style:'arab',rain:['🦃','🥧','❌','⭕'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){$('#setupOv').classList.add('hidden');render()}
+</script><script>/*TGBUZZ*/(function(){
+function hv(){if(!window.TGB)return;if(!S||!S.board){TGB.host({title:'🦃 Tic-Tac-Turkey',note:'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
+ const T=S.teams[S.turn],O=S.teams[1-S.turn];
+ if(S.phase==='pick')TGB.host({title:`${T.name} picks a square`,note:'Waiting for them to pick a square on the TV',actions:[],noBuzzBtns:true});
+ else if(S.phase==='q'||S.phase==='a'){const c=QB[S.cats[S.sq]];TGB.host({title:`${c[0]} ${c[1]} · for ${T.name}`,q:S.q[0],a:S.q[1],actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'}].concat(S.phase==='q'?[{id:'show',label:'👀 Show answer on TV'}]:[]),noBuzzBtns:true})}
+ else if(S.phase==='steal')TGB.host({title:`🕵️ Steal chance: ${O.name}`,q:S.q[0],a:S.q[1],actions:[{id:'steal',label:'✅ Stolen!',k:'ok'},{id:'nosteal',label:'❌ Missed',k:'no'}],noBuzzBtns:true});
+ else TGB.host({title:'Board finished',actions:[{id:'nb',label:'Next ➜',k:'y'}],noBuzzBtns:true})}
+const oR=render;render=function(){oR.apply(this,arguments);hv()};
+const cl=s=>{const e=$(s);if(e)e.click()};
+function boot(){TGB.init({game:'Tic-Tac-Turkey',hostOnly:true,names:()=>[],onAct:id=>{if(!S)return;
+ if(id==='show')cl('#bShow');else if(id==='right'||id==='wrong'){if(S.phase==='q')cl('#bShow');cl(id==='right'?'#bRight':'#bWrong')}else if(id==='steal')cl('#bSteal');else if(id==='nosteal')cl('#bNo');else if(id==='nb')cl('#bNB')}});hv()}
+const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

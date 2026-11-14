@@ -448,9 +448,9 @@ forehead:{name:"Whose Forehead Is It?",emoji:"👀",photo:true,clues:[
 guesswho:{name:"Guess Who?!",emoji:"🕵️",mixed:true,clues:[
  {q:"Ronak and Rivan's honeymoon had 4 stops! Name as many as you can.",a:"Costa Rica, Dominican Republic, Bahamas, Turks & Caicos"},
  {q:"What month and day did Ronak and Rivan get married?",a:"August 8th (08/08)"},
+ {q:"What is Rivan's favorite sport?",a:"Football"},
  {q:"Guess the celebrity: I'm a rapper from Toronto. People call me Drizzy, and I \"started from the bottom.\"",a:"Drake"},
- {q:"Guess the celebrity: I'm a soccer legend from Portugal, and I celebrate goals by yelling \"SIUUU!\"",a:"Cristiano Ronaldo"},
- {q:"Guess the celebrity: I was a wrestler called \"The Rock,\" then became one of the biggest movie stars in the world.",a:"Dwayne Johnson"}]},
+ {q:"Guess the celebrity: I'm a soccer legend from Portugal and I shout \"SIUUU!\" when I score.",a:"Cristiano Ronaldo"}]},
 factcap:{name:"Fact or Cap?",emoji:"🧢",clues:[
  {q:"Fact or cap: Wild turkeys can fly.",a:"FACT (short distances, up to about 55 mph!)"},
  {q:"Fact or cap: Hummus is the Arabic word for chickpea.",a:"FACT"},
@@ -636,9 +636,23 @@ music2:{name:"Pop Music",emoji:"🎤",clues:[
  {q:"Who sings \"Espresso\"?",a:"Sabrina Carpenter"},
  {q:"Bruno Mars and Rosé named their hit after this Korean drinking game.",a:"APT."},
  {q:"The rapper behind \"God's Plan\" and \"Hotline Bling.\"",a:"Drake"},
- {q:"Kendrick Lamar's diss track that won Song of the Year at the Grammys.",a:"Not Like Us"}]}
+ {q:"Kendrick Lamar's diss track that won Song of the Year at the Grammys.",a:"Not Like Us"}]},
+ronriv:{name:"Ronak & Rivan 💍",emoji:"💍",clues:[
+ {q:"Ronak cleans teeth for a living. What's Ronak's job?",a:"Dental hygienist"},
+ {q:"Rivan works with money all day. What's Rivan's job?",a:"Banker"},
+ {q:"YES or NO: Does Rivan eat sushi?",a:"NO! 🍣🙅"},
+ {q:"TRUE or FALSE: Ronak and Rivan were both born in Iraq.",a:"TRUE"},
+ {q:"TRUE or FALSE: Rivan has Turkish descent.",a:"TRUE"}]},
+ronriv2:{name:"Ronak & Rivan: Love Story 💕",emoji:"💕",clues:[
+ {q:"Who's the better cook: Ronak or Rivan?",a:"Ronak 👨‍🍳"},
+ {q:"Where did Ronak and Rivan go on their ski trip?",a:"Yosemite 🎿"},
+ {q:"Ronak and Rivan's honeymoon had 4 stops. Which one came FIRST?",a:"Costa Rica 🇨🇷"},
+ {q:"What was the LAST concert Ronak and Rivan went to together?",a:"Teddy Swims 🎤"},
+ {q:"Their wedding slow dance was a duet by Marc Anthony and Tina Arena. Name the song!",a:"I Want to Spend My Lifetime Loving You 💃🕺",link:"https://www.youtube.com/results?search_query=Marc+Anthony+Tina+Arena+I+Want+to+Spend+My+Lifetime+Loving+You"}]}
 };
 const FINALS_DEFAULT=[
+ {cat:"Ronak & Rivan ✈️",q:"Ronak's very first trip EVER was to this Mexican beach city.",a:"Cancun 🏖️"},
+ {cat:"Ronak & Rivan 🎓",q:"What YEAR did Rivan graduate from UCSD?",a:"2024"},
  {cat:"Thanksgiving History",q:"The very first Thanksgiving feast in 1621 lasted this many days.",a:"3 days"},
  {cat:"Ancient Iraq",q:"This ancient city near today's Baghdad was famous for its Hanging Gardens.",a:"Babylon"},
  {cat:"Middle East Map",q:"This is the only country with a coastline on both the Red Sea and the Persian Gulf.",a:"Saudi Arabia"},
@@ -648,7 +662,7 @@ const FINALS_DEFAULT=[
  {cat:"Food Words",q:"The word \"hummus\" is simply the Arabic word for this.",a:"Chickpea"},
  {cat:"Pop Culture",q:"This blind-box monster toy from Pop Mart sold out around the world in 2025.",a:"Labubu"},
  {cat:"Arabic Words",q:"The Sahara's name comes from the Arabic word for this, so \"Sahara Desert\" really means \"The ____ ____.\"",a:"Desert (\"The Desert Desert\")"}];
-const GROUPS=[["thanks","turkey","tg2","holidays"],["arabeats","iraqi","desserts","snacks","fastfood","costco"],["chaldean","slang","mideast","arabwed","arabmom"],["arabmusic","arabstars","famous","arabtv"],["reality","pop","reality2","movies","worldstars","throwback","tiktok","trending2","disney","heroes","sitcoms","music2"],["guesswho","emoji","factcap","sports","sandiego","forehead","nfl","soccer","usa","world","kids","animals","brands"]];
+const GROUPS=[["thanks","turkey","tg2","holidays"],["arabeats","iraqi","desserts","snacks","fastfood","costco"],["chaldean","slang","mideast","arabwed","arabmom"],["arabmusic","arabstars","famous","arabtv"],["reality","pop","reality2","movies","worldstars","throwback","tiktok","trending2","disney","heroes","sitcoms","music2"],["ronriv","ronriv2","guesswho","emoji","factcap","sports","sandiego","forehead","nfl","soccer","usa","world","kids","animals","brands"]];
 const DEFAULT_PLAN=[
  ["thanks","arabeats","chaldean","arabmusic","reality","guesswho"],
  ["turkey","iraqi","slang","arabstars","pop","emoji"],
@@ -824,7 +838,7 @@ $$('#segShuffle button').forEach(b=>b.onclick=()=>setMode(b.dataset.v));
 setup.heatK=5;$$('#segHeat button').forEach(b=>b.onclick=()=>{setup.heatK=+b.dataset.v;$$('#segHeat button').forEach(x=>x.classList.toggle('on',x===b));heatHint()});
 function groupsOf(n){const H=Math.max(2,Math.ceil(n/4)),sz=Array(H).fill(0);for(let i=0;i<n;i++)sz[i%H]++;return sz}
 function genBalanced(sizes){const hasPhoto=CATS.forehead&&cat('forehead').clues.some(c=>c.img);const ok=id=>CATS[id]&&(id!=='forehead'||hasPhoto);
- const PRI=['reality','guesswho','thanks','chaldean','arabeats','arabmusic','reality2'],pr=id=>{const i=PRI.indexOf(id);return i<0?99:i};const fresh=()=>GROUPS.map(g=>shuffle(g.filter(ok)).sort((a,b)=>pr(a)-pr(b)));let G=fresh();const plan=[];
+ const PRI=['ronriv','ronriv2','reality','guesswho','thanks','chaldean','arabeats','arabmusic','reality2'],pr=id=>{const i=PRI.indexOf(id);return i<0?99:i};const fresh=()=>GROUPS.map(g=>shuffle(g.filter(ok)).sort((a,b)=>pr(a)-pr(b)));let G=fresh();const plan=[];
  for(const k of sizes){const out=[];const order=shuffle(G.map((g,i)=>i)).sort((a,b)=>G[b].length-G[a].length);
   for(const gi of order){if(out.length>=k)break;if(G[gi].length)out.push(G[gi].shift())}
   while(out.length<k){let any=G.flat().filter(id=>!out.includes(id));if(!any.length){G=fresh();any=G.flat().filter(id=>!out.includes(id))}const id=pick(any);out.push(id);G=G.map(g=>g.filter(x=>x!==id))}
@@ -1076,15 +1090,15 @@ function hv(){if(!window.TGB)return;if(!C){TGB.host({title:'🎯 Board',note:S&&
  const a=C.ph?(C.cl.name||C.cl.a):C.cl.a;TGB.host({title:`${C.cat.emoji} ${C.cat.name} · ${C.dd?'DAILY DOUBLE ':''}${money(C.val)}`,q:C.ph?'📸 Whose forehead?':C.cl.q,a,note:C.dd?'Daily Double: only '+S.teams[C.team].name+' answers':C.all?'Everyone-answers mode: judge each team on the TV':'',
   actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'reveal',label:'👀 Reveal'},{id:'board',label:'Board ➜',k:'y'}],noBuzzBtns:C.dd||C.all})}
 let ansTouched=false;$$('#segAns button').forEach(b=>b.addEventListener('click',e=>{if(e.isTrusted)ansTouched=true}));
-function boot(){TGB.init({game:'Jeopardy',names,onJoin:()=>{if(!S&&!ansTouched){const b=$('#segAns button[data-v="buzz"]');if(b&&!b.classList.contains('on')){b.click();toast('📱 Phone buzzers connected: switched to Buzz-in mode')}}},teamOf:n=>{const i=tIdx(n);if(i<0)return null;const t=S.teams[i];return{label:t.name,color:t.c}},
+function boot(){TGB.init({game:'Jeopardy',names,onJoin:()=>{if(S&&S.allAns&&!(C)){S.allAns=false;save();toast('📱 Phones connected: buzz-in mode is ON')}if(!S&&!ansTouched){const b=$('#segAns button[data-v="buzz"]');if(b&&!b.classList.contains('on')){b.click();toast('📱 Phone buzzers connected: switched to Buzz-in mode')}}},teamOf:n=>{const i=tIdx(n);if(i<0)return null;const t=S.teams[i];return{label:t.name,color:t.c}},
  onBuzz:(n,r)=>{if(r===1){stopTimer();hi();const i=tIdx(n);toast('🔔 '+n+(i>=0&&S.teams[i].name!==n?' ('+S.teams[i].name+')':'')+' buzzed first!')}hv()},
  onAct:id=>{if(!C){return}const who=C.dd?C.team:tIdx(TGB.first()||'');
   if(id==='right'||id==='wrong'){if(who<0){toast('Nobody has buzzed yet');return}const el=$(`#cTeams .tbtn[data-i="${who}"]`);if(!el||el.classList.contains('done')){toast('Already judged');return}judge(who,id==='right')}
   else if(id==='reveal'){reveal();hv()}else if(id==='board'){if(!C.shown)reveal();closeClue()}}});hv()}
-const oShow=showClue;showClue=function(){oShow.apply(this,arguments);if(window.TGB){TGB.reset();if(!C.dd&&!C.all)TGB.openIn(4,$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i).flatMap(mem));hv()}};
+const oShow=showClue;showClue=function(){if(window.TGB&&TGB.connected().length&&S.allAns){S.allAns=false;save();toast('📱 Phones connected: buzz-in mode is ON')}oShow.apply(this,arguments);if(window.TGB){TGB.reset();if(!C.dd&&!C.all)TGB.openIn(4,$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i).flatMap(mem));hv()}};
 
 const oJudge=judge;judge=function(i,ok){oJudge.apply(this,arguments);if(!window.TGB)return;const m=mem(i);if(ok){TGB.right(m)}else{TGB.out(m);if(!C.dd&&!C.all&&C.won==null&&!C.shown&&!TGB.isOpen()){const el=$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i);if(el.length)TGB.reopen()}}hi();hv()};
-const oRev=reveal;reveal=function(){oRev.apply(this,arguments);if(window.TGB){TGB.lock();hv()}};
+const oRev=reveal;reveal=function(){oRev.apply(this,arguments);try{if(C&&C.cl&&C.cl.link&&!document.getElementById('tgSong')){$('#answerBox').insertAdjacentHTML('beforeend',`<div><a id="tgSong" href="${C.cl.link}" target="_blank" rel="noopener" style="display:inline-block;margin-top:1.4vh;font:800 2.6vh system-ui;padding:1vh 2.4vh;border-radius:3vh;background:linear-gradient(#ff4d6d,#c1121f);color:#fff;text-decoration:none">🎵 Play the song</a></div>`)}}catch(e){}if(window.TGB){TGB.lock();hv()}};
 const oClose=closeClue;closeClue=function(){oClose.apply(this,arguments);if(window.TGB){TGB.reset();hv()}};
-const s=document.createElement('script');s.src='buzzer.js';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🔔 Buzzer Test</title>
+<style>*{box-sizing:border-box;margin:0}body{min-height:100vh;background:radial-gradient(ellipse at 50% 110%,#7a2410,#4a1420 40%,#1d0a10 80%);color:#fff3dc;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:2.4vh;padding:4vh 3vw;text-align:center}
+h1{font-size:6vh;color:#ffcc3d}.sub{font-size:2.4vh;opacity:.9;max-width:900px;line-height:1.4}
+.btns{display:flex;gap:1.4vw;flex-wrap:wrap;justify-content:center}button{font:900 2.6vh system-ui;padding:1.6vh 3.4vh;border-radius:2vh;border:0;cursor:pointer;background:linear-gradient(#ffe27a,#ffb703);color:#2a0d12;box-shadow:0 .6vh 0 #8a3a07}button.g{background:rgba(255,255,255,.15);color:#fff;box-shadow:none}
+#res{display:flex;flex-direction:column;gap:1vh;width:min(700px,94vw)}#res div{display:flex;justify-content:space-between;font:800 3vh system-ui;padding:1.2vh 2vh;border-radius:1.6vh;background:rgba(0,0,0,.35)}#res div:first-child{background:linear-gradient(#ffe27a,#ffb703);color:#2a0d12}
+#who{font-size:2.2vh;opacity:.85}a{color:#ffcc3d}</style></head><body>
+<a href="index.html" style="align-self:flex-start;text-decoration:none;font-weight:800">🏠 All games</a>
+<h1>🔔 Buzzer Test</h1>
+<div class="sub">1. Tap <b>📱 Buzzers</b> (bottom right) and scan the players QR with 2 or 3 phones.<br>2. Tap <b>▶ Test round</b>. Phones count down, then everyone buzzes as fast as they can.<br>3. You'll see who was first and how fast each person was. Try the 🎤 host QR too.</div>
+<div id="who">Nobody connected yet</div>
+<div class="btns"><button id="go">▶ Test round</button><button class="g" id="rs">🔄 Reset</button></div>
+<div id="res"></div>
+<script src="buzzer.js?v=1794677556"></script>
+<script>
+let t0=0,rows=[];const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function drawR(){$('res').innerHTML=rows.map((r,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(r.n)}</span><span>${r.ms} ms</span></div>`).join('')}
+TGB.init({game:'Buzzer Test',names:()=>[],onBuzz:(n)=>{rows.push({n,ms:t0?Math.round(performance.now()-t0):0});drawR()},
+ onAct:id=>{if(id==='go')$('go').click();else if(id==='right'||id==='wrong'){const f=TGB.first();if(f){id==='right'?TGB.right(f):TGB.out(f)}}}});
+setInterval(()=>{const c=TGB.connected();$('who').textContent=c.length?'📱 Connected: '+c.join(', '):'Nobody connected yet';},1000);
+let was=false;setInterval(()=>{const o=TGB.isOpen();if(o&&!was)t0=performance.now();was=o},20);
+$('go').onclick=()=>{rows=[];drawR();TGB.openIn(3);TGB.host({title:'🔔 Buzzer test',note:'Phones are counting down',actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'go',label:'▶ New test round',k:'y'}]})};
+$('rs').onclick=()=>{rows=[];drawR();TGB.reset()};
+TGB.host({title:'🔔 Buzzer test',note:'Tap ▶ New test round to start',actions:[{id:'go',label:'▶ New test round',k:'y'}]});
+</script></body></html>

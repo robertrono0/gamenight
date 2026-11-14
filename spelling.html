@@ -1401,5 +1401,17 @@ document.addEventListener('pointerdown',()=>{if(A.mode==='off')music('chill')},{
 window.bgMusic=music;})();</script><script>/*TGHOOK*/(function(){tgHome('left:14px;bottom:76px');const r=tgRoster();
  if(G&&G.players&&!G.players.length&&r.length){r.forEach(n=>G.players.push({name:n.slice(0,24),out:false,outRound:null,ll:{first:true,second:true,phone:true}}));saveG();renderSetup();renderAll()}
  const sb=document.getElementById('startBtn');if(sb)sb.addEventListener('click',()=>tgSetRoster(G.players.map(p=>p.name)));
- const oc=champion;champion=function(){oc.apply(this,arguments);try{tgNight('Spelling Bee',[[G.players[G.champ].name],G.runnerUp!=null?[G.players[G.runnerUp].name]:[]])}catch(e){}}})();</script></body>
+ const oc=champion;champion=function(){oc.apply(this,arguments);try{tgNight('Spelling Bee',[[G.players[G.champ].name],G.runnerUp!=null?[G.players[G.runnerUp].name]:[]])}catch(e){}}})();</script><script>/*TGBUZZ*/(function(){
+function hv(){if(!window.TGB)return;const live=G&&G.started&&!G.over;const w=live?curWord():null;const sp=live&&G.order.length?G.players[G.order[Math.min(G.pos,G.order.length-1)]]:null;
+ if(!w){TGB.host({title:'🐝 Spelling Bee',note:G&&G.over&&G.champ!=null?'🏆 Champion: '+G.players[G.champ].name:'Start the game on the TV',actions:[],noBuzzBtns:true});return}
+ const st=G.state,a=[];
+ if(st==='ready'||st==='spelling')a.push({id:'ok',label:'✅ Correct',k:'ok'},{id:'no',label:'❌ Wrong',k:'no'});
+ if(st==='ready')a.push({id:'say',label:'🔊 Start'});
+ if(st==='judged')a.push({id:'next',label:'Next speller ➜',k:'y'});
+ if(st!=='judged')a.push({id:'def',label:'📖 Read definition'},{id:'swap',label:'🔄 Swap word'});
+ TGB.host({title:`🎤 ${sp?sp.name:''} · ${ROUNDS[G.round].name}`,a:String(w[0]).toUpperCase(),q:w[1],note:'Letter by letter: '+String(w[0]).toUpperCase().split('').join(' · '),actions:a,noBuzzBtns:true})}
+const oR=renderAll;renderAll=function(){oR.apply(this,arguments);hv()};
+function boot(){TGB.init({game:'Spelling Bee',hostOnly:true,names:()=>[],onAct:id=>{if(id==='ok')judge(true);else if(id==='no')judge(false);else if(id==='next')advance();else if(id==='say')speakWord();else if(id==='def')speakDef();else if(id==='swap')swapWord()}});hv()}
+const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
+</script></body>
 </html>

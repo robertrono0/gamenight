@@ -91,7 +91,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
  <div class="hc"><span class="i">😎</span>Emojis appear on the TV. They spell out a <b>movie, song, food, show or saying</b>.</div>
  <div class="hc"><span class="i">🔔</span>First to <b>buzz</b> gets to answer out loud.</div>
- <div class="hc"><span class="i">💯</span>Right answer early = <b>300 points</b>. After the letter hint drops it's worth <b>150</b>.</div>
+ <div class="hc"><span class="i">💯</span>Right answer early = <b>300 points</b>. After the letter hint drops it's worth <b>150</b>. Answer in the first 10 seconds for a <b>⚡ +100 speed bonus</b>!</div>
  <div class="hc"><span class="i">❌</span>Wrong answer? That team is <b>locked out</b> and someone else can buzz.</div>
  <div class="hc"><span class="i">⏱️</span>30 seconds per puzzle. The hint shows up at 15.</div>
  <div class="hc"><span class="i">🏆</span>Most points after all the puzzles wins.</div>
@@ -229,9 +229,9 @@ function render(){$('#scores').innerHTML=scoreBar(S.teams,-1);const q=S.q[S.i],s
   <div class="btns">${S.teams.map((t,i)=>`<span style="display:inline-flex;gap:.4vw"><button class="tb${S.out.includes(i)?' out':''}" style="--tc:${t.c}" data-ok="${i}">✅ ${esc(t.name)}</button><button class="tb${S.out.includes(i)?' out':''}" style="--tc:${t.c};padding:1.4vh 1.6vh" data-no="${i}">✗</button></span>`).join('')}<button class="bb ghost" id="bNone">🤷 Nobody / reveal</button></div>`;
   timer&&timer.stop();timer=Timer($('#ring'),30,()=>reveal(-1),l=>{if(l<=15&&!S.hint){S.hint=true;save();$('.hintL').textContent=hintOf(q.a);$('.worth').textContent='Worth 150';SFX.whoosh()}});timer.start();
   $$('[data-ok]').forEach(b=>b.onclick=()=>reveal(+b.dataset.ok));$$('[data-no]').forEach(b=>b.onclick=()=>{S.out.push(+b.dataset.no);SFX.buzz();t2('❌ NOPE!<small>'+esc(S.teams[+b.dataset.no].name)+' is locked out</small>',1200);save();if(S.out.length>=S.teams.length){reveal(-1);return}$$(`[data-ok="${b.dataset.no}"],[data-no="${b.dataset.no}"]`).forEach(x=>x.classList.add('out'))});$('#bNone').onclick=()=>reveal(-1)}
- else if(S.phase==='ans'){st.innerHTML=`<div class="catTag">${d.e} ${d.n}</div><div class="emo">${emo}</div><div class="ans popIn">${esc(q.a)}</div><div class="status">${S.win>=0?`🎉 <b>${esc(S.teams[S.win].name)}</b> got it for ${S.won} points!`:'😬 Nobody got it!'}</div><button class="bb big" id="bNext">${S.i+1>=S.q.length?'🏆 FINAL RESULTS':'NEXT PUZZLE ➜'}</button>`;$('#bNext').onclick=next}}
+ else if(S.phase==='ans'){st.innerHTML=`<div class="catTag">${d.e} ${d.n}</div><div class="emo">${emo}</div><div class="ans popIn">${esc(q.a)}</div><div class="status">${S.win>=0?`🎉 <b>${esc(S.teams[S.win].name)}</b> got it for ${S.won} points!${S.fast?' ⚡ includes a +100 SPEED BONUS!':''}`:'😬 Nobody got it!'}</div><button class="bb big" id="bNext">${S.i+1>=S.q.length?'🏆 FINAL RESULTS':'NEXT PUZZLE ➜'}</button>`;$('#bNext').onclick=next}}
 function start(){S.phase='play';S.out=[];S.hint=false;save();SFX.whoosh();music('tense');render()}
-function reveal(w){timer&&timer.stop();S.win=w;S.won=S.hint?150:300;if(w>=0){S.teams[w].score+=S.won;SFX.win();burst(innerWidth/2,innerHeight/3,120,['😎','🎉','⭐','🦃'])}else SFX.sad();S.phase='ans';save();music('play');render();if(w>=0)bumpScore(w)}
+function reveal(w){const fast=w>=0&&timer&&timer.left>=20;timer&&timer.stop();S.win=w;S.won=(S.hint?150:300)+(fast?100:0);S.fast=fast;if(w>=0){S.teams[w].score+=S.won;SFX.win();burst(innerWidth/2,innerHeight/3,120,['😎','🎉','⭐','🦃'])}else SFX.sad();S.phase='ans';save();music('play');render();if(w>=0)bumpScore(w)}
 function next(){S.i++;S.phase='ready';if(S.i>=S.q.length){end();return}save();render()}
 function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score-a.score),tie=w[1]&&w[0].score===w[1].score;
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${tie?"IT'S A TIE!":esc(w[0].name)+' WIN!'}</div>${podium(S.teams)}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240);
@@ -258,5 +258,5 @@ function boot(){TGB.init({game:'Emoji Decode',names,teamOf:n=>{const i=tI(n);ret
   if(id==='go'){const b=$('#bGo');b&&b.click()}else if(id==='right'){if(w<0){toast('Nobody has buzzed yet');return}reveal(w)}
   else if(id==='wrong'){if(w<0){toast('Nobody has buzzed yet');return}const b=$(`[data-no="${w}"]`);b&&b.click()}
   else if(id==='none')reveal(-1);else if(id==='next'){const b=$('#bNext');b&&b.click()}}});sync()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794679533';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

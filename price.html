@@ -97,7 +97,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
  <div class="hc"><span class="i">🎯</span>Closest <b>without going over</b> wins 100 points.</div>
  <div class="hc"><span class="i">💥</span>Everyone over? Then the closest guess still wins, but only 50.</div>
  <div class="hc"><span class="i">🤑</span>Within $1 (or 1%) = <b>BULLSEYE</b> for 300 points!</div>
- <div class="hc"><span class="i">💡</span>Prices are approximate US retail prices.</div>
+ <div class="hc"><span class="i">🏆</span>The last item is the <b>SHOWCASE</b>: a bundle of 3 items, worth <b>5× points</b>!</div>
 </div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
 <script>(function(){
@@ -211,21 +211,23 @@ let N=12;$$('#segN button').forEach(b=>b.onclick=()=>{$$('#segN button').forEach
 const money=v=>'$'+(v>=1000?Math.round(v).toLocaleString():(+v).toFixed(2).replace(/\.00$/,''));
 $('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('Add at least 2 players 🙂');return}ac();
  const cu=$('#custom').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length===2&&+p[1].replace(/[$,]/g,'')>0).map(p=>['🎁',p[0],'Inside info required 😏',+p[1].replace(/[$,]/g,'')]);
- S={teams,items:shuffle(cu).concat(shuffle(ITEMS)).slice(0,Math.max(N,cu.length)),i:0,phase:'guess',g:teams.map(()=>'')};save();$('#setupOv').classList.add('hidden');render();music('play')};
+ const its=shuffle(cu).concat(shuffle(ITEMS)).slice(0,Math.max(N,cu.length));const rest=shuffle(ITEMS.filter(x=>!its.includes(x)&&x[3]<5000));const pool=rest.length>=3?rest:shuffle(ITEMS.filter(x=>x[3]<5000));const bundle=pool.slice(0,3);
+ its.push(['🏆','THE SHOWCASE','A bundle: '+bundle.map(b=>b[1]).join(' + '),Math.round(bundle.reduce((a,b)=>a+b[3],0)*100)/100,'showcase',bundle.map(b=>b[0]).join(' ')]);
+ S={teams,items:its,i:0,phase:'guess',g:teams.map(()=>'')};save();$('#setupOv').classList.add('hidden');render();music('play')};
 function render(){$('#scores').innerHTML=scoreBar(S.teams,-1);const it=S.items[S.i],st=$('#stage');
- const head=`<div class="kicker">ITEM ${S.i+1} OF ${S.items.length}</div><div class="item popIn">${it[0]}</div><div class="iname">${esc(it[1])}</div><div class="idesc">${esc(it[2])}</div>`;
+ const sc=it[4]==='showcase';const head=`<div class="kicker">${sc?'🏆 THE SHOWCASE FINALE · WORTH 5×':'ITEM '+(S.i+1)+' OF '+(S.items.length-1)}</div><div class="item popIn" ${sc?'style="font-size:11vh"':''}>${sc?it[5]:it[0]}</div><div class="iname">${esc(it[1])}</div><div class="idesc">${esc(it[2])}</div>`;
  if(S.phase==='guess'){st.innerHTML=head+`<div class="guesses">${S.teams.map((t,i)=>`<div class="gc" style="--tc:${t.c}"><h4>${esc(t.name)}</h4><input inputmode="decimal" data-g="${i}" placeholder="$" value="${esc(S.g[i])}"></div>`).join('')}</div><button class="bb big gold" id="bRev">🥁 REVEAL THE PRICE</button><div class="note">Prices are approximate US retail.</div>`;
   $$('[data-g]').forEach(e=>{e.oninput=()=>{S.g[+e.dataset.g]=e.value;save()};e.onkeydown=k=>{if(k.key==='Enter'){const n=$(`[data-g="${+e.dataset.g+1}"]`);n?n.focus():reveal()}}});$('#bRev').onclick=reveal;setTimeout(()=>{const f=$$('[data-g]').find(x=>!x.value);f&&f.focus()},50)}
  else{const r=S.res;st.innerHTML=head+`<div class="price" id="pv">${S.anim?'$???':money(it[3])}</div><div class="guesses">${S.teams.map((t,i)=>{const g=r.g[i];return`<div class="gc ${S.anim?'':r.win.includes(i)?'win':g!=null&&g>it[3]?'over':''}" style="--tc:${t.c}"><h4>${esc(t.name)}</h4><div class="gv">${g==null?'—':money(g)}</div><div class="df">${S.anim||g==null?'':g>it[3]?'💥 OVER by '+money(g-it[3]):Math.abs(g-it[3])<1e-9?'🎯 EXACT!':'Under by '+money(it[3]-g)}</div></div>`}).join('')}</div>
   <div class="status">${S.anim?'':r.msg}</div>${S.anim?'':`<button class="bb big" id="bNext">${S.i+1>=S.items.length?'🏆 FINAL RESULTS':'NEXT ITEM ➜'}</button>`}`;if(!S.anim)$('#bNext').onclick=next}}
 async function reveal(){const it=S.items[S.i],p=it[3];const g=S.g.map(x=>{const v=parseFloat(String(x).replace(/[$,\s]/g,''));return isNaN(v)?null:v});if(g.every(x=>x==null)){toast('Type at least one guess');return}
  const under=g.map((v,i)=>[v,i]).filter(([v])=>v!=null&&v<=p),pool=under.length?under:g.map((v,i)=>[v,i]).filter(([v])=>v!=null);const best=Math.min(...pool.map(([v])=>Math.abs(p-v)));const win=pool.filter(([v])=>Math.abs(Math.abs(p-v)-best)<1e-9).map(([,i])=>i);
- const bull=win.length&&under.length&&(best<=1||best<=p*.01);const pts=bull?300:under.length?100:50;win.forEach(i=>S.teams[i].score+=pts);
+ const bull=win.length&&under.length&&(best<=1||best<=p*.01);const sc=it[4]==='showcase';const pts=(bull?300:under.length?100:50)*(sc?5:1);win.forEach(i=>S.teams[i].score+=pts);
  const names=win.map(i=>`<b style="color:${S.teams[i].c}">${esc(S.teams[i].name)}</b>`).join(' & ');
  S.res={g,win,msg:bull?`🤑 BULLSEYE! ${names} +${pts}`:under.length?`🎯 ${names} closest without going over! +${pts}`:`💥 Everyone went over! ${names} was closest. +${pts}`};S.phase='rev';S.anim=true;save();render();music('off');SFX.roll(1800);
  const pv=$('#pv'),t0=Date.now();await new Promise(res=>{const iv=setInterval(()=>{const k=(Date.now()-t0)/1800;if(k>=1){clearInterval(iv);res()}else pv.textContent=money(p*(0.2+Math.random()*1.6))},70)});
  S.anim=false;save();render();music('play');if(win.length){SFX.win();burst(innerWidth/2,innerHeight/3,bull?220:120,['💵','💰','🤑','⭐']);win.forEach(bumpScore)}}
-function next(){S.i++;S.phase='guess';S.g=S.teams.map(()=>'');if(S.i>=S.items.length){end();return}save();render();SFX.whoosh()}
+function next(){S.i++;S.phase='guess';S.g=S.teams.map(()=>'');if(S.i>=S.items.length){end();return}save();render();SFX.whoosh();if(S.items[S.i][4]==='showcase'){SFX.horn();t2('🏆 THE SHOWCASE!<small>One last bundle. Every point is worth 5×. Anyone can still win!</small>',3200);burst(innerWidth/2,innerHeight/3,160,['💵','🏆','🎁'])}}
 function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score-a.score),tie=w[1]&&w[0].score===w[1].score;
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${tie?"IT'S A TIE!":esc(w[0].name)+' WIN!'}</div>${podium(S.teams)}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['💵','💰','🏆']);
  $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}

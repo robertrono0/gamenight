@@ -2308,7 +2308,7 @@ var qrcode = function() {
 ;/* Thanksgiving Game Night: phone buzzers + host remote (TV side) */
 (function(){
 "use strict";
-const BUILD='1794677556';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
+const BUILD='1794679533';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
 function peerOpts(){if(!PEERP)return{debug:0};const[h,p]=PEERP.split(':');return{host:h,port:+p||9000,path:'/',secure:false,debug:0}}
 const ls={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const rid=n=>{const a='abcdefghijkmnpqrstuvwxyz23456789';let s='';const r=new Uint32Array(n);crypto.getRandomValues(r);for(const x of r)s+=a[x%a.length];return s};
@@ -2369,6 +2369,9 @@ const TGB=window.TGB={
  right(names){[].concat(names).forEach(n=>st.res[n]='right');st.open=false;pushAll();draw();pushHost()},
  first(){return live()[0]||null},queue(){return live()},isOpen(){return st.open},
  host(view){st.hostView=view;pushHost()},
+ makeHost(name){for(const[k,p]of P)if(p.name===name&&p.role==='player'){promote(k);return true}return false},
+ unHost(name){for(const[k,p]of P)if(p.name===name&&p.role==='host')demote(k)},
+ isHost(name){for(const p of P.values())if(p.name===name&&p.role==='host')return true;return false},
  connected:connectedNames,
  refreshNames(){for(const p of P.values())if(p.role==='player')send(p.c,{t:'names',names:allNames(),game:O.game})},
  showPanel(){$p.classList.remove('tgb-hide');drawPanel()}};

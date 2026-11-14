@@ -872,7 +872,7 @@ const pick=a=>a[randInt(a.length)];
 const active=()=>G.players.map((p,i)=>i).filter(i=>!G.players[i].out&&(!G.pool||G.pool.includes(i)));
 function drawWord(){const r=G.round;if(!G.bag[r]||!G.bag[r].length)G.bag[r]=shuffleArr(WORDS[r].map((_,i)=>i));return G.bag[r].shift()}
 function snapshot(){const c=JSON.parse(JSON.stringify(G));c.hist=[];G.hist.push(JSON.stringify(c));if(G.hist.length>40)G.hist.shift()}
-function startRound(){G.order=active();G.pos=0;G.results={};nextSpeller(true)}
+function startRound(){G.order=G.revive?G.elim.slice():active();G.pos=0;G.results={};nextSpeller(true)}
 function nextSpeller(first){if(G.pos>=G.order.length){endRound();return}
  G.word=drawWord();G.state='ready';G.typed='';G.hint=false;G.retry=false;stopTimer();saveG();renderAll();
  const p=G.players[G.order[G.pos]];
@@ -923,11 +923,18 @@ function undo(){clearInterval(anT);if(!G.hist.length)return;const h=G.hist.pop()
 function endRound(){
  const ok=G.order.filter(i=>G.results[i]==='ok'),miss=G.order.filter(i=>G.results[i]==='miss');
  let title,sub,lines=[];
+ if(G.revive){G.revive=false;ok.forEach(i=>{G.players[i].out=false;G.elim=G.elim.filter(x=>x!==i)});G.roundNo++;
+  title=ok.length?'🔥 THEY\'RE BACK!':'😬 Nobody made it back!';sub=ROUNDS[G.round].sub;
+  if(ok.length)lines.push(`🔥 Back in the game: ${ok.map(i=>G.players[i].name).join(', ')}`);if(miss.length)lines.push(`❌ Still out: ${miss.map(i=>G.players[i].name).join(', ')}`);
+  lines.push(`Next up: ${ROUNDS[G.round].name}!`);$('roundGo').dataset.base='';$('roundGo').textContent='Next round! 🎬';
+  saveG();renderAll();$('rTitle').textContent=title;$('rSub').textContent=sub;$('rLines').innerHTML=lines.map(l=>`<p>${esc(l)}</p>`).join('');renderHosts();show('roundOv',true);return}
  if(ok.length===0){title='Everybody missed! 😂';sub="Nobody's out. Same round, new words. Try again!";G.roundNo++}
  else{miss.forEach(i=>{const p=G.players[i];p.out=true;p.outRound=G.round;G.elim.push(i);if(G.firstOut==null)G.firstOut=i});
   if(ok.length===1&&G.tourn&&!G.tourn.champ){heatWon(ok[0]);return}
   if(ok.length===1){G.over=true;G.champ=ok[0];G.runnerUp=miss.length?miss[miss.length-1]:(G.elim.length?G.elim[G.elim.length-1]:null);saveG();renderAll();champion();return}
   const was=G.round;if(G.round<4)G.round++;G.roundNo++;
+  if(!G.sc&&!G.tourn&&was===1&&G.elim.length){G.sc=true;G.revive=true;title='🔥 SECOND CHANCE ROUND!';sub="Everyone who's out gets ONE word. Spell it right and you're BACK IN!";lines.push(`✅ Still in: ${ok.map(i=>G.players[i].name).join(', ')}`);lines.push(`🔥 Getting a second chance: ${G.elim.map(i=>G.players[i].name).join(', ')}`);$('roundGo').dataset.base='';$('roundGo').textContent='Second chance! 🔥';
+   saveG();renderAll();$('rTitle').textContent=title;$('rSub').textContent=sub;$('rLines').innerHTML=lines.map(l=>`<p>${esc(l)}</p>`).join('');renderHosts();show('roundOv',true);return}
   title=was===G.round?`${ROUNDS[G.round].name}: again! 🥧`:`Next up: ${ROUNDS[G.round].name}! 🎉`;$('roundGo').dataset.base='';$('roundGo').textContent='Next round! 🎬';
   sub=ROUNDS[G.round].sub;
   lines.push(`✅ Moving on: ${ok.map(i=>G.players[i].name).join(', ')}`);
@@ -1412,6 +1419,6 @@ function hv(){if(!window.TGB)return;const live=G&&G.started&&!G.over;const w=liv
  TGB.host({title:`🎤 ${sp?sp.name:''} · ${ROUNDS[G.round].name}`,a:String(w[0]).toUpperCase(),q:w[1],note:'Letter by letter: '+String(w[0]).toUpperCase().split('').join(' · '),actions:a,noBuzzBtns:true})}
 const oR=renderAll;renderAll=function(){oR.apply(this,arguments);hv()};
 function boot(){TGB.init({game:'Spelling Bee',hostOnly:true,names:()=>[],onAct:id=>{if(id==='ok')judge(true);else if(id==='no')judge(false);else if(id==='next')advance();else if(id==='say')speakWord();else if(id==='def')speakDef();else if(id==='swap')swapWord()}});hv()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794679533';s.onload=boot;document.head.appendChild(s)})();
 </script></body>
 </html>

@@ -237,7 +237,7 @@ const giverName=()=>{const t=S.teams[curTeam()];return t.m[S.giver[curTeam()]%t.
 let timer=null,card=null,streak=0;
 function render(){$('#scores').innerHTML=scoreBar(S.teams,curTeam());const st=$('#stage'),t=S.teams[curTeam()];
  if(S.phase==='ready'){st.innerHTML=`<div class="panel popIn" style="--tc:${t.c}"><div class="kicker">TURN ${S.turn+1} OF ${S.total}</div><div class="huge" style="color:${t.c};filter:brightness(1.2)">${esc(t.name)}</div>
-  <div style="font-size:3.4vh;margin:1.6vh 0">🎤 <b style="color:var(--gold)">${esc(giverName())}</b>, you're giving the clues! Face the TV.</div><div class="backs">🙈 Everyone else on ${esc(t.name)}: TURN YOUR BACKS TO THE TV!</div>
+  <div style="font-size:3.4vh;margin:1.6vh 0">🎤 <b style="color:var(--gold)">${esc(giverName())}</b>, you're giving the clues!</div>${phoneOn(giverName())?`<div class="backs" style="color:#5cf09a">📱 The words go to ${esc(giverName())}'s phone. Everyone can face the TV!</div>`:`<div class="backs">🙈 Everyone else on ${esc(t.name)}: TURN YOUR BACKS TO THE TV!</div><div class="keys" style="margin-top:.6vh">Tip: tap 📱 Buzzers and have ${esc(giverName())} scan, so the word shows on their phone instead</div>`}${S.lightning?'<div class="fire" style="margin-top:1vh">⚡ LIGHTNING ROUND: 30 seconds, every card worth DOUBLE!</div>':''}
   <div class="ctr"><button class="bb big gold" id="bGo">START ${S.t}s ⏱️</button></div><div class="keys">Tip: → key = Got it, ← key = Skip</div></div>`;$('#bGo').onclick=go}
  else if(S.phase==='play'){st.innerHTML=`<div class="panel" id="cardP" style="min-width:70vw;min-height:34vh;display:flex;flex-direction:column;align-items:center;justify-content:center"></div><div class="playRow"><button class="big2 skipB" id="bSkip">⏭ SKIP</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:1.4vh"><div class="ring" id="ring"><span>${S.t}</span></div><div class="tally"><span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span></div><div class="fire" id="fire"></div></div>
@@ -247,19 +247,24 @@ function render(){$('#scores').innerHTML=scoreBar(S.teams,curTeam());const st=$(
   <div class="btns"><button class="bb ghost" id="bFix">↩️ Undo last "Got it"</button><button class="bb big" id="bNext">${S.turn+1>=S.total?'🏆 FINAL RESULTS':'NEXT TEAM ➜'}</button></div></div>`;
   $('#bNext').onclick=next;$('#bFix').onclick=()=>{if(!S.got.length)return;S.got.pop();const v=(S.gp||[]).pop()||1;S.teams[curTeam()].score-=v;S.lastPts-=v;save();render()}}}
 function showCard(){if(!S.pile.length)S.pile=buildPile();card=S.pile.pop();const M=MODES[card.m],d=DECK[card.c]||{e:'⭐',n:'Inside joke'};
- const p=$('#cardP');p.innerHTML=`<div class="mode" style="--mc:${M.c}">${M.t}</div><div class="cat" style="margin-top:1vh">${d.e} ${d.n} · ${M.s}</div><div class="word flipIn">${esc(card.w)}</div>`;save()}
-async function go(){S.phase='play';S.got=[];S.skip=[];S.gp=[];streak=0;save();$('#stage').innerHTML='';await countdown(3,'ACT!');render();music('tense');
+ const p=$('#cardP'),onPh=S.phone;p.innerHTML=`<div class="mode" style="--mc:${M.c}">${M.t}</div><div class="cat" style="margin-top:1vh">${d.e} ${d.n} · ${M.s}</div>${onPh?`<div class="word flipIn" style="font-size:6vh">📱 Look at ${esc(giverName())}'s phone!</div>`:`<div class="word flipIn">${esc(card.w)}</div>`}`;save();phoneView()}
+function phoneOn(n){return !!(window.TGB&&TGB.connected().includes(n))||!!(window.TGB&&TGB.isHost(n))}
+function phoneView(){if(!window.TGB)return;if(S&&S.phase==='play'&&S.phone&&card){const M=MODES[card.m],d=DECK[card.c]||{e:'⭐',n:'Inside joke'};TGB.host({title:`${M.t} · ${d.e} ${d.n}`,a:card.w,note:M.s+(S.lightning?' · ⚡ DOUBLE POINTS':''),actions:[{id:'got',label:'✅ GOT IT',k:'ok'},{id:'skip',label:'⏭ SKIP',k:'no'}],noBuzzBtns:true})}else TGB.host({title:'🎭 Charades',note:'Waiting for the next turn',actions:[],noBuzzBtns:true})}
+async function go(){S.phase='play';S.got=[];S.skip=[];S.gp=[];streak=0;S.phone=false;if(window.TGB&&phoneOn(giverName())){S.phone=true;TGB.makeHost(giverName())}save();$('#stage').innerHTML='';await countdown(3,'ACT!');render();music('tense');
  timer=Timer($('#ring'),S.t,endTurn);timer.start()}
-function got(){if(S.phase!=='play')return;streak++;const v=streak>3?2:1;S.got.push(card.w);S.gp.push(v);S.teams[curTeam()].score+=v;SFX.ok();bumpScore(curTeam());burst(innerWidth*.82,innerHeight*.5,streak>3?60:30);
+function got(){if(S.phase!=='play')return;streak++;const v=(streak>3?2:1)*(S.lightning?2:1);S.got.push(card.w);S.gp.push(v);S.teams[curTeam()].score+=v;SFX.ok();bumpScore(curTeam());burst(innerWidth*.82,innerHeight*.5,streak>3?60:30);
  if(streak===3){t2('🔥 ON FIRE!<small>Every card is worth 2 now!</small>',1300);SFX.horn()}$('#fire').textContent=streak>=3?'🔥 ON FIRE x2':'';$('.tally').innerHTML=`<span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span>`;$('#scores').innerHTML=scoreBar(S.teams,curTeam());showCard()}
 function skip(){if(S.phase!=='play')return;streak=0;S.skip.push(card.w);SFX.skip();$('#fire').textContent='';$('.tally').innerHTML=`<span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span>`;showCard()}
-function endTurn(){timer&&timer.stop();S.pile.unshift(card);S.phase='sum';S.lastPts=(S.gp||[]).reduce((a,b)=>a+b,0);save();music('chill');
+function endTurn(){timer&&timer.stop();if(window.TGB&&S.phone){TGB.unHost(giverName());S.phone=false;phoneView()}S.pile.unshift(card);S.phase='sum';S.lastPts=(S.gp||[]).reduce((a,b)=>a+b,0);save();music('chill');
  if(S.got.length>=5){SFX.win();burst(innerWidth/2,innerHeight/3,140)}else SFX.sad();render()}
-function next(){S.giver[curTeam()]++;S.turn++;if(S.turn>=S.total){end();return}S.phase='ready';save();render();SFX.whoosh()}
+function next(){S.giver[curTeam()]++;S.turn++;if(S.turn>=S.total){if(!S.lightning){S.lightning=true;S.total+=S.teams.length;S.t=30;S.phase='ready';save();render();SFX.horn();t2('⚡ LIGHTNING ROUND!<small>Every team gets 30 seconds. Every card is worth DOUBLE!</small>',3200);burst(innerWidth/2,innerHeight/3,140,['⚡','🎭','⭐']);return}end();return}S.phase='ready';save();render();SFX.whoosh()}
 function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score-a.score);const tie=w[1]&&w[0].score===w[1].score;
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${tie?"IT'S A TIE!":esc(w[0].name)+' WIN!'}</div>${podium(S.teams)}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;
  $('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240);$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
 document.addEventListener('keydown',e=>{if(!S||S.phase!=='play'||e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();got()}if(e.key==='ArrowLeft'){e.preventDefault();skip()}});
 shellInit({game:'Charades',style:'pop',rain:['🎭','🦃','🍂','🎬'],onNew:()=>{timer&&timer.stop();S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){if(S.phase==='play')S.phase='ready';$('#setupOv').classList.add('hidden');render()}
-</script></body></html>
+</script><script>/*TGBUZZ*/(function(){
+function boot(){TGB.init({game:'Charades',names:()=>S&&S.teams?S.teams.flatMap(t=>t.m):(window.tgRoster?tgRoster():[]),teamOf:n=>{if(!S||!S.teams)return null;const t=S.teams.find(x=>x.m.includes(n));return t?{label:t.name,color:'#ffcc3d'}:null},
+ onAct:id=>{if(!S||S.phase!=='play')return;if(id==='got')got();else if(id==='skip')skip();phoneView()}});phoneView();let lastOn=null;setInterval(()=>{if(S&&S.phase==='ready'){const o=phoneOn(giverName());if(o!==lastOn){lastOn=o;render()}}},1500)}
+const s=document.createElement('script');s.src='buzzer.js?v=1794679533';s.onload=boot;document.head.appendChild(s)})();</script></body></html>

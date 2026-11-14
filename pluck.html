@@ -412,5 +412,5 @@ function hv(){if(!window.TGB)return;if(!S||!S.cur){TGB.host({title:'🦃 Pluck t
 const oR=render;render=function(){oR.apply(this,arguments);hv()};
 const cl=s=>{const e=$(s);if(e)e.click()};
 function boot(){TGB.init({game:'Pluck the Turkey',hostOnly:true,names:()=>[],onAct:id=>{({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]&&cl(({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]);setTimeout(hv,50)}});hv()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794677556';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794679533';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

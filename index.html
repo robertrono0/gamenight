@@ -53,7 +53,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 .tip b{color:var(--gold)}
 </style></head><body><div class="wrap">
 <h1>THANKSGIVING<br>GAME NIGHT</h1>
-<div class="sub">🦃 11 games, one place 🦃</div>
+<div class="sub">🦃 12 games, one place 🦃</div>
 
 <div class="night">
  <div class="nbox">
@@ -90,6 +90,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 </div>
 <h2>⚡ Quick fun</h2>
 <div class="games">
+ <a class="g" href="dond.html"><div class="e">💼</div><h3>Deal or No Deal</h3><p>Pick a case, open the rest, and face the Banker's offers. DEAL or NO DEAL? The audience yells advice!</p><span class="t">~5-12 min per contestant · any group</span></a>
  <a class="g" href="emoji.html"><div class="e">😎</div><h3>Emoji Decode</h3><p>Emojis spell out a movie, song, food or saying. Buzz in and decode it first. Over 120 puzzles.</p><span class="t">~10-20 min · 2-4 teams</span></a>
  <a class="g" href="price.html"><div class="e">💲</div><h3>The Price Is Right</h3><p>Guess the price of Labubus, AirPods, Costco chicken and more. Closest without going over!</p><span class="t">~10-20 min · 2-4 teams</span></a>
  <a class="g" href="tictac.html"><div class="e">❌⭕</div><h3>Tic-Tac-Turkey</h3><p>Trivia tic-tac-toe. Answer right to claim a square, wrong and the other team can steal.</p><span class="t">~10-20 min · 2 teams</span></a>
@@ -178,4 +179,71 @@ $('lbReveal').onclick=()=>{const N=JSON.parse(localStorage.getItem('tg-night')||
   timers.push(setTimeout(()=>{const el=document.createElement('div');el.className='rv'+(last?' r1':'');el.innerHTML=`<span class="m">${md[i]||(i+1)}</span><span>${last?'👑 ':''}${esc(n)}</span><span class="p">${p}</span>`;$('revList').appendChild(el);
    if(last){fan();$('revT').textContent='👑 '+n.toUpperCase()+' WINS GAME NIGHT! 👑'}else tone(330+40*(order.length-k),.18,.12,'triangle')},d))})};
 $('revClose').onclick=()=>{timers.forEach(clearTimeout);$('revOv').classList.remove('on')};})();</script>
-</body></html>
+<!--HOUSE--><style>
+#hmBtn{position:fixed;right:18px;bottom:18px;z-index:500;border:0;border-radius:999px;padding:14px 22px;font:700 18px Fredoka,system-ui,sans-serif;color:#2a0d12;background:linear-gradient(180deg,#ffe07a,#ffb21e);box-shadow:0 6px 0 #a8620a,0 10px 24px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;gap:10px}
+#hmBtn:active{transform:translateY(4px);box-shadow:0 2px 0 #a8620a}
+#hmBtn .eq{display:inline-flex;gap:3px;align-items:flex-end;height:20px}
+#hmBtn .eq i{width:4px;background:#2a0d12;border-radius:2px;height:4px}
+#hmBtn.on .eq i{animation:hmEq .48s ease-in-out infinite alternate}
+#hmBtn.on .eq i:nth-child(2){animation-delay:.12s}#hmBtn.on .eq i:nth-child(3){animation-delay:.24s}#hmBtn.on .eq i:nth-child(4){animation-delay:.36s}
+@keyframes hmEq{from{height:4px}to{height:20px}}
+#hmVol{accent-color:#2a0d12;width:80px;display:none}#hmBtn.on #hmVol{display:inline-block}
+body.hmBeat h1{animation:hmPulse .484s ease-out}
+@keyframes hmPulse{0%{transform:scale(1.035)}100%{transform:scale(1)}}
+</style>
+<button id="hmBtn" title="House music"><span class="eq"><i></i><i></i><i></i><i></i></span><span id="hmL">🎧 Start the party music</span><input id="hmVol" type="range" min="0" max="100" value="70" title="Volume"></button>
+<script>(function(){
+/* Original house groove, synthesized live: 124 BPM, 4-on-the-floor */
+const BPM=124,SPB=60/BPM/4;let ac,master,comp,sideG,filt,on=false,step=0,nextT=0,timer=null,bar=0;
+const LS='tg-house';const vol=document.getElementById('hmVol'),btn=document.getElementById('hmBtn'),lbl=document.getElementById('hmL');
+try{vol.value=localStorage.getItem(LS+'-v')||70}catch(e){}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+/* Am7 - Fmaj7 - C - G6 : bright, happy house progression */
+const CH=[[57,60,64,67],[53,57,60,64],[55,60,64,67],[55,59,62,64]];
+const BASS=[45,41,48,43];
+const BL=[1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0];/* rolling offbeat bass rhythm */
+const ST=[0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,1];/* piano stab rhythm */
+const LEAD=[76,0,0,79,0,0,76,0,74,0,72,0,74,0,0,0,76,0,0,79,0,81,0,79,76,0,74,0,72,0,0,0];
+function init(){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();comp=ac.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;
+ filt=ac.createBiquadFilter();filt.type='lowpass';filt.frequency.value=18000;filt.Q.value=6;
+ sideG=ac.createGain();sideG.connect(filt);filt.connect(comp);comp.connect(master);master.connect(ac.destination);setVol()}
+function setVol(){if(master)master.gain.value=(vol.value/100)*.55;try{localStorage.setItem(LS+'-v',vol.value)}catch(e){}}
+function noiseBuf(){const b=ac.createBuffer(1,ac.sampleRate*.5,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}let NB=null;
+function kick(t){const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.connect(g);g.connect(comp);o.start(t);o.stop(t+.42);
+ /* sidechain pump on everything else */
+ sideG.gain.cancelScheduledValues(t);sideG.gain.setValueAtTime(.25,t);sideG.gain.linearRampToValueAtTime(1,t+SPB*3.2)}
+function hat(t,open){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=NB;f.type='highpass';f.frequency.value=open?7000:9000;g.gain.setValueAtTime(open?.22:.1,t);g.gain.exponentialRampToValueAtTime(.001,t+(open?.18:.04));s.connect(f);f.connect(g);g.connect(sideG);s.start(t);s.stop(t+.2)}
+function clap(t){for(let k=0;k<3;k++){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),tt=t+k*.011;s.buffer=NB;f.type='bandpass';f.frequency.value=1500;f.Q.value=1.2;g.gain.setValueAtTime(.45,tt);g.gain.exponentialRampToValueAtTime(.001,tt+(k==2?.16:.03));s.connect(f);f.connect(g);g.connect(comp);s.start(tt);s.stop(tt+.2)}}
+function bass(t,m){const o=ac.createOscillator(),o2=ac.createOscillator(),f=ac.createBiquadFilter(),g=ac.createGain();o.type='sawtooth';o2.type='square';o.frequency.value=o2.frequency.value=mtof(m);o2.detune.value=-1200;f.type='lowpass';f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(180,t+.16);g.gain.setValueAtTime(.32,t);g.gain.exponentialRampToValueAtTime(.001,t+SPB*1.8);o.connect(f);o2.connect(f);f.connect(g);g.connect(sideG);[o,o2].forEach(x=>{x.start(t);x.stop(t+SPB*2)})}
+function stab(t,ch){ch.forEach(m=>{[0,7].forEach(dt=>{const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='triangle';o.frequency.value=mtof(m+12);o.detune.value=dt;f.type='lowpass';f.frequency.value=3200;g.gain.setValueAtTime(.075,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(f);f.connect(g);g.connect(sideG);o.start(t);o.stop(t+.3)})})}
+function lead(t,m){const o=ac.createOscillator(),g=ac.createGain(),d=ac.createDelay(),fb=ac.createGain();o.type='square';o.frequency.value=mtof(m);g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.001,t+SPB*1.6);d.delayTime.value=SPB*3;fb.gain.value=.35;o.connect(g);g.connect(sideG);g.connect(d);d.connect(fb);fb.connect(d);d.connect(sideG);o.start(t);o.stop(t+SPB*2)}
+function riser(t){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(),dur=SPB*16;s.buffer=NB;s.loop=true;f.type='bandpass';f.Q.value=3;f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(9000,t+dur);g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(.18,t+dur);s.connect(f);f.connect(g);g.connect(comp);s.start(t);s.stop(t+dur)}
+/* 16-bar arrangement: intro (drums+bass) -> full groove -> build -> drop */
+function play(st,t){const s=st%16,b=Math.floor(st/16)%16,ci=b%4,sec=b<4?0:b<12?1:b<15?2:3;
+ if(s===0)bar=b;
+ const build=sec===2&&b===14;
+ if(s%4===0&&!(b===15&&s>=8))kick(t);
+ if(s%4===2)hat(t,true);else if(sec>0)hat(t,false);
+ if((s===4||s===12)&&b!==15)clap(t);
+ if(b===15&&s>=8&&s%2===0)clap(t);/* snare-roll style clap fill */
+ if(BL[s]&&!(b===15&&s>=8))bass(t,BASS[ci]+(s===14?12:0));
+ if(sec>=1&&ST[s])stab(t,CH[ci]);
+ if((sec===1&&b>=8||sec===3)&&LEAD[(b%2)*16+s])lead(t,LEAD[(b%2)*16+s]);
+ if(b===14&&s===0)riser(t);
+ if(b===15&&s===0){filt.frequency.cancelScheduledValues(t);filt.frequency.setValueAtTime(18000,t);filt.frequency.exponentialRampToValueAtTime(500,t+SPB*15)}
+ if(b===0&&s===0&&st>0){filt.frequency.cancelScheduledValues(t);filt.frequency.setValueAtTime(18000,t)}
+ if(s%4===0){const d=(t-ac.currentTime)*1000;setTimeout(()=>{document.body.classList.remove('hmBeat');void document.body.offsetWidth;document.body.classList.add('hmBeat')},Math.max(0,d))}}
+function sched(){while(nextT<ac.currentTime+.15){play(step,nextT);step++;nextT+=SPB}}
+function start(){if(!ac)init();if(!NB)NB=noiseBuf();ac.resume();step=0;nextT=ac.currentTime+.08;filt.frequency.value=18000;timer=setInterval(sched,25);on=true;btn.classList.add('on');lbl.textContent='🎧 House music on';try{localStorage.setItem(LS,'1')}catch(e){}}
+function stop(){clearInterval(timer);timer=null;on=false;btn.classList.remove('on');lbl.textContent='🎧 Start the party music';if(master){master.gain.setTargetAtTime(0,ac.currentTime,.05);setTimeout(()=>{if(!on)ac.suspend()},300)}try{localStorage.setItem(LS,'0')}catch(e){}}
+btn.addEventListener('click',e=>{if(e.target===vol)return;if(on)stop();else{start();setVol()}});
+vol.addEventListener('input',e=>{e.stopPropagation();setVol()});vol.addEventListener('click',e=>e.stopPropagation());
+/* Browsers block sound until someone taps: if music was on last time, start on the first tap anywhere */
+let want=true;try{want=localStorage.getItem(LS)!=='0'}catch(e){}
+if(want){const go=e=>{if(btn.contains(e.target))return;if(!on){start();setVol()}};document.addEventListener('pointerdown',go,{once:true});document.addEventListener('keydown',go,{once:true})}
+/* fade out when leaving to a game so it never overlaps game music */
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(a&&on&&master){master.gain.setTargetAtTime(0,ac.currentTime,.08)}},true);
+window.addEventListener('pageshow',e=>{if(e.persisted&&on&&master){setVol()}});
+window.TGHouse={start,stop,get on(){return on}};
+})();</script>
+<!--/HOUSE--></body></html>

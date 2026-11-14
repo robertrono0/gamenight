@@ -200,9 +200,63 @@ function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.t
  document.addEventListener('pointerdown',()=>{ac();if(A.mode==='off')music('chill')},{once:true});
  if(o.rain)setInterval(()=>{if(!document.hidden)rain(o.rain,2)},9000)}
 
+/* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
+(function(){
+if(window.FXX)return;
+const css=document.createElement('style');css.textContent=`
+.fxBill{position:fixed;top:-12vh;z-index:9990;pointer-events:none;font-size:6vh;will-change:transform;animation:fxFall linear forwards}
+@keyframes fxFall{0%{transform:translateY(0) rotate(0) rotateY(0)}100%{transform:translateY(125vh) rotate(var(--r)) rotateY(720deg)}}
+.fxFly{position:fixed;z-index:9991;pointer-events:none;font-size:7vh;animation:fxFly 1.6s ease-in forwards}
+@keyframes fxFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(.3) rotate(var(--r));opacity:0}}
+#fxOv{position:fixed;inset:0;z-index:9992;display:none;place-items:center;pointer-events:none}
+#fxOv.on{display:grid}
+#fxOv .spot{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,215,90,.55),rgba(255,170,30,.18) 30%,rgba(0,0,0,.82) 70%);animation:fxSpot 3.6s ease-out forwards}
+#fxOv.loss .spot{background:radial-gradient(circle at 50% 45%,rgba(255,60,60,.35),rgba(120,0,0,.55) 45%,rgba(0,0,0,.85) 80%)}
+@keyframes fxSpot{0%{opacity:0}12%{opacity:1}80%{opacity:1}100%{opacity:0}}
+#fxOv .box{position:relative;text-align:center;animation:fxBox 3.6s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes fxBox{0%{transform:scale(.2);opacity:0}14%{transform:scale(1.08);opacity:1}22%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+#fxOv .t{font:900 9vh system-ui,sans-serif;color:#fff;text-shadow:0 .8vh 0 rgba(0,0,0,.4),0 0 4vh rgba(255,204,61,.9);letter-spacing:.02em}
+#fxOv.loss .t{color:#ffd0d0;text-shadow:0 .8vh 0 rgba(0,0,0,.5),0 0 4vh rgba(255,60,60,.9)}
+#fxOv .a{font:900 16vh system-ui,sans-serif;color:#ffcc3d;text-shadow:0 1vh 0 #6b4a07,0 0 6vh rgba(255,204,61,.9);line-height:1}
+#fxOv.loss .a{color:#ff6b6b;text-shadow:0 1vh 0 #5a0a0a,0 0 6vh rgba(255,60,60,.8)}
+#fxOv .s{font:700 3.6vh system-ui,sans-serif;color:#fff3dc;margin-top:1vh}
+.fxRing{position:fixed;left:50%;top:45%;width:10vh;height:10vh;margin:-5vh 0 0 -5vh;border-radius:50%;border:1vh solid #ffcc3d;z-index:9991;pointer-events:none;animation:fxRing 1.2s ease-out forwards}
+@keyframes fxRing{to{transform:scale(14);opacity:0}}
+.fxCannon{position:fixed;bottom:-4vh;z-index:9991;pointer-events:none;font-size:4.4vh;animation:fxCan 1.8s cubic-bezier(.2,.7,.4,1) forwards}
+@keyframes fxCan{0%{transform:translate(0,0) rotate(0)}60%{opacity:1}100%{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}`;
+(document.head||document.documentElement).appendChild(css);
+const ov=document.createElement('div');ov.id='fxOv';ov.innerHTML='<div class="spot"></div><div class="box"><div class="t"></div><div class="a"></div><div class="s"></div></div>';const att=()=>{if(!ov.isConnected)document.body.appendChild(ov)};if(document.body)att();else document.addEventListener('DOMContentLoaded',att);
+let ac=null;const A=()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac}catch(e){return null}};
+function tone(f,d,o={}){const c=A();if(!c)return;const t=c.currentTime+(o.at||0),os=c.createOscillator(),g=c.createGain(),fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=o.lp||4000;os.type=o.type||'square';os.frequency.setValueAtTime(f,t);if(o.to)os.frequency.exponentialRampToValueAtTime(o.to,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.g||.12,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(fl);fl.connect(g);g.connect(c.destination);os.start(t);os.stop(t+d+.05)}
+function noise(d,o={}){const c=A();if(!c)return;const t=c.currentTime+(o.at||0),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type=o.ft||'bandpass';f.frequency.value=o.f||3000;g.gain.setValueAtTime(o.g||.15,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}
+const S={
+ cash(){[0,.07].forEach((d,i)=>tone(i?2637:1975,.35,{type:'triangle',g:.16,at:d}));noise(.25,{f:6000,g:.12,at:.05});tone(4186,.5,{type:'sine',g:.06,at:.12})},
+ fanfare(){[[523,659,784],[587,740,880],[659,831,988],[784,988,1175,1568]].forEach((c,i)=>c.forEach(f=>tone(f,i==3?1.6:.2,{type:'sawtooth',g:.05,lp:3500,at:i*.17})));for(let i=0;i<14;i++)noise(.06,{f:2500+Math.random()*3000,g:.08,at:.5+i*.06})},
+ trombone(){[392,370,349,311].forEach((f,i)=>tone(f/2,i===3?1.3:.42,{type:'sawtooth',g:.14,lp:900,at:i*.45,to:i===3?f/2*.9:undefined}))},
+ whoosh(){noise(.6,{f:900,g:.2})},
+ tick(){tone(1400,.03,{type:'square',g:.04})},
+ boom(){tone(90,.6,{type:'sine',g:.35,to:40});noise(.4,{f:300,g:.2})}};
+function rain(n=40,emo=['💵','💵','💵','💰','🪙']){for(let i=0;i<n;i++){const e=document.createElement('div');e.className='fxBill';e.textContent=emo[Math.floor(Math.random()*emo.length)];e.style.left=(Math.random()*100)+'vw';e.style.fontSize=(4+Math.random()*4)+'vh';e.style.setProperty('--r',(Math.random()*720-360)+'deg');e.style.animationDuration=(2.2+Math.random()*2.2)+'s';e.style.animationDelay=(Math.random()*1.2)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),5000)}}
+function cannons(emo=['🎉','✨','💵','⭐','🎊']){for(let i=0;i<36;i++){const left=i%2===0,e=document.createElement('div');e.className='fxCannon';e.textContent=emo[i%emo.length];e.style.left=left?'2vw':'94vw';e.style.setProperty('--x',(left?1:-1)*(20+Math.random()*45)+'vw');e.style.setProperty('--y',-(55+Math.random()*45)+'vh');e.style.setProperty('--r',(Math.random()*900-450)+'deg');e.style.animationDelay=(Math.random()*.4)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}}
+function flyAway(n=14,emo=['💸','💸','💵']){for(let i=0;i<n;i++){const e=document.createElement('div');e.className='fxFly';e.textContent=emo[i%emo.length];e.style.left='50vw';e.style.top='45vh';const a=Math.random()*Math.PI*2;e.style.setProperty('--x',Math.cos(a)*60+'vw');e.style.setProperty('--y',Math.sin(a)*60-20+'vh');e.style.setProperty('--r',(Math.random()*720-360)+'deg');e.style.animationDelay=(Math.random()*.25)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}}
+function ring(){const r=document.createElement('div');r.className='fxRing';document.body.appendChild(r);setTimeout(()=>r.remove(),1300)}
+const fmt$=v=>v<1&&v>0?(v*100).toFixed(0)+'¢':'$'+Math.round(v).toLocaleString();
+function countUp(el,to,ms=1400,f=fmt$,from=0){const t0=performance.now();let lastTick=0;(function st(now){const k=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-k,3),v=from+(to-from)*e;el.textContent=f(v);if(now-lastTick>70&&k<1){S.tick();lastTick=now}if(k<1)requestAnimationFrame(st);else el.textContent=f(to)})(t0)}
+let hideT=null;
+function show(cls,t,amt,sub){att();ov.className='on '+cls;ov.querySelector('.t').textContent=t;ov.querySelector('.s').textContent=sub||'';const a=ov.querySelector('.a');a.textContent=amt==null?'':(typeof amt==='number'?fmt$(0):amt);
+ [ov.querySelector('.spot'),ov.querySelector('.box')].forEach(x=>{x.style.animation='none';void x.offsetWidth;x.style.animation=''});
+ if(typeof amt==='number')setTimeout(()=>countUp(a,amt,1300),350);clearTimeout(hideT);hideT=setTimeout(()=>{ov.className=''},3700)}
+window.FXX={sfx:S,rain,cannons,flyAway,ring,countUp,fmt$,
+ win(t,amt,sub){show('win',t,amt,sub);S.boom();setTimeout(S.cash,300);setTimeout(S.fanfare,1500);ring();cannons();setTimeout(()=>rain(60),400)},
+ bigWin(t,amt,sub){this.win(t,amt,sub);setTimeout(()=>{rain(80);cannons()},1600)},
+ gain(amt,label){S.cash();rain(Math.min(50,8+Math.round(Math.log10(Math.max(1,amt))*8)));if(label){show('win',label,amt);clearTimeout(hideT);hideT=setTimeout(()=>{ov.className=''},2300)}},
+ loss(t,amt,sub){show('loss',t,amt==null?null:(typeof amt==='number'?'−'+fmt$(Math.abs(amt)):amt),sub);S.trombone();flyAway()},
+ lose(amt){S.whoosh();flyAway(10)}};
+})();
+
 const P={
  movies:{e:'🎬',n:'Movies',l:[['🦁👑','The Lion King'],['❄️👸','Frozen'],['🏠😱🎄','Home Alone'],['🚢🧊💔','Titanic'],['🦈🌊','Jaws'],['🕷️🧑','Spider-Man'],['🧙‍♂️⚡👓','Harry Potter'],['🦖🏝️','Jurassic Park'],['🐠🔍','Finding Nemo'],['🧸🤠🚀','Toy Story'],['👸🐸','The Princess and the Frog'],['🧞‍♂️🪔','Aladdin'],['💅👛🎀','Barbie'],['🏎️💨😤','Fast and Furious'],['👻🚫','Ghostbusters'],['🏴‍☠️🌊🦜','Pirates of the Caribbean'],['🟢👹💚','Shrek'],['🎈🏠👴','Up'],['🧝‍♂️🎄','Elf'],['🥋👦','Karate Kid'],['🍫🏭','Charlie and the Chocolate Factory'],['💍🌋','The Lord of the Rings'],['🦇🧔','Batman'],['🐒🌍🔙','Planet of the Apes'],['😠😢😊🧠','Inside Out'],['🌺🌊⛵','Moana']]},
- songs:{e:'🎵',n:'Songs',l:[['👶🦈','Baby Shark'],['🎂🎉','Happy Birthday'],['🍫☕','Espresso'],['🎅🎄🎁❤️','All I Want for Christmas Is You'],['👑🐝💍👩','Single Ladies'],['😁','Happy'],['⬆️🏙️🕺','Uptown Funk'],['🧊🧊👶','Ice Ice Baby'],['🤠🛣️🐴','Old Town Road'],['🌧️☔🎤','Umbrella'],['🔥🔥🔥','Girl on Fire'],['🪩👸','Dancing Queen'],['🚫🛑🎶','Don\'t Stop Believin\''],['🌈🦄😘','Firework'],['👋🌍','Hello'],['🕺💀','Thriller'],['💃🍑','Hips Don\'t Lie'],['🫵🪨','We Will Rock You'],['❤️🗝️','Habibi Ya Nour El Ain'],['😢💔🌧️','Someone Like You']]},
+ songs:{e:'🎵',n:'Songs',l:[['👶🦈','Baby Shark'],['🎂🎉','Happy Birthday'],['🍫☕','Espresso'],['🎅🎄🎁❤️','All I Want for Christmas Is You'],['👑🐝💍👩','Single Ladies'],['😁','Happy'],['⬆️🏙️🕺','Uptown Funk'],['🧊🧊👶','Ice Ice Baby'],['🤠🛣️🐴','Old Town Road'],['🌧️☔🎤','Umbrella'],['🔥🔥🔥','Girl on Fire'],['🪩👸','Dancing Queen'],['🚫🛑🎶','Don\'t Stop Believin\''],['🎆💥🎇','Firework'],['👋🌍','Hello'],['🕺💀','Thriller'],['💃🍑','Hips Don\'t Lie'],['🫵🪨','We Will Rock You'],['❤️👁️✨','Habibi Ya Nour El Ain'],['😢💔🌧️','Someone Like You']]},
  food:{e:'🍽️',n:'Food',l:[['🍕🧀','Pizza'],['🌯🔥🍗','Shawarma'],['🍔🍟','Burger and fries'],['🥧🎃','Pumpkin pie'],['🍝🍅','Spaghetti'],['🍿🎬','Popcorn'],['🧀🍞🔥','Grilled cheese'],['🍫🇦🇪','Dubai chocolate'],['🧆🥙','Falafel wrap'],['🍇🍃🍚','Grape leaves'],['🌭🔴🍞','Hot dog'],['🥔🥣','Mashed potatoes'],['🍳🥓','Bacon and eggs'],['🍦🥶','Ice cream'],['🌮🔔','Taco Bell'],['🥞🍁','Pancakes with maple syrup'],['🍯🥜🥐','Baklava'],['🦃🍗','Turkey leg'],['🌽🍯🍞','Cornbread'],['🍵🍃','Matcha']]},
  shows:{e:'📺',n:'TV Shows',l:[['🦑🎮','Squid Game'],['🏢📄😐','The Office'],['❤️🙈','Love Is Blind'],['👩‍👩‍👧‍👦👫☕','Friends'],['🧽⭐🍍','SpongeBob'],['🙃🔦👾','Stranger Things'],['🐉👑❄️','Game of Thrones'],['💃🌟','Dancing with the Stars'],['🦈💰','Shark Tank'],['🏝️🔥🗳️','Survivor'],['🖤🧛‍♀️✋','Wednesday'],['🌹💍👨','The Bachelor'],['💛👨‍👩‍👦🍩','The Simpsons'],['🧪👨‍🔬💵','Breaking Bad'],['🏡💰🌴','Selling Sunset'],['🏝️❤️','Love Island'],['🐻👨‍🍳🔪','The Bear'],['🎤🪑🔄','The Voice']]},
  sayings:{e:'💬',n:'Sayings',l:[['⏰💰','Time is money'],['🍎📅👨‍⚕️','An apple a day keeps the doctor away'],['🐦🐦🪨','Two birds, one stone'],['🌧️🐱🐶','Raining cats and dogs'],['🐘🏠','Elephant in the room'],['🍰🚶','Piece of cake'],['💔❤️','Heartbreaker'],['👀🌍','See the world'],['🐱👜','Cat out of the bag'],['🧊🔨','Break the ice'],['💤🌙','Sleep tight'],['🦵🦵🦵🤞','Break a leg'],['🌈🍀💰','Pot of gold'],['🔥👖🤥','Liar liar pants on fire'],['🍳🔥','Out of the frying pan into the fire'],['👁️👁️🤝','See eye to eye'],['🧿','Evil eye'],['😴🔥','Food coma']]},
@@ -258,5 +312,5 @@ function boot(){TGB.init({game:'Emoji Decode',names,teamOf:n=>{const i=tI(n);ret
   if(id==='go'){const b=$('#bGo');b&&b.click()}else if(id==='right'){if(w<0){toast('Nobody has buzzed yet');return}reveal(w)}
   else if(id==='wrong'){if(w<0){toast('Nobody has buzzed yet');return}const b=$(`[data-no="${w}"]`);b&&b.click()}
   else if(id==='none')reveal(-1);else if(id==='next'){const b=$('#bNext');b&&b.click()}}});sync()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794679533';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794689456';s.onload=boot;document.head.appendChild(s)})();
 </script></body></html>

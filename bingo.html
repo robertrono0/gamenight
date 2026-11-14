@@ -990,5 +990,38 @@ function frame(){
 frame();
 })();
 </script>
-</body>
+<script>(function(){"use strict";const $$=s=>[...document.querySelectorAll(s)],$=s=>document.querySelector(s);const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const A={ctx:null,on:LS.get('tg-music',true),mode:'off',step:0,next:0,timer:null,style:null};
+const STYLES={
+ funk:{bpm:112,prog:[[60,64,67,71],[57,60,64,67],[62,65,69,72],[55,59,62,65]],bass:[48,45,50,43],mel:[72,0,74,76,0,79,76,0,74,72,0,69,72,0,0,0,76,0,79,81,0,79,76,0,74,0,76,74,72,0,0,0],lead:'square'},
+ pop:{bpm:122,prog:[[60,64,67],[67,71,74],[57,60,64],[65,69,72]],bass:[48,43,45,41],mel:[76,76,0,74,72,0,74,76,79,0,76,0,74,0,72,0,72,74,76,0,79,0,81,79,76,0,74,72,74,0,0,0],lead:'triangle'},
+ arab:{bpm:104,prog:[[62,65,69],[62,66,69],[60,63,67],[62,65,69]],bass:[50,50,48,50],mel:[74,75,78,0,79,78,75,74,0,75,74,72,74,0,0,0,74,0,78,79,81,79,78,75,78,75,74,0,72,74,0,0],lead:'sawtooth',maq:1},
+ swing:{bpm:132,prog:[[60,64,67,70],[65,69,72,75],[60,64,67,70],[67,71,74,77]],bass:[48,53,48,55],mel:[79,0,76,79,0,76,0,72,74,0,76,0,74,72,0,0,81,0,79,76,0,74,0,76,79,0,0,76,74,0,72,0],lead:'square'},
+ spooky:{bpm:96,prog:[[57,60,64],[53,57,60],[52,56,59],[57,60,64]],bass:[45,41,40,45],mel:[69,0,72,0,71,0,68,0,69,0,0,0,64,0,0,0,69,0,72,76,0,74,72,0,71,0,68,0,64,0,0,0],lead:'triangle'}};
+function ac(){if(!A.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;const c=A.ctx=new C();A.out=c.createDynamicsCompressor();A.out.connect(c.destination);A.mus=c.createGain();A.mus.gain.value=0;A.mus.connect(A.out);A.sfx=c.createGain();A.sfx.gain.value=.9;A.sfx.connect(A.out);
+ const nb=c.createBuffer(1,c.sampleRate,c.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;A.nb=nb}if(A.ctx.state==='suspended')A.ctx.resume();return A.ctx}
+const mt=n=>440*Math.pow(2,(n-69)/12);
+function v(t,f,d,o={}){const c=A.ctx,os=c.createOscillator(),g=c.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);let n=os;if(o.lp){const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=o.lp;os.connect(fl);n=fl}n.connect(g);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.g||.2,t+(o.a||.004));g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(o.bus||A.sfx);os.start(t);os.stop(t+d+.05)}
+function nz(t,d,o={}){const c=A.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=A.nb;f.type=o.ft||'highpass';f.frequency.value=o.f||7000;s.connect(f);f.connect(g);g.gain.setValueAtTime(o.g||.15,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(o.bus||A.sfx);s.start(t,Math.random()*.5);s.stop(t+d+.02)}
+function setStyle(name){A.style=STYLES[name]||STYLES.funk;A.bpm=A.style.bpm}
+function music(m){A.mode=m;if(!ac())return;if(!A.style)setStyle('funk');const lv={off:0,chill:.22,play:.32,tense:.3,party:.55}[m]||0;A.mus.gain.setTargetAtTime(A.on?lv:0,A.ctx.currentTime,.3);
+ if(!A.timer){A.next=A.ctx.currentTime+.1;A.step=0;A.timer=setInterval(()=>{if(!A.on||A.mode==='off')return;const bpm=A.style.bpm*(A.mode==='tense'?1.12:A.mode==='party'?1.06:1),spb=60/bpm/4;if(A.next<A.ctx.currentTime)A.next=A.ctx.currentTime+.05;while(A.next<A.ctx.currentTime+.12){beat(A.step,A.next,spb);A.next+=spb;A.step++}},25)}
+ $$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on))}
+function beat(s,t,spb){const S=A.style,st=s%16,bar=Math.floor(s/16),ch=bar%4,m=A.mode,B=A.mus;
+ if(m!=='chill'||st%8===0){if(st%4===0)v(t,150,.28,{f2:42,g:.75,bus:B})}
+ if(st===4||st===12)nz(t,.14,{f:1400,g:m==='chill'?.12:.28,bus:B});
+ if(st%2===0||m==='tense')nz(t,.035,{f:9000,g:m==='tense'?.09:.05,bus:B});
+ if(S.maq&&(st===3||st===11))nz(t,.05,{ft:'bandpass',f:3200,g:.12,bus:B});
+ if(st%4===2||(m!=='chill'&&st%8===7))v(t,mt(S.bass[ch]-12),spb*1.6,{type:'sawtooth',g:.15,lp:520,bus:B});
+ if(st===0||st===8||(m==='party'&&st%4===2))S.prog[ch].forEach(n=>v(t,mt(n+12),.28,{type:'square',g:.022,lp:2600,bus:B}));
+ if(m==='chill'&&st===0)S.prog[ch].forEach(n=>v(t,mt(n),spb*14,{type:'triangle',g:.035,a:.3,bus:B}));
+ if(m==='tense'&&st%2===0)v(t,mt(S.bass[ch]),spb*.9,{type:'square',g:.04,lp:900,bus:B});
+ if(m!=='tense'&&m!=='chill'){const mi=(st+(bar%2)*16),n=S.mel[mi%S.mel.length];if(n&&st%1===0&&(mi%2===0||m==='party'))v(t,mt(n),spb*1.8,{type:S.lead,g:m==='party'?.07:.045,lp:3500,bus:B})}}
+
+const btn=document.createElement('button');btn.className='musicBtn';btn.title='Background music';btn.textContent='🎵';btn.style.cssText='position:fixed;left:14px;bottom:14px;z-index:9999;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);color:#fff;font-size:24px;cursor:pointer;backdrop-filter:blur(4px)';
+document.body.appendChild(btn);const css=document.createElement('style');css.textContent='.musicBtn.off{opacity:.4}';document.head.appendChild(css);
+setStyle('swing');btn.classList.toggle('off',!A.on);
+btn.onclick=e=>{e.stopPropagation();A.on=!A.on;LS.set('tg-music',A.on);music(A.mode==='off'?'play':A.mode);if(A.on&&A.mus)A.mus.gain.setTargetAtTime(.3,A.ctx.currentTime,.3)};
+document.addEventListener('pointerdown',()=>{if(A.mode==='off')music('chill')},{once:true});
+window.bgMusic=music;})();</script></body>
 </html>

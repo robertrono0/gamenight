@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Family Feud: Thanksgiving Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--a:#2ec4b6;--b:#ff4d6d}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#1d0a10;color:var(--cream);font-family:var(--fb)}
+button{font-family:var(--fb);cursor:pointer;border:0}input,textarea{font-family:var(--fb)}
+.hidden{display:none!important}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,#7a2410 0%,#4a1420 38%,#1d0a10 78%)}
+#bg::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 60%,rgba(255,204,61,.05) 0 6deg,transparent 6deg 18deg);animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#fx{position:fixed;inset:0;z-index:60;pointer-events:none}
+#app{position:relative;z-index:1;height:100vh;display:grid;grid-template-rows:auto auto 1fr auto;gap:1.2vh;padding:1.4vh 1.6vw}
+header{display:flex;align-items:center;justify-content:space-between}
+.title{font-family:var(--fd);font-size:4.4vh;background:linear-gradient(180deg,#fff6c9,var(--gold) 45%,var(--gold2) 70%,#d1560c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .35vh 0 #5a1505) drop-shadow(0 0 1.4vh rgba(255,170,40,.4))}
+.tools{display:flex;gap:.5vw}
+.ib{width:5vh;height:5vh;border-radius:1.4vh;background:rgba(255,243,220,.12);color:var(--cream);font-size:2.4vh;display:grid;place-items:center;border:1px solid rgba(255,243,220,.18)}
+.ib:hover{background:rgba(255,204,61,.3)}.ib.off{opacity:.45}
+.topRow{display:grid;grid-template-columns:1fr auto 1fr;gap:1.4vw;align-items:center}
+.team{border-radius:2vh;padding:1vh 1.4vw;background:rgba(255,255,255,.06);border:.4vh solid var(--tc);display:flex;justify-content:space-between;align-items:center;transition:.3s;cursor:pointer}
+.team .tn{font-family:var(--fd);font-size:2.6vh;color:var(--tc)}.team .tm{font-size:1.6vh;opacity:.8;max-width:22vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team .ts{font-family:var(--fd);font-size:5vh}
+.team.ctrl{background:color-mix(in srgb,var(--tc) 30%,transparent);box-shadow:0 0 3vh var(--tc);transform:scale(1.03)}
+.team.ctrl .tn::after{content:"  🎤 PLAYING";font-family:var(--fb);font-size:1.6vh;color:var(--cream);letter-spacing:.1em}
+.bank{text-align:center;min-width:16vw}
+.bank .bl{font-size:1.7vh;letter-spacing:.3em;opacity:.8;font-weight:700}
+.bank .bv{font-family:var(--fd);font-size:6vh;color:var(--gold);text-shadow:0 0 2vh rgba(255,204,61,.6);line-height:1}
+.bank .mult{display:inline-block;margin-top:.4vh;font-weight:700;font-size:1.7vh;padding:.2vh 1vh;border-radius:2vh;background:linear-gradient(#3ddc84,#16a35a)}
+.q{text-align:center;font-family:var(--fd);font-size:3.6vh;line-height:1.2;padding:1.4vh 3vw;border-radius:2vh;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.2));border:1px solid rgba(255,204,61,.35)}
+.q small{display:block;font-family:var(--fb);font-size:1.8vh;color:var(--gold);letter-spacing:.2em;margin-bottom:.5vh;font-weight:700}
+.boardWrap{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:1.4vh;min-height:0;position:relative}
+.board{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1.2vh 1.2vw;padding:1.6vh;border-radius:2.4vh;background:linear-gradient(180deg,#5d1322,#3f0b17);box-shadow:inset 0 0 0 .5vh var(--gold),0 0 0 1vh #8a3a07,0 2vh 4vh rgba(0,0,0,.5);perspective:1200px;min-height:0}
+.slot{position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.4,.5,1);cursor:pointer}
+.slot.open{transform:rotateX(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:1.4vh;display:flex;align-items:center;justify-content:center;font-family:var(--fd)}
+.front{background:linear-gradient(180deg,#2a6fdb,#123a8a);box-shadow:inset 0 0 0 .3vh rgba(255,255,255,.35)}
+.front .num{width:7vh;height:5vh;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 40% 35%,#5aa0ff,#0b2a6b);color:#fff;font-size:3vh;box-shadow:0 0 0 .3vh #fff}
+.back{transform:rotateX(180deg);background:linear-gradient(180deg,#fff7e6,#ffd98f);color:var(--ink);justify-content:space-between;padding:0 1.6vw;font-size:2.8vh}
+.back .pts{background:#2a0d12;color:var(--gold);border-radius:1vh;padding:.4vh 1.2vh;font-size:3vh}
+.slot.missed .back{background:linear-gradient(180deg,#cfc6b8,#a99f90)}
+.slot.empty{visibility:hidden}
+.strikes{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2vw;pointer-events:none;z-index:10}
+.x{font-family:var(--fd);font-size:28vh;color:#ff2a2a;text-shadow:0 0 4vh #ff0000,0 1vh 0 #600;animation:xin .9s ease-out forwards}
+@keyframes xin{0%{transform:scale(3);opacity:0}25%{transform:scale(1);opacity:1}80%{opacity:1}100%{opacity:0}}
+.xs{display:flex;gap:.6vw;justify-content:center}.xs span{font-family:var(--fd);font-size:3.4vh;color:rgba(255,255,255,.18)}.xs span.on{color:#ff3b3b;text-shadow:0 0 1.4vh #ff3b3b}
+.ctl{display:flex;flex-direction:column;gap:1vh;align-items:center}
+.inputRow{display:flex;gap:.8vw;width:min(1000px,96%)}
+.inputRow input{flex:1;font-size:3vh;padding:1.2vh 1.6vw;border-radius:1.8vh;border:.4vh solid var(--gold);background:#fff8e8;color:var(--ink);font-weight:700}
+.status{font-size:2.4vh;font-weight:700;text-align:center;min-height:3vh}.status b{color:var(--gold)}
+.btns{display:flex;gap:.8vw;flex-wrap:wrap;justify-content:center}
+.bb{font-family:var(--fd);font-size:2.1vh;padding:1.1vh 2.2vh;border-radius:1.6vh;background:linear-gradient(#ff8a2a,#d9480f);color:#fff;box-shadow:0 .6vh 0 #8a3a07,0 1vh 2vh rgba(0,0,0,.35)}
+.bb.gold{background:linear-gradient(var(--gold),var(--gold2));color:var(--ink)}.bb.ghost{background:rgba(255,255,255,.12);color:var(--cream);box-shadow:0 .5vh 0 rgba(0,0,0,.3)}
+.bb.red{background:linear-gradient(#ff5d5d,#d12b2b);box-shadow:0 .6vh 0 #7a1010}.bb.ta{background:linear-gradient(color-mix(in srgb,var(--a) 85%,#fff),var(--a));color:#06231f;box-shadow:0 .6vh 0 #0b5f55}.bb.tb{background:linear-gradient(color-mix(in srgb,var(--b) 85%,#fff),var(--b));box-shadow:0 .6vh 0 #7a1024}
+.bb:hover{filter:brightness(1.08)}
+.toast2{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(0);z-index:30;font-family:var(--fd);font-size:6vh;text-align:center;padding:2vh 4vw;border-radius:3vh;background:rgba(20,6,10,.94);border:.4vh solid var(--gold);box-shadow:0 0 6vh rgba(255,204,61,.5);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.toast2.on{transform:translate(-50%,-50%) scale(1)}.toast2 small{display:block;font-family:var(--fb);font-size:2.4vh;margin-top:.6vh}
+.ov{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,rgba(74,20,32,.97),rgba(20,6,10,.985));overflow:auto}
+.card{width:min(1100px,94vw);max-height:94vh;overflow:auto;padding:3vh 3vw;border-radius:3vh;background:linear-gradient(180deg,#fff7e6,#ffe9c4);color:var(--ink);box-shadow:0 0 0 .6vh var(--gold),0 0 0 1.2vh #8a3a07,0 3vh 6vh rgba(0,0,0,.6)}
+.card h2{font-family:var(--fd);font-size:3.6vh;color:#c2410c;text-align:center;margin-bottom:1vh}.card h3{font-size:2.1vh;margin:1.6vh 0 .7vh;color:#7a2410}
+.hint{font-size:1.7vh;opacity:.75}
+.field{width:100%;padding:1vh 1.2vh;border-radius:1.2vh;border:.25vh solid #e8b77a;background:#fff;font-size:2vh;color:var(--ink)}
+textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
+.seg{display:inline-flex;border-radius:1.4vh;overflow:hidden;border:.25vh solid #e8b77a}.seg button{padding:1vh 1.8vh;font-size:1.9vh;font-weight:700;background:#fff;color:var(--ink)}.seg button.on{background:#ff7a1a;color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.6vw}
+.ctr{display:flex;justify-content:center;gap:1vw;margin-top:2vh;flex-wrap:wrap}
+.howg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vh 1.4vw}.hc{background:#fff;border-radius:2vh;padding:1.6vh 1.2vw;font-size:2vh;line-height:1.4;box-shadow:0 .5vh 0 #e8b77a}.hc .i{font-size:4vh;display:block}.hc b{color:#c2410c}
+.wrapc{width:min(1300px,96vw);text-align:center}
+.bigT{font-family:var(--fd);font-size:6vh;color:var(--gold);text-shadow:0 .6vh 0 #8a3a07,0 0 3vh rgba(255,204,61,.5)}
+.subT{font-size:2.6vh;opacity:.9;margin:1vh 0 2vh}
+.endTeams{display:grid;grid-template-columns:1fr 1fr;gap:2vw;margin:2vh 0}
+.et{border-radius:2.4vh;padding:2.4vh;border:.5vh solid var(--tc);background:rgba(255,255,255,.07)}.et.win{background:color-mix(in srgb,var(--tc) 30%,transparent);box-shadow:0 0 6vh var(--tc);transform:scale(1.04)}
+.et h4{font-family:var(--fd);font-size:3.4vh;color:var(--tc)}.et .s{font-family:var(--fd);font-size:7vh}.et p{font-size:2.2vh;font-weight:600}
+#toast{position:fixed;left:50%;bottom:12vh;transform:translateX(-50%) translateY(20vh);background:var(--gold);color:var(--ink);font-weight:700;font-size:2.4vh;padding:1.2vh 2.6vh;border-radius:3vh;z-index:90;transition:.4s}#toast.on{transform:translateX(-50%)}
+</style></head><body>
+<div id="bg"></div><canvas id="fx"></canvas>
+<div id="app">
+ <header><div class="title">🗣️ FAMILY FEUD!</div>
+  <div class="tools"><button class="ib" id="bHow" title="How to play">❓</button><button class="ib" id="bMusic" title="Music">🎵</button><button class="ib" id="bUndo" title="Undo">↩️</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></header>
+ <div class="topRow">
+  <div class="team" id="teamA" style="--tc:var(--a)" data-t="0"><div><div class="tn" id="tnA">Team A</div><div class="tm" id="tmA"></div><div class="xs" id="xsA"></div></div><div class="ts" id="tsA">0</div></div>
+  <div class="bank"><div class="bl">ROUND BANK</div><div class="bv" id="bankV">0</div><div class="mult hidden" id="multV"></div></div>
+  <div class="team" id="teamB" style="--tc:var(--b)" data-t="1"><div><div class="tn" id="tnB">Team B</div><div class="tm" id="tmB"></div><div class="xs" id="xsB"></div></div><div class="ts" id="tsB">0</div></div>
+ </div>
+ <div class="boardWrap">
+  <div class="q" id="qBox"><small id="roundLbl">ROUND 1</small><span id="qText"></span></div>
+  <div class="board" id="board"></div>
+  <div class="strikes" id="strikes"></div>
+ </div>
+ <div class="ctl">
+  <div class="status" id="status"></div>
+  <div class="inputRow" id="inputRow"><input id="ans" placeholder="Type what they said and press Enter…" autocomplete="off"><button class="bb gold" id="bCheck">CHECK ✔</button><button class="bb red" id="bStrike" title="Force a strike">✗</button></div>
+  <div class="btns" id="btns"></div>
+ </div>
+</div>
+<div class="toast2" id="t2"></div>
+
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🗣️ Set up Family Feud</h2>
+ <h3>1. Players <span class="hint">(one per line or commas; we'll split them into 2 families)</span></h3>
+ <textarea class="field" id="names" placeholder="Fadi&#10;Rita&#10;Anita&#10;..."></textarea>
+ <div class="row" style="margin-top:.6vh"><span class="hint" id="nCount">0 players</span> <button class="bb ghost" id="bMix" style="font-size:1.6vh;padding:.5vh 1.2vh;color:var(--ink);background:#ffd9a8">🎲 Shuffle families</button></div>
+ <div class="two" style="margin-top:1vh">
+  <div><h3 style="color:#0b6b62">Family 1 name</h3><input class="field" id="nA" value="The Gravy Boats"><div class="hint" id="mA"></div></div>
+  <div><h3 style="color:#b0183a">Family 2 name</h3><input class="field" id="nB" value="The Pie Hards"><div class="hint" id="mB"></div></div>
+ </div>
+ <h3>2. How many rounds?</h3>
+ <div class="seg" id="segR"><button data-v="3">3 (~15 min)</button><button data-v="5" class="on">5 (~25 min)</button><button data-v="7">7 (~35 min)</button></div>
+ <div class="hint" style="margin-top:.6vh">Round 4 is worth DOUBLE and the last round is worth TRIPLE, just like the show.</div>
+ <h3>3. Your own questions <span class="hint">(optional, one per line: Question | answer 30 | answer 25 | ...)</span></h3>
+ <textarea class="field" id="custom" placeholder="Name something Ronak always says | yalla 35 | habibi 25 | wallah 20 | let's eat 20"></textarea>
+ <div class="ctr"><button class="bb ghost" id="bHow2" style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb" id="bStart">SURVEY SAYS... START! 🎉</button></div>
+</div></div>
+
+<div class="ov hidden" id="howOv"><div class="card">
+ <h2>📜 How to Play Family Feud</h2>
+ <div class="howg">
+  <div class="hc"><span class="i">🙋</span><b>Face-off:</b> one player from each family comes up. First to <b>buzz</b> (use your buzzer site) answers.</div>
+  <div class="hc"><span class="i">🏆</span>The family with the <b>higher answer</b> plays the round. The host taps that family.</div>
+  <div class="hc"><span class="i">⌨️</span>Players take turns answering. The host <b>types what they say</b>, and the game finds it on the board.</div>
+  <div class="hc"><span class="i">❌</span>Not on the board = <b>a strike</b>. Three strikes and you're out!</div>
+  <div class="hc"><span class="i">🕵️</span>After 3 strikes the other family huddles and gets <b>one guess to STEAL</b> all the points!</div>
+  <div class="hc"><span class="i">💰</span>Round 4 is <b>double</b> and the last round is <b>triple</b>. Most points wins!</div>
+ </div>
+ <div class="ctr"><button class="bb" id="bHowClose">LET'S PLAY! 🎉</button></div>
+</div></div>
+<div class="ov hidden" id="endOv"><div class="wrapc" id="endWrap"></div></div>
+<div id="toast"></div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+function rnd(n){const a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a},pick=a=>a[rnd(a.length)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2200)}
+// survey: [answer, points, aliases...]
+const Q=[
+ ['Name something people eat on Thanksgiving',[['Turkey',36,'turkey'],['Mashed potatoes',18,'mashed potato','potatoes','potato'],['Stuffing',14,'stuffing','dressing'],['Pumpkin pie',12,'pie','pumpkin'],['Cranberry sauce',10,'cranberry','cranberries'],['Mac and cheese',10,'mac','macaroni','cheese']]],
+ ['Name something your mom yells when you leave the house',[['Where are you going?',30,'where are you going','where','going'],['Take a jacket!',22,'jacket','coat','sweater','its cold','cold'],['Text me when you get there',18,'text','text me','call me','call'],['Come home early!',15,'early','come back early','dont be late','curfew','late'],['Did you eat?',9,'eat','food','hungry','eat something'],['Be careful!',6,'careful','be safe','drive safe','safe']]],
+ ['Name something you always see at an Arab or Chaldean wedding',[['Dabke / dancing',32,'dabke','dance','dancing','khigga','line dance'],['Loud music',20,'music','dj','band','loud','singer'],['So much food',18,'food','buffet','mezza','dinner','meat'],['Way too many guests',14,'people','guests','crowd','cousins','family','relatives'],['Zaffa / drums',10,'zaffa','drum','drums','entrance','grand entrance'],['Money throwing',6,'money','cash','throwing money','dollars']]],
+ ['Name an app everyone has on their phone',[['Instagram',30,'instagram','ig','insta'],['TikTok',24,'tiktok','tik tok'],['Snapchat',16,'snapchat','snap'],['WhatsApp',14,'whatsapp','whats app'],['YouTube',10,'youtube'],['Uber',6,'uber','lyft']]],
+ ['Name something people do on Black Friday',[['Shop',40,'shop','shopping','buy','buy stuff','sales','deals'],['Wait in long lines',20,'line','lines','wait','camp out'],['Sleep in',15,'sleep','nap','rest','sleep in'],['Eat leftovers',13,'leftovers','eat','leftover'],['Shop online',12,'online','amazon','online shopping']]],
+ ['Name a reason you show up late to a family party',[['Traffic',34,'traffic','freeway','cars'],['Getting ready',26,'getting ready','ready','makeup','hair','outfit','clothes','shower'],['Overslept / nap',16,'sleep','slept','overslept','nap','tired'],['No parking',12,'parking','park'],['Picking up food',12,'food','dessert','pick up','picking up','grocery','bakery']]],
+ ['Name a show everyone was watching on Netflix',[['Stranger Things',28,'stranger things','stranger'],['Squid Game',22,'squid game','squid'],['Wednesday',16,'wednesday'],['Love Is Blind',14,'love is blind','love blind'],['The Office',12,'the office','office'],['Bridgerton',8,'bridgerton']]],
+ ['Name something you would find in an Arab grandma\'s kitchen',[['Spices',26,'spices','spice','zaatar','sumac','cumin'],['Tea',20,'tea','chai','shai','teapot'],['Bread',18,'bread','pita','khubz','samoon'],['Dates',14,'dates','date','tamar'],['Olive oil',12,'olive oil','oil','olives','olive'],['A drawer full of plastic bags',10,'bags','plastic bags','plastic bag','bag']]],
+ ['Name a fast food place',[['McDonald\'s',34,'mcdonalds','mcdonald','mickey d','mcd'],['In-N-Out',22,'in n out','in and out','innout','in-n-out'],['Chick-fil-A',18,'chick fil a','chickfila','chick-fil-a'],['Taco Bell',12,'taco bell'],['Wendy\'s',8,'wendys','wendy'],['Burger King',6,'burger king','bk']]],
+ ['Name something people post on Instagram',[['Food',30,'food','dinner','lunch','brunch'],['Selfies',26,'selfie','selfies','face','pictures of themselves'],['Vacations',18,'vacation','travel','trip','beach','holiday'],['Gym pics',12,'gym','workout','gym selfie','fitness'],['Pets',8,'dog','cat','pet','pets','puppy'],['Outfits',6,'outfit','fit','ootd','clothes','fashion']]],
+ ['Name something people do after a huge Thanksgiving dinner',[['Take a nap',36,'nap','sleep','pass out','food coma'],['Watch football',22,'football','watch tv','tv','game','watch the game'],['Eat dessert',16,'dessert','pie','eat more','sweets'],['Unbutton their pants',12,'unbutton','pants','belt','loosen'],['Wash the dishes',8,'dishes','clean','clean up','wash'],['Go for a walk',6,'walk','go for a walk']]],
+ ['Name something an Arab dad always says',[['Turn off the lights!',30,'lights','turn off the lights','light'],['Go ask your mother',22,'ask your mom','mother','mom','ask your mother'],['Yalla!',16,'yalla','let\'s go','lets go','hurry'],['Do you know how much this costs?',14,'cost','costs','expensive','money','bills'],['When I was your age...',10,'your age','when i was your age','back home','back in my day'],['Close the door!',8,'door','close the door','shut the door']]],
+ ['Name a famous singer',[['Taylor Swift',28,'taylor swift','taylor'],['Beyoncé',20,'beyonce','beyoncé','queen b'],['Drake',16,'drake'],['Bad Bunny',14,'bad bunny'],['Amr Diab',12,'amr diab','amr'],['Michael Jackson',10,'michael jackson','mj']]],
+ ['Name something you bring to a party',[['Food / a dish',32,'food','dish','dessert','plate'],['Drinks',24,'drinks','soda','juice','drink','water'],['Flowers',14,'flowers','flower'],['A gift',12,'gift','present'],['Baklava / sweets',10,'baklava','sweets','pastries','kunafa','cookies'],['Your appetite',8,'appetite','hungry','stomach']]],
+ ['Name something people are thankful for',[['Family',42,'family','parents','kids'],['Health',22,'health','being healthy','life'],['Friends',14,'friends','friend'],['Food',10,'food'],['Their job',7,'job','work'],['Money',5,'money','cash']]],
+ ['Name a sport people love to watch',[['Soccer',32,'soccer','futbol','world cup'],['Football',26,'football','nfl','american football'],['Basketball',22,'basketball','nba'],['Baseball',8,'baseball','padres','mlb'],['Boxing / UFC',6,'boxing','ufc','mma','fighting'],['Tennis',6,'tennis']]],
+ ['Name something that is trending right now',[['Dubai chocolate',26,'dubai chocolate','dubai','pistachio chocolate'],['Labubu',22,'labubu','labubus'],['Pickleball',18,'pickleball'],['Matcha',14,'matcha','matcha latte'],['Stanley cups',12,'stanley','stanley cup','tumbler'],['ChatGPT / AI',8,'chatgpt','ai','chat gpt','claude']]],
+ ['Name something you always lose in your house',[['Keys',36,'keys','key','car keys'],['Phone',24,'phone','cell phone','iphone'],['TV remote',18,'remote','tv remote','controller'],['Socks',10,'socks','sock'],['Charger',7,'charger','phone charger'],['Wallet',5,'wallet','purse']]],
+ ['Name something people do at a red light',[['Check their phone',38,'phone','text','texting','check phone','instagram'],['Sing / change the song',20,'sing','music','song','change the song','radio'],['Fix their hair / makeup',14,'hair','makeup','mirror','fix hair'],['Eat',10,'eat','snack','food'],['Pick their nose',10,'nose','pick nose'],['Wait patiently',8,'wait','nothing','stop']]],
+ ['Name a reason people go to Costco',[['Free samples',30,'samples','free samples','sample'],['Hot dog combo',22,'hot dog','hotdog','$1.50','food court','pizza'],['Buy in bulk',20,'bulk','buy in bulk','groceries','food','toilet paper'],['Gas',14,'gas','cheap gas'],['Rotisserie chicken',8,'chicken','rotisserie'],['Just to walk around',6,'walk','browse','look around','fun']]],
+ ['Name something people bring to a potluck',[['Casserole',28,'casserole','dish'],['Dessert',22,'dessert','pie','cake','cookies','brownies'],['Salad',18,'salad'],['Chips and dip',14,'chips','dip'],['Drinks',10,'drinks','soda','juice'],['Rolls / bread',8,'rolls','bread']]],
+ ['Name a word you hear a lot at an Arab party',[['Yalla',30,'yalla'],['Habibi',24,'habibi','habibti'],['Wallah',18,'wallah','walla'],['Eat! / Kul!',12,'eat','kul','kol'],['Mashallah',10,'mashallah','masha allah'],['Inshallah',6,'inshallah','insha allah']]],
+ ['Name something you do on your phone when you are bored',[['Scroll TikTok',34,'tiktok','scroll','social media'],['Instagram',22,'instagram','ig','insta'],['Play games',18,'games','game','candy crush'],['Text people',12,'text','texting','message','chat'],['YouTube',8,'youtube','videos','watch videos'],['Online shopping',6,'shop','shopping','amazon']]],
+ ['Name a pizza topping',[['Pepperoni',38,'pepperoni'],['Cheese',18,'cheese','extra cheese'],['Mushrooms',14,'mushroom','mushrooms'],['Sausage',12,'sausage'],['Olives',10,'olive','olives'],['Pineapple',8,'pineapple']]],
+ ['Name something you see at the beach',[['Sand',30,'sand'],['Waves / ocean',24,'water','ocean','waves','sea'],['Seagulls',14,'seagull','seagulls','birds'],['Umbrellas',12,'umbrella','umbrellas'],['Surfers',10,'surfer','surfers','surf'],['Lifeguard',10,'lifeguard']]],
+ ['Name something people do to get ready for a wedding',[['Get their hair done',30,'hair','hairdresser','salon','blowout'],['Buy an outfit',24,'outfit','dress','suit','clothes'],['Diet / work out',16,'diet','gym','workout','work out','lose weight'],['Get nails done',12,'nails','manicure'],['Makeup',10,'makeup','make up'],['Practice dancing',8,'dance','dancing','dabke']]],
+ ['Name a reason someone checks the fridge 10 times',[['Bored',34,'bored','boredom'],['Hungry',30,'hungry','hunger'],['Hoping new food appeared',16,'new food','hope','hoping','magic'],['Looking for a snack',10,'snack','snacks'],['Something cold to drink',10,'drink','cold drink','water','soda']]],
+ ['Name a holiday people decorate for',[['Christmas',46,'christmas','xmas'],['Halloween',24,'halloween'],['Easter',10,'easter'],['Thanksgiving',8,'thanksgiving'],['Fourth of July',6,'4th of july','fourth of july','july 4th','independence day'],['Eid / Ramadan',6,'eid','ramadan']]],
+ ['Name something you always forget when you travel',[['Phone charger',34,'charger','phone charger'],['Toothbrush',22,'toothbrush','toothpaste'],['Socks',12,'socks','sock'],['Passport / ID',12,'passport','id','license'],['Underwear',10,'underwear','boxers'],['Sunglasses',10,'sunglasses','glasses']]],
+ ['Name a Taylor Swift song',[['Shake It Off',30,'shake it off'],['Love Story',22,'love story'],['Anti-Hero',16,'anti hero','antihero'],['Blank Space',14,'blank space'],['Cruel Summer',10,'cruel summer'],['You Belong With Me',8,'you belong with me']]],
+ ['Name something people complain about at Thanksgiving',[['Too much food',26,'too much food','full','stuffed','overate'],['Dry turkey',22,'dry turkey','turkey','dry'],['Politics',16,'politics','arguing','fighting','arguments'],['Doing the dishes',14,'dishes','cleaning','clean up'],['Traffic / travel',12,'traffic','travel','driving','flight'],['Family drama',10,'family','drama','relatives']]],
+ ['Name a dessert at an Arab party',[['Baklava',36,'baklava'],['Kunafa',28,'kunafa','knafeh','kanafeh'],['Cake',12,'cake','wedding cake'],['Klecha / date cookies',10,'klecha','kleicha','maamoul','date cookies'],['Fruit',8,'fruit','fruits','watermelon'],['Ice cream / booza',6,'ice cream','booza']]],
+ ['Name a reason you would leave a party early',[['Tired',34,'tired','sleepy','sleep'],['Work tomorrow',24,'work','early shift','job'],['Feeling sick',14,'sick','not feeling well','ate too much'],['Boring party',12,'boring','bored','lame'],['Babysitter / kids',10,'kids','baby','babysitter'],['Saw your ex',6,'ex','my ex','drama']]],
+ ['Name something a teenager is always doing',[['On their phone',42,'phone','texting','tiktok','social media'],['Sleeping',20,'sleep','sleeping','nap'],['Eating',14,'eating','eat','snacking'],['Playing video games',12,'video games','games','gaming','xbox','playstation'],['Rolling their eyes',6,'eye roll','rolling eyes','attitude'],['Asking for money',6,'money','asking for money']]],
+ ['Name a city people love to visit',[['Las Vegas',28,'vegas','las vegas'],['New York',24,'new york','nyc','new york city'],['Dubai',16,'dubai'],['Paris',14,'paris'],['Los Angeles',10,'la','los angeles'],['Cancun',8,'cancun']]]];
+// ---------- matching ----------
+const STOP=new Set(['a','an','the','my','your','their','his','her','to','of','and','or','some','is','are','be','it','in','on','at','for','with','i','you','they','we','that','this','go']);
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+const toks=s=>norm(s).split(' ').filter(w=>w&&!STOP.has(w)).map(w=>w.length>3&&w.endsWith('s')&&!w.endsWith('ss')?w.slice(0,-1):w);
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m||!n)return m||n;let p=Array(n+1).fill(0).map((_,i)=>i);for(let i=1;i<=m;i++){let c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+const close=(a,b)=>a===b||(a.length>=4&&b.length>=4&&lev(a,b)<=(Math.max(a.length,b.length)>=7?2:1));
+function score(input,alias){const A=toks(input),B=toks(alias);if(!A.length||!B.length)return 0;const na=norm(input),nb=norm(alias);if(na===nb)return 1;
+ if(na.replace(/ /g,'')===nb.replace(/ /g,''))return 1;let hit=0;for(const b of B)if(A.some(a=>close(a,b)))hit++;
+ const cov=hit/B.length;if(cov===1)return .95;if(B.length>1&&cov>=.5&&A.length<=B.length+2)return .7*cov;return 0}
+function match(input,answers){let best=-1,bs=0;answers.forEach((a,i)=>{const al=[a[0],...a.slice(2)];for(const x of al){const s=score(input,x);if(s>bs){bs=s;best=i}}});return bs>=.6?best:-1}
+// ---------- audio ----------
+const A={ctx:null,on:LS.get('tg-feud-music',true),mode:'off',step:0,next:0,timer:null,bpm:116};
+function ac(){if(!A.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;const c=A.ctx=new C();A.out=c.createDynamicsCompressor();A.out.connect(c.destination);A.mus=c.createGain();A.mus.gain.value=0;A.mus.connect(A.out);A.sfx=c.createGain();A.sfx.connect(A.out);
+ const nb=c.createBuffer(1,c.sampleRate,c.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;A.nb=nb}if(A.ctx.state==='suspended')A.ctx.resume();return A.ctx}
+const mt=n=>440*Math.pow(2,(n-69)/12);
+function v(t,f,d,o={}){const c=A.ctx,os=c.createOscillator(),g=c.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);let n=os;if(o.lp){const fl=c.createBiquadFilter();fl.type='lowpass';fl.frequency.value=o.lp;os.connect(fl);n=fl}n.connect(g);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.g||.2,t+(o.a||.004));g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(o.bus||A.sfx);os.start(t);os.stop(t+d+.05)}
+function nz(t,d,o={}){const c=A.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=A.nb;f.type=o.ft||'highpass';f.frequency.value=o.f||7000;s.connect(f);f.connect(g);g.gain.setValueAtTime(o.g||.15,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);g.connect(o.bus||A.sfx);s.start(t,Math.random()*.5);s.stop(t+d+.02)}
+const PROG=[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],BASS=[48,45,41,43],MEL=[72,74,76,0,79,76,74,0,72,74,76,79,81,0,79,0];
+function music(m){A.mode=m;if(!ac())return;A.mus.gain.setTargetAtTime(!A.on||m==='off'?0:m==='party'?.55:.28,A.ctx.currentTime,.3);if(!A.timer){A.next=A.ctx.currentTime+.1;A.step=0;A.timer=setInterval(()=>{const spb=60/A.bpm/4;while(A.next<A.ctx.currentTime+.12){play(A.step,A.next,spb);A.next+=spb;A.step++}},25)}}
+function play(s,t,spb){const st=s%16,ch=Math.floor(s/16)%4;if(st%4===0)v(t,140,.25,{f2:45,g:.7,bus:A.mus});if(st===4||st===12)nz(t,.12,{f:1500,g:.25,bus:A.mus});if(st%2===0)nz(t,.04,{f:9000,g:.06,bus:A.mus});
+ if(st%4===2)v(t,mt(BASS[ch]-12),spb*1.5,{type:'sawtooth',g:.16,lp:500,bus:A.mus});if(st===0||st===8)PROG[ch].forEach(n=>v(t,mt(n+12),.3,{type:'square',g:.025,lp:2600,bus:A.mus}));
+ if(st%2===0&&MEL[(st/2+ch*4)%16])v(t,mt(MEL[(st/2+ch*4)%16]),.14,{type:'triangle',g:A.mode==='party'?.09:.05,bus:A.mus})}
+const SFX={ding(){if(!ac())return;const t=A.ctx.currentTime;[88,93].forEach((n,i)=>v(t+i*.12,mt(n),1.2,{type:'sine',g:.25}));v(t,mt(76),.6,{type:'triangle',g:.12})},
+ buzz(){if(!ac())return;const t=A.ctx.currentTime;v(t,110,.9,{type:'sawtooth',g:.35,lp:1400});v(t,116,.9,{type:'square',g:.18,lp:1200})},
+ win(){if(!ac())return;const t=A.ctx.currentTime;[[60,64,67],[65,69,72],[67,71,74],[72,76,79,84]].forEach((c,i)=>c.forEach(n=>v(t+i*.16,mt(n),i==3?1.4:.22,{type:'sawtooth',g:.06,lp:4000})));for(let i=0;i<30;i++)nz(t+.3+i*.04,.05,{ft:'bandpass',f:2000+rnd(2000),g:.08})},
+ click(){if(!ac())return;v(A.ctx.currentTime,1100,.05,{type:'square',g:.05})}};
+// ---------- fx ----------
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};addEventListener('resize',rs);rs();
+function burst(x,y,n=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc']):null,e:pick(['🦃','🥧','⭐','💵','🍂']),sz:7+Math.random()*8})}}
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life>0&&p.y<cv.height+40);for(const p of parts){p.vy+=.25;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.life-=p.dec;cx.save();cx.globalAlpha=Math.min(1,p.life*1.5);cx.translate(p.x,p.y);cx.rotate(p.r);if(p.c){cx.fillStyle=p.c;cx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2)}else{cx.font=(p.sz*2.6)+'px serif';cx.fillText(p.e,-p.sz,p.sz)}cx.restore()}requestAnimationFrame(loop)})();
+function t2(html,ms=1800){const b=$('#t2');b.innerHTML=html;b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),ms)}
+// ---------- state ----------
+let S=LS.get('tg-feud',null);const save=()=>LS.set('tg-feud',S);
+let fam=[[],[]];
+function parseNames(){const seen=new Set();return $('#names').value.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))}
+function split(){const n=shuffle(parseNames());fam=[[],[]];n.forEach((x,i)=>fam[i%2].push(x));$('#mA').textContent=fam[0].join(', ');$('#mB').textContent=fam[1].join(', ');$('#nCount').textContent=n.length+' players'}
+$('#names').oninput=()=>{LS.set('tg-feud-names',$('#names').value);split()};$('#bMix').onclick=()=>{split();SFX.click()};
+let nR=5;$$('#segR button').forEach(b=>b.onclick=()=>{$$('#segR button').forEach(x=>x.classList.remove('on'));b.classList.add('on');nR=+b.dataset.v});
+const mult=(r,n)=>r===n-1&&n>=3?3:r===3&&n>=5?2:1;
+$('#bStart').onclick=()=>{if(parseNames().length<2){toast('Add at least 2 players 🙂');return}if(!fam[0].length)split();ac();
+ const custom=$('#custom').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length>=3).map(p=>[p[0],p.slice(1).map(x=>{const m=x.match(/^(.*?)\s+(\d+)$/);return m?[m[1],+m[2],m[1]]:[x,10,x]}).sort((a,b)=>b[1]-a[1]).slice(0,8)]);
+ const qs=shuffle(custom).concat(shuffle(Q)).slice(0,nR);
+ S={teams:[{name:$('#nA').value||'Family 1',m:fam[0],score:0},{name:$('#nB').value||'Family 2',m:fam[1],score:0}],qs,r:0,undo:[]};newRound();save();$('#setupOv').classList.add('hidden');render();music('play');t2(`ROUND 1<small>${esc(S.qs[0][0])}</small>`,2600)};
+function newRound(){S.cur={open:[],bank:0,ctrl:-1,strikes:0,phase:'faceoff',done:false,missed:false}}
+function pushUndo(){S.undo.push(JSON.stringify({teams:S.teams,cur:S.cur,r:S.r}));if(S.undo.length>40)S.undo.shift()}
+function render(){const q=S.qs[S.r],c=S.cur,m=mult(S.r,S.qs.length);
+ $('#tnA').textContent=S.teams[0].name;$('#tnB').textContent=S.teams[1].name;$('#tmA').textContent=S.teams[0].m.join(', ');$('#tmB').textContent=S.teams[1].m.join(', ');
+ $('#tsA').textContent=S.teams[0].score;$('#tsB').textContent=S.teams[1].score;$('#bankV').textContent=c.bank;
+ $('#multV').classList.toggle('hidden',m===1);$('#multV').textContent=m===2?'💰 DOUBLE POINTS':'🔥 TRIPLE POINTS';
+ $('#teamA').classList.toggle('ctrl',c.ctrl===0);$('#teamB').classList.toggle('ctrl',c.ctrl===1);
+ ['A','B'].forEach((k,i)=>$('#xs'+k).innerHTML=c.ctrl===i?[0,1,2].map(j=>`<span class="${j<c.strikes?'on':''}">✗</span>`).join(''):'');
+ $('#roundLbl').textContent=`ROUND ${S.r+1} OF ${S.qs.length}${m>1?(m===2?' · DOUBLE':' · TRIPLE'):''}`;$('#qText').textContent=q[0];
+ const ans=q[1],rows=Math.max(4,Math.ceil(ans.length/2))*2;let h='';
+ for(let k=0;k<rows;k++){const idx=k%2===0?k/2:Math.ceil(rows/2)+(k-1)/2;const a=ans[idx];
+  h+=a?`<div class="slot${c.open.includes(idx)||c.done?' open':''}${c.done&&!c.open.includes(idx)?' missed':''}" data-i="${idx}"><div class="face front"><div class="num">${idx+1}</div></div><div class="face back"><span>${esc(a[0])}</span><span class="pts">${a[1]*m}</span></div></div>`:'<div class="slot empty"></div>'}
+ $('#board').innerHTML=h;$('#board').style.gridTemplateRows=`repeat(${rows/2},1fr)`;
+ $$('#board .slot[data-i]').forEach(e=>e.onclick=()=>{const i=+e.dataset.i;if(S.cur.open.includes(i))return;if(S.cur.done){reveal(i,true);return}if(confirm2(i))reveal(i)});
+ let st='',btn='';const T=i=>`<b style="color:var(--${i?'b':'a'})">${esc(S.teams[i].name)}</b>`;
+ if(c.phase==='faceoff'){st='🙋 FACE-OFF! First to buzz answers. Type their answers, then pick who plays.';btn=`<button class="bb ta" data-ctrl="0">🎤 ${esc(S.teams[0].name)} plays</button><button class="bb tb" data-ctrl="1">🎤 ${esc(S.teams[1].name)} plays</button>`}
+ else if(c.phase==='play'){st=`${T(c.ctrl)} is playing. Strikes: ${c.strikes} of 3`;btn=`<button class="bb ghost" id="bEndRound">🏁 End round (give bank to ${esc(S.teams[c.ctrl].name)})</button>`}
+ else if(c.phase==='steal'){st=`🕵️ 3 STRIKES! ${T(1-c.ctrl)} gets ONE guess to steal ${c.bank} points!`;btn=`<button class="bb ghost" id="bNoSteal">❌ Steal failed</button>`}
+ else if(c.phase==='done'){st=c.winner>=0?`🏆 ${T(c.winner)} wins the round! Tap any card to reveal the rest.`:'Round over! Tap any card to reveal the rest.';btn=`<button class="bb ghost" id="bRevealAll">👀 Reveal all</button><button class="bb" id="bNext">${S.r>=S.qs.length-1?'🏆 Final scores':'Next round ➜'}</button>`}
+ $('#status').innerHTML=st;$('#btns').innerHTML=btn;$('#inputRow').classList.toggle('hidden',c.phase==='done');
+ $('#ans').placeholder=c.phase==='steal'?'Type the STEAL answer and press Enter…':'Type what they said and press Enter…';
+ $$('[data-ctrl]').forEach(b=>b.onclick=()=>{pushUndo();c.ctrl=+b.dataset.ctrl;c.phase='play';save();render();SFX.click();t2(`🎤 ${esc(S.teams[c.ctrl].name)} PLAYS!`,1400)});
+ const e1=$('#bEndRound');if(e1)e1.onclick=()=>{pushUndo();awardRound(c.ctrl)};const e2=$('#bNoSteal');if(e2)e2.onclick=()=>{pushUndo();stealFail()};
+ const e3=$('#bRevealAll');if(e3)e3.onclick=()=>{q[1].forEach((_,i)=>{if(!c.open.includes(i))setTimeout(()=>reveal(i,true),i*250)})};
+ const e4=$('#bNext');if(e4)e4.onclick=()=>{if(S.r>=S.qs.length-1){gameEnd();return}S.r++;newRound();save();render();SFX.click();const m2=mult(S.r,S.qs.length);t2(`ROUND ${S.r+1}${m2>1?(m2===2?' · DOUBLE!':' · TRIPLE!'):''}<small>${esc(S.qs[S.r][0])}</small>`,2600)};
+ if(c.phase!=='done')setTimeout(()=>$('#ans').focus(),50)}
+let armI=-1,armT=0;function confirm2(i){if(armI===i&&Date.now()-armT<2500)return true;armI=i;armT=Date.now();toast(`Tap #${i+1} again to reveal it as a correct answer`);return false}
+function reveal(i,silentPts){const c=S.cur,q=S.qs[S.r],m=mult(S.r,S.qs.length);if(c.open.includes(i))return;c.open.push(i);SFX.ding();
+ if(!silentPts&&c.phase!=='done'){c.bank+=q[1][i][1]*m}save();render();
+ const el=$(`.slot[data-i="${i}"]`);if(el&&!silentPts){const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,30)}
+ if(!silentPts){if(c.phase==='steal'){awardRound(1-c.ctrl,true);return}if(c.phase==='play'&&c.open.length>=q[1].length){awardRound(c.ctrl);return}}}
+function strike(){const c=S.cur;SFX.buzz();if(c.phase==='faceoff'){showX(1);return}if(c.phase==='steal'){showX(1);setTimeout(stealFail,900);return}
+ c.strikes++;showX(c.strikes);save();render();if(c.strikes>=3){c.phase='steal';save();setTimeout(()=>{render();t2(`🕵️ STEAL!<small>${esc(S.teams[1-c.ctrl].name)}, huddle up! One guess.</small>`,2400)},1100)}}
+function showX(n){$('#strikes').innerHTML=Array(n).fill('<div class="x">✗</div>').join('');setTimeout(()=>$('#strikes').innerHTML='',1000)}
+function awardRound(w,stole){const c=S.cur;c.done=true;c.phase='done';c.winner=w;S.teams[w].score+=c.bank;save();render();SFX.win();music('party');setTimeout(()=>music('play'),4000);burst(innerWidth*(w?0.8:0.2),innerHeight*.2,120);
+ t2(`${stole?'🕵️ STOLEN!':'🏆 '+esc(S.teams[w].name)+' WINS!'}<small>${stole?esc(S.teams[w].name)+' steal ':'+'}${c.bank} points</small>`,2600)}
+function stealFail(){const c=S.cur;t2(`❌ STEAL FAILED!<small>${esc(S.teams[c.ctrl].name)} keeps the ${c.bank} points</small>`,2000);awardRound(c.ctrl)}
+function check(){const v=$('#ans').value.trim();if(!v||!S||S.cur.phase==='done')return;pushUndo();$('#ans').value='';const q=S.qs[S.r],i=match(v,q[1]);
+ if(i>=0&&!S.cur.open.includes(i)){t2(`✅ "${esc(v)}"<small>SURVEY SAYS: #${i+1} ${esc(q[1][i][0])}!</small>`,1400);reveal(i)}
+ else if(i>=0){t2(`Already up there!<small>${esc(q[1][i][0])}</small>`,1400)}
+ else{t2(`❌ "${esc(v)}"<small>Not on the board!</small>`,1400);strike()}}
+$('#bCheck').onclick=check;$('#ans').addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+$('#bStrike').onclick=()=>{if(!S||S.cur.phase==='done')return;pushUndo();strike()};
+$$('.team').forEach(e=>e.onclick=()=>{});
+$('#bUndo').onclick=()=>{const u=S&&S.undo.pop();if(!u){toast('Nothing to undo');return}const o=JSON.parse(u);S.teams=o.teams;S.cur=o.cur;S.r=o.r;save();render();toast('↩️ Undone')};
+function gameEnd(){music('party');const [a,b]=S.teams,w=a.score===b.score?-1:a.score>b.score?0:1;
+ $('#endWrap').innerHTML=`<div class="bigT">🏆 ${w<0?"IT'S A TIE!":esc(S.teams[w].name)+' WIN!'}</div><div class="subT">Final scores</div>
+ <div class="endTeams">${S.teams.map((t,i)=>`<div class="et${i===w?' win':''}" style="--tc:var(--${i?'b':'a'})"><h4>${i===w?'👑 ':''}${esc(t.name)}</h4><div class="s">${t.score}</div><p>${t.m.map(esc).join(', ')}</p></div>`).join('')}</div>
+ <div class="ctr"><button class="bb gold" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');SFX.win();burst(innerWidth/2,innerHeight/3,220);
+ $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')}}
+const showHow=()=>$('#howOv').classList.remove('hidden');$('#bHow').onclick=showHow;$('#bHow2').onclick=showHow;$('#bHowClose').onclick=()=>$('#howOv').classList.add('hidden');
+$('#bMusic').onclick=()=>{A.on=!A.on;LS.set('tg-feud-music',A.on);$('#bMusic').classList.toggle('off',!A.on);music(A.mode==='off'?'play':A.mode)};$('#bMusic').classList.toggle('off',!A.on);
+$('#bFull').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
+let nArm=0;$('#bNew').onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')};
+$('#names').value=LS.get('tg-feud-names','');split();
+if(S&&S.cur){$('#setupOv').classList.add('hidden');render();document.addEventListener('pointerdown',()=>music('play'),{once:true})}
+</script></body></html>

@@ -93,7 +93,7 @@ textarea.field{min-height:12vh;resize:vertical;line-height:1.45}
 .chip.on{background:#ffcc3d;border-color:#d9480f}
 .row{display:flex;gap:1vw;align-items:center;flex-wrap:wrap}
 .ctr{display:flex;justify-content:center;gap:1vw;margin-top:2vh;flex-wrap:wrap}
-.howg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vh 1.4vw}
+.howg{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vh 1.4vw}
 .hc{background:#fff;border-radius:2vh;padding:1.6vh 1.2vw;font-size:2vh;line-height:1.4;box-shadow:0 .5vh 0 #e8b77a}.hc .i{font-size:4vh;display:block}.hc b{color:#c2410c}
 .wrapc{width:min(1400px,96vw);text-align:center}
 .bigT{font-family:var(--fd);font-size:6vh;color:var(--gold);text-shadow:0 .6vh 0 #8a3a07,0 0 3vh rgba(255,204,61,.5);margin-bottom:1vh}
@@ -113,6 +113,12 @@ textarea.field{min-height:12vh;resize:vertical;line-height:1.45}
 .lbr.crown{border-color:var(--gold);background:rgba(255,204,61,.2)}.lbr.crown .nm::before{content:"👑 "}
 #toast{position:fixed;left:50%;bottom:12vh;transform:translateX(-50%) translateY(20vh);background:var(--gold);color:var(--ink);font-weight:700;font-size:2.4vh;padding:1.2vh 2.6vh;border-radius:3vh;z-index:90;transition:.4s}
 #toast.on{transform:translateX(-50%)}
+.tring{display:inline-grid;place-items:center;width:5vh;height:5vh;border-radius:50%;margin-left:1vw;vertical-align:middle;font-family:var(--fd);font-size:2.4vh;color:var(--ink);background:conic-gradient(var(--gold),var(--gold2));box-shadow:0 0 2vh rgba(255,204,61,.6)}
+.tring.low{background:#ff4d5e;color:#fff;box-shadow:0 0 2.4vh #ff4d5e;animation:pulse .5s infinite alternate}@keyframes pulse{to{transform:scale(1.15)}}
+.flags{display:flex;gap:.6vw;justify-content:center;flex-wrap:wrap;margin-top:.8vh}.flag{font-family:var(--fb);font-weight:700;font-size:1.7vh;padding:.4vh 1.2vh;border-radius:2vh;background:rgba(255,255,255,.1)}
+.flag.dbl{background:linear-gradient(#3ddc84,#16a35a);color:#fff}.flag.gold{background:linear-gradient(var(--gold),var(--gold2));color:var(--ink)}.flag.fire{background:linear-gradient(#ff8a2a,#d12b2b);color:#fff;animation:pulse .6s infinite alternate}
+.tile.goldt{background:linear-gradient(180deg,#fff2a8,#ffcc3d)!important;box-shadow:0 0 2.6vh #ffcc3d,inset 0 -.6vh 0 rgba(0,0,0,.12)!important}
+@keyframes fadeOut{to{opacity:0}}
 </style></head><body>
 <div id="bg"></div><canvas id="fx"></canvas>
 <div id="app">
@@ -157,6 +163,8 @@ textarea.field{min-height:12vh;resize:vertical;line-height:1.45}
  <div class="row"><div class="seg" id="segMode"><button data-v="solo" class="on">🙋 Everyone for themselves</button><button data-v="2">2 teams</button><button data-v="3">3 teams</button><button data-v="4">4 teams</button></div></div>
  <h3>3. How many puzzles?</h3>
  <div class="seg" id="segN"><button data-v="5">5 (~10 min)</button><button data-v="8" class="on">8 (~15 min)</button><button data-v="12">12 (~25 min)</button></div>
+ <h3>⏱ Turn clock</h3>
+ <div class="seg" id="segClock"><button data-v="10" class="on">10 seconds</button><button data-v="15">15 seconds</button><button data-v="0">No clock</button></div>
  <h3>4. Categories <span class="hint">(tap to turn on or off)</span></h3>
  <div class="chips" id="catChips"></div>
  <h3>5. Your own puzzles <span class="hint">(optional, one per line: Category: PHRASE. They get mixed in.)</span></h3>
@@ -173,6 +181,8 @@ textarea.field{min-height:12vh;resize:vertical;line-height:1.45}
   <div class="hc"><span class="i">✅</span>Letter is in it? <b>+100 for every time it shows up</b>, and you go again!</div>
   <div class="hc"><span class="i">🪶</span>Letter not in it? The host <b>plucks a feather</b> off the turkey and it's the next player's turn.</div>
   <div class="hc"><span class="i">💡</span>Think you know it? <b>Solve it!</b> Right = <b>+300 bonus + 100 for every hidden letter</b>. Wrong = lose a feather.</div>
+  <div class="hc"><span class="i">⏱</span><b>10 seconds</b> to call a letter or you lose your turn! Get <b>3 right in a row</b> and you're 🔥 ON FIRE: letters pay <b>2×</b>.</div>
+  <div class="hc"><span class="i">🌟</span>A <b>golden letter</b> hides in every puzzle (3×), and one puzzle is a <b>💰 DOUBLE MONEY</b> puzzle!</div>
   <div class="hc"><span class="i">🦃</span>All 7 feathers gone? the turkey is <b>NAKED</b> 🫣 and nobody gets the bonus. Most money at the end wins!</div>
  </div>
  <div class="ctr"><button class="big-btn" id="bHowClose">LET'S PLUCK! 🦃</button></div>
@@ -207,8 +217,11 @@ const BANK={
  'Arabic words':['HABIBI','YALLA','KHALAS','MABROOK','INSHALLAH','WALLAH','SAHTEIN','SHUKRAN','MASHALLAH','HAYATI'],
  'Places':['EL CAJON','SAN DIEGO','BAGHDAD','BEIRUT','NEW YORK CITY','LAS VEGAS','DISNEYLAND','TIJUANA','DUBAI','DETROIT'],
  'Family life':['FAMILY PHOTO','GROUP CHAT','SECOND PLATE','DO THE DISHES','NAP ON THE COUCH','TAKE LEFTOVERS HOME','WHEN ARE YOU GETTING MARRIED','AUNTIE GOSSIP','ONE MORE BITE'],
+ 'Trending':['DUBAI CHOCOLATE','LABUBU','PICKLEBALL','STANLEY CUP','SIX SEVEN','MATCHA LATTE','ICE BATH','CHATGPT','KPOP DEMON HUNTERS','WICKED','SQUID GAME','AIR FRYER','GYM SELFIE'],
+ 'TV shows':['STRANGER THINGS','WEDNESDAY','THE OFFICE','FRIENDS','GAME OF THRONES','THE WHITE LOTUS','THE BEAR','SEVERANCE','BREAKING BAD','SPONGEBOB','THE SIMPSONS'],
+ 'Fast food':['IN N OUT','CHICK FIL A','TACO BELL','SHAKE SHACK','DOUBLE DOUBLE','CHICKEN NUGGETS','FRENCH FRIES','MILKSHAKE','PIZZA HUT','STARBUCKS'],
  'Sports':['SOCCER','BASKETBALL','WORLD CUP','SUPER BOWL','TOUCHDOWN','PENALTY KICK','BOXING MATCH','TENNIS']};
-const CAT_EMOJI={'Thanksgiving':'🦃','Arab food':'🧆','Movies':'🎬','Reality TV':'📺','Celebrities':'⭐','Arabic words':'🗣️','Places':'📍','Family life':'👨‍👩‍👧','Sports':'⚽'};
+const CAT_EMOJI={'Thanksgiving':'🦃','Arab food':'🧆','Movies':'🎬','Reality TV':'📺','Celebrities':'⭐','Arabic words':'🗣️','Places':'📍','Family life':'👨‍👩‍👧','Sports':'⚽','Trending':'🔥','TV shows':'📺','Fast food':'🍔'};
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let S=LS.get('tg-pluck',null);const save=()=>LS.set('tg-pluck',S);
 const FEATHERS=7;
@@ -248,6 +261,7 @@ const LINES={
  hit:['Ugh... lucky guess 🙄','Stop being smart, habibi 😒','Fine. FINE. 😤','Nice... I guess 🫤','Who invited the genius? 🤓'],
  solve:['PHEW! I keep my feathers! 😅','Saved! Still fabulous 💅','Thank you! I owe you a pie 🥧'],
  low:['I\'m FREEZING! 🥶','Please... I have a family 🥺','Someone get me a sweater 🧣'],
+ slow:['Tick tock, habibi! ⏰','Too slow! I almost fell asleep 😴','Hurry up, the pie is getting cold 🥧'],
  naked:['DON\'T LOOK AT ME!! 😳','I feel so... exposed 🫣','This is SO embarrassing 🙈','Can I at least get a towel?! 🧻']};
 let sayT;function tkSay(kind){const el=$('#tkSay');el.textContent=pick(LINES[kind]);el.classList.add('on');clearTimeout(sayT);sayT=setTimeout(()=>el.classList.remove('on'),2600)}
 function drawTurkey(){const fl=S&&S.cur?S.cur.feathers:FEATHERS,naked=fl===0,pinkA=(1-fl/FEATHERS)*.85;let f='';
@@ -282,13 +296,14 @@ function renderSetup(){$('#nCount').textContent=parseNames().length+' players';
 $('#names').oninput=()=>{renderSetup();LS.set('tg-pluck-names',$('#names').value)};
 $$('#segMode button').forEach(b=>b.onclick=()=>{$$('#segMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setup.mode=b.dataset.v});
 $$('#segN button').forEach(b=>b.onclick=()=>{$$('#segN button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setup.n=+b.dataset.v});
+setup.clock=10;$$('#segClock button').forEach(b=>b.onclick=()=>{$$('#segClock button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setup.clock=+b.dataset.v});
 $('#bStart').onclick=()=>{const names=parseNames();if(names.length<2){toast('Add at least 2 players 🙂');return}
  const custom=$('#custom').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.+?)\s*:\s*(.+)$/);return m?{cat:m[1],p:m[2].toUpperCase()}:{cat:'Mystery',p:l.toUpperCase()}}).filter(x=>/[A-Z]/.test(x.p));
  let pool=[];setup.cats.forEach(c=>BANK[c].forEach(p=>pool.push({cat:c,p})));if(!pool.length&&!custom.length){toast('Pick at least one category');return}
  const n=setup.n,cust=shuffle(custom).slice(0,n),fill=shuffle(pool).slice(0,Math.max(0,n-cust.length));const puzzles=shuffle(cust.concat(fill));
  let teams;if(setup.mode==='solo')teams=names.map((nm,i)=>({name:nm,m:[nm],score:0,c:TC[i%TC.length]}));
  else{const k=Math.min(+setup.mode,names.length),sh=shuffle(names),tn=shuffle(TEAMN);teams=[];for(let i=0;i<k;i++)teams.push({name:tn[i],m:[],score:0,c:TC[i]});sh.forEach((nm,i)=>teams[i%k].m.push(nm))}
- ac();S={teams,puzzles,i:0,turn:0,cur:null,undo:[],crowns:null};newPuzzle(true);save();$('#setupOv').classList.add('hidden');showDraw()};
+ ac();S={teams,puzzles,i:0,turn:0,cur:null,undo:[],crowns:null,clock:setup.clock,dbl:puzzles.length>2?1+rnd(puzzles.length-1):-1};newPuzzle(true);save();$('#setupOv').classList.add('hidden');showDraw()};
 // ---------- who first ----------
 function showDraw(){$('#drawOv').classList.remove('hidden');$('#drawT').textContent=S.teams[0].m.length>1?'👥 THE TEAMS':'🎯 WHO GOES FIRST?';$('#drawSub').textContent='Spin to pick who calls the first letter!';
  const c=$('#drawCols');c.style.gridTemplateColumns=`repeat(${Math.min(S.teams.length,5)},1fr)`;
@@ -297,48 +312,56 @@ $('#bSpin').onclick=()=>{$('#bSpin').classList.add('hidden');const cols=$$('#dra
  const go=()=>{cols.forEach(x=>x.classList.remove('lit'));cols[i%L].classList.add('lit');SFX.tick();if(--n<=0){S.turn=win;save();SFX.solve();const r=cols[win].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,90);
    $('#drawSub').innerHTML=`<b style="color:${S.teams[win].c};font-size:3.4vh">${esc(S.teams[win].name)}</b> goes first!`;setTimeout(()=>{$('#drawOv').classList.add('hidden');render()},2200);return}i++;d=Math.min(d*1.09,420);setTimeout(go,d)};go()};
 // ---------- game ----------
-function newPuzzle(){const P=S.puzzles[S.i];S.cur={p:P.p,cat:P.cat,shown:[],wrong:[],feathers:FEATHERS,done:false,outcome:null}}
+function newPuzzle(){const P=S.puzzles[S.i],ls=[...new Set(P.p.replace(/[^A-Z]/g,''))];S.cur={p:P.p,cat:P.cat,shown:[],wrong:[],feathers:FEATHERS,done:false,outcome:null,dbl:S.i===S.dbl,gold:ls.length>2?pick(ls):null,streak:{i:-1,n:0}}}
 const letters=p=>[...new Set(p.replace(/[^A-Z]/g,''))];
 function hiddenCount(){const c=S.cur;return [...c.p].filter(ch=>/[A-Z]/.test(ch)&&!c.shown.includes(ch)).length}
 function render(flipLetter){const c=S.cur;if(!c)return;
  $('#catPill').textContent=(CAT_EMOJI[c.cat]||'🧩')+' '+c.cat;$('#roundPill').textContent=`Puzzle ${S.i+1} of ${S.puzzles.length}`;
  const words=c.p.split(' '),len=c.p.length;$('#words').className='words '+(len>24?'small':len<12?'big':'');
- $('#words').innerHTML=words.map(w=>`<div class="word">${[...w].map(ch=>/[A-Z]/.test(ch)?`<div class="tile${c.shown.includes(ch)||c.done?'':' hid'}${flipLetter===ch?' flip':''}">${c.shown.includes(ch)||c.done?ch:''}</div>`:`<div class="tile sym">${esc(ch)}</div>`).join('')}</div>`).join('');
+ $('#words').innerHTML=words.map(w=>`<div class="word">${[...w].map(ch=>/[A-Z]/.test(ch)?`<div class="tile${c.shown.includes(ch)||c.done?'':' hid'}${flipLetter===ch?' flip':''}${(c.shown.includes(ch)||c.done)&&ch===c.gold?' goldt':''}">${c.shown.includes(ch)||c.done?ch:''}</div>`:`<div class="tile sym">${esc(ch)}</div>`).join('')}</div>`).join('');
  $('#used').innerHTML=c.wrong.length?'Not in it: '+c.wrong.map(l=>`<s>${l}</s>`).join(''):'';
- const t=S.teams[S.turn];$('#turn').style.setProperty('--tc',t.c);$('#turn').innerHTML=c.done?'':`🎯 <b>${esc(t.name)}</b>, call a letter!`;
+ const t=S.teams[S.turn];$('#turn').style.setProperty('--tc',t.c);const st=c.streak||{i:-1,n:0},hot=st.i===S.turn&&st.n>=2;
+ $('#turn').innerHTML=c.done?'':`🎯 <b>${esc(t.name)}</b>, call a letter!${S.clock?' <span class="tring" id="tring">'+S.clock+'</span>':''}<div class="flags">${c.dbl?'<span class="flag dbl">💰 DOUBLE MONEY PUZZLE</span>':''}${c.gold?'<span class="flag gold">🌟 A golden letter is hiding: worth 3×!</span>':''}${hot?'<span class="flag fire">🔥 ON FIRE! Letters are worth 2×</span>':st.i===S.turn&&st.n===1?'<span class="flag">🔥 One more right for a streak!</span>':''}</div>`;
  $('#keys').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`<button class="key${c.shown.includes(l)?' hit':c.wrong.includes(l)?' miss':''}" data-l="${l}" ${c.shown.includes(l)||c.wrong.includes(l)||c.done?'disabled':''}>${l}</button>`).join('');
  $$('#keys .key').forEach(k=>k.onclick=()=>guess(k.dataset.l));
  $('#actions').classList.toggle('hidden',c.done);$('#solveAsk').classList.add('hidden');$('#nextRow').classList.toggle('hidden',!c.done);
  $('#bNext').textContent=S.i>=S.puzzles.length-1?'🏆 Final scores':'Next puzzle ➜';
  $('#scoreList').innerHTML=S.teams.map((x,i)=>`<div class="sc${i===S.turn&&!c.done?' now':''}" style="--tc:${x.c}" data-i="${i}"><div><div class="n">${esc(x.name)}</div>${x.m.length>1?`<div class="m">${x.m.map(esc).join(', ')}</div>`:''}</div><div class="v" id="sv${i}">${money(x.score)}</div></div>`).join('');
  $$('#scoreList .sc').forEach(e=>e.onclick=()=>{if(S.cur.done)return;S.turn=+e.dataset.i;save();render();SFX.click()});
- drawTurkey();const tk=$('#turkey');tk.classList.toggle('tk-shiver',c.feathers<=2&&!(c.done&&c.outcome==='solved'));tk.classList.toggle('tk-bob',c.feathers>2||(c.done&&c.outcome==='solved'));tk.classList.remove('tk-dance')}
+ startClock();drawTurkey();const tk=$('#turkey');tk.classList.toggle('tk-shiver',c.feathers<=2&&!(c.done&&c.outcome==='solved'));tk.classList.toggle('tk-bob',c.feathers>2||(c.done&&c.outcome==='solved'));tk.classList.remove('tk-dance')}
 function pushUndo(){S.undo.push(JSON.stringify({teams:S.teams,turn:S.turn,cur:S.cur}));if(S.undo.length>40)S.undo.shift()}
 function floatAt(i,txt,col){const el=$('#sv'+i);if(!el)return;const r=el.getBoundingClientRect(),f=document.createElement('div');f.className='floatNum';f.textContent=txt;f.style.color=col;f.style.left=(r.left+r.width/2)+'px';f.style.top=r.top+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1600)}
 function banner(html,ms=1800){const b=$('#banner');b.innerHTML=html;b.classList.add('on');clearTimeout(b._t);if(ms)b._t=setTimeout(()=>b.classList.remove('on'),ms)}
+let clk=null,clkN=0;function stopClock(){clearInterval(clk);clk=null}
+function startClock(){stopClock();const c=S.cur;if(!S.clock||!c||c.done||!$('#solveAsk').classList.contains('hidden'))return;clkN=S.clock;
+ clk=setInterval(()=>{if(!$('#howOv').classList.contains('hidden'))return;clkN--;const el=$('#tring');if(el){el.textContent=clkN;el.classList.toggle('low',clkN<=3)}if(clkN<=3&&clkN>0)SFX.tick();
+  if(clkN<=0){stopClock();pushUndo();S.cur.streak={i:-1,n:0};const was=S.teams[S.turn].name;nextTurn();save();render();if(A.ctx)v(A.ctx.currentTime,160,.4,{type:'sawtooth',f2:90,g:.15,lp:800});banner(`⏰ TOO SLOW, ${esc(was)}!<small>${esc(S.teams[S.turn].name)}'s turn</small>`,1600);tkSay('slow')}},1000)}
+function flashGold(){const f=document.createElement('div');f.style.cssText='position:fixed;inset:0;z-index:58;pointer-events:none;background:radial-gradient(circle,rgba(255,220,100,.45),transparent 70%);animation:fadeOut .8s forwards';document.body.appendChild(f);setTimeout(()=>f.remove(),900)}
 function nextTurn(){S.turn=(S.turn+1)%S.teams.length}
 function guess(l){const c=S.cur;if(c.done||c.shown.includes(l)||c.wrong.includes(l))return;pushUndo();
- const n=[...c.p].filter(ch=>ch===l).length,i=S.turn;
- if(n){c.shown.push(l);const pts=100*n;S.teams[i].score+=pts;SFX.hit(n);render(l);floatAt(i,'+'+money(pts),'#5dffa0');
-  banner(`✅ ${n} ${l}${n>1?"'s":''}!<small>${esc(S.teams[i].name)} +${money(pts)}, go again!</small>`,1400);if(rnd(2))tkSay('hit');
+ stopClock();const n=[...c.p].filter(ch=>ch===l).length,i=S.turn;
+ if(n){c.shown.push(l);c.streak=c.streak&&c.streak.i===i?{i,n:c.streak.n+1}:{i,n:1};const fire=c.streak.n>=3,gold=l===c.gold,mult=(c.dbl?2:1)*(gold?3:1)*(fire?2:1),pts=100*n*mult;S.teams[i].score+=pts;SFX.hit(n);render(l);floatAt(i,'+'+money(pts),gold?'#ffcc3d':'#5dffa0');
+  const tags=[gold?'🌟 GOLDEN LETTER 3×':'',fire?`🔥 ${c.streak.n} IN A ROW 2×`:'',c.dbl?'💰 DOUBLE':''].filter(Boolean).join(' · ');
+  if(gold||fire){burst(innerWidth/2,innerHeight*.3,gold?90:50);flashGold()}
+  banner(`✅ ${n} ${l}${n>1?"'s":''}!<small>${esc(S.teams[i].name)} +${money(pts)}${tags?' · '+tags:''}, go again!</small>`,1600);if(rnd(2))tkSay('hit');
   if(hiddenCount()===0)finish('solved',i,true)}
- else{c.wrong.push(l);c.feathers--;SFX.pluck();const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}
+ else{c.wrong.push(l);c.feathers--;c.streak={i:-1,n:0};SFX.pluck();const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}
   if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}
   nextTurn();tkSay(c.feathers<=2?'low':'pluck');setTimeout(()=>{render();banner(`🪶 No ${l}! Pluck!<small>${esc(S.teams[S.turn].name)}'s turn</small>`,1500)},700)}
  save()}
 function finish(outcome,i,byLetters){const c=S.cur;c.done=true;c.outcome=outcome;
- if(outcome==='solved'){const bonus=300+(byLetters?0:100*hiddenCount());S.teams[i].score+=bonus;S.turn=i;
+ stopClock();if(outcome==='solved'){const bonus=(300+(byLetters?0:100*hiddenCount()))*(c.dbl?2:1);S.teams[i].score+=bonus;S.turn=i;
   render();floatAt(i,'+'+money(bonus),'#ffcc3d');SFX.solve();burst(innerWidth/2,innerHeight/2,140);music('party');setTimeout(()=>music('play'),5000);
   banner(`🎉 ${esc(S.teams[i].name)} SOLVED IT!<small>+${money(bonus)} bonus</small>`,0);tkSay('solve')}
  else{render();SFX.lose();tkSay('naked');banner(`🫣 THE TURKEY IS NAKED!<small>Nobody got it... it was: ${esc(c.p)}</small>`,0)}
  save()}
-$('#bSolve').onclick=()=>{$('#actions').classList.add('hidden');$('#solveAsk').classList.remove('hidden');SFX.click()};
+$('#bSolve').onclick=()=>{stopClock();$('#actions').classList.add('hidden');$('#solveAsk').classList.remove('hidden');SFX.click()};
 $('#sCancel').onclick=()=>render();
 $('#sYes').onclick=()=>{pushUndo();const i=S.turn,h=hiddenCount();finish('solved',i,false)};
-$('#sNo').onclick=()=>{pushUndo();const c=S.cur;c.feathers--;SFX.pluck();{const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}}$('#solveAsk').classList.add('hidden');if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}nextTurn();tkSay('pluck');setTimeout(render,700);banner(`❌ Not quite!<small>A feather is plucked. ${esc(S.teams[S.turn].name)}'s turn</small>`,1600);save()};
-$('#bPass').onclick=()=>{pushUndo();nextTurn();save();render();SFX.click()};
+$('#sNo').onclick=()=>{pushUndo();const c=S.cur;c.feathers--;c.streak={i:-1,n:0};SFX.pluck();{const fe=$('#f'+c.feathers);if(fe){fe.classList.add('gone');const r=fe.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,14,true)}}$('#solveAsk').classList.add('hidden');if(c.feathers<=0){save();setTimeout(()=>finish('turkey'),900);return}nextTurn();tkSay('pluck');setTimeout(render,700);banner(`❌ Not quite!<small>A feather is plucked. ${esc(S.teams[S.turn].name)}'s turn</small>`,1600);save()};
+$('#bPass').onclick=()=>{pushUndo();S.cur.streak={i:-1,n:0};nextTurn();save();render();SFX.click()};
 $('#bReveal').onclick=()=>{pushUndo();finish('turkey')};
-$('#bNext').onclick=()=>{$('#banner').classList.remove('on');if(S.i>=S.puzzles.length-1){gameEnd();return}S.i++;newPuzzle();nextTurn();save();render();SFX.click()};
+$('#bNext').onclick=()=>{$('#banner').classList.remove('on');if(S.i>=S.puzzles.length-1){stopClock();gameEnd();return}S.i++;newPuzzle();nextTurn();save();render();SFX.click();if(S.cur.dbl){SFX.solve();flashGold();burst(innerWidth/2,innerHeight*.3,120);banner('💰 DOUBLE MONEY PUZZLE!<small>Every letter and the solve bonus are worth 2×</small>',2600)}};
 $('#bUndo').onclick=()=>{const u=S.undo.pop();if(!u){toast('Nothing to undo');return}const o=JSON.parse(u);S.teams=o.teams;S.turn=o.turn;S.cur=o.cur;$('#banner').classList.remove('on');save();render();toast('↩️ Undone')};
 document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;if(!$('#setupOv').classList.contains('hidden')||!$('#drawOv').classList.contains('hidden'))return;const k=e.key.toUpperCase();if(/^[A-Z]$/.test(k)&&S&&S.cur&&!S.cur.done)guess(k)});
 // ---------- end ----------

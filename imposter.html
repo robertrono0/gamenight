@@ -185,7 +185,7 @@ input{background:rgba(0,0,0,.4)!important;color:var(--paper)!important;border:1p
 <!-- ============ PLAYER VIEW (opened from the QR code) ============ -->
 <div id="player" class="hidden">
   <div><span class="pill">🔍 Case file · Thanksgiving edition</span></div>
-  <h1 class="bubble">Who's the Imposter?</h1>
+  <h1 class="bubble" id="pTitle">Who's the Imposter?</h1>
   <div class="pnum" id="pNum"></div>
   <div id="join" class="hidden" style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%">
     <div class="pnum">📱 Type the game code from the TV</div>
@@ -209,11 +209,11 @@ input{background:rgba(0,0,0,.4)!important;color:var(--paper)!important;border:1p
   </div>
   <div class="flip" id="flip">
     <div class="flipin">
-      <div class="face front"><div class="stampx">TOP SECRET</div><div class="q">🦃</div><div class="hand" style="font-size:16px;opacity:.8">The Thanksgiving Dinner Case</div><div class="t">Tap to open your file</div><div class="hand" style="font-size:18px">Make sure nobody is looking...</div></div>
+      <div class="face front"><div class="stampx">TOP SECRET</div><div class="q">🦃</div><div class="hand" style="font-size:16px;opacity:.8">The Thanksgiving Dinner Case</div><div class="t" id="pTap">Tap to open your file</div><div class="hand" style="font-size:18px">Make sure nobody is looking...</div></div>
       <div class="face back" id="back"></div>
     </div>
   </div>
-  <div class="warn">Tap the card again to hide it. Keep your phone to yourself! 😉</div>
+  <div class="warn" id="pHide">Tap the card again to hide it. Keep your phone to yourself! 😉</div>
 </div>
 
 <!-- ============ HOST VIEW (TV / laptop) ============ -->
@@ -237,6 +237,7 @@ input{background:rgba(0,0,0,.4)!important;color:var(--paper)!important;border:1p
     <div>
       <div class="opt"><h3>🍽️ Category</h3><div class="seg" id="catSeg"></div></div>
       <div class="opt"><h3>🕵️ Imposters</h3><div class="seg" id="impSeg"></div><div class="note" id="impNote"></div></div>
+      <div class="opt"><h3>🌐 Language on phones</h3><div class="seg" id="langSeg"></div><div class="note">Everyone can also flip it on their own phone with the 🌐 button.</div></div>
       <div class="opt"><h3>💡 Imposter hint</h3><div class="seg" id="hintSeg"></div><div class="note">With a hint, the imposter sees the category so they can bluff.</div></div>
       <div class="opt"><h3>⏱️ Talking time</h3><div class="seg" id="timeSeg"></div></div>
       <button class="big" id="startBtn" style="width:100%">Start the round! 🎲</button>
@@ -2625,26 +2626,36 @@ var qrcode = function() {
 <script>
 // ===== Who's the Imposter? =====
 const BASE='https://robertrono0.github.io/gamenight/imposter.html';
-const CATS={
- food:{name:'Thanksgiving food 🍗',words:['turkey','stuffing','mashed potatoes','gravy','pumpkin pie','cranberry sauce','corn','sweet potato','apple pie','green beans','rolls','mac and cheese','salad','ice cream','rice','hummus','chocolate cake','soup','pizza','popcorn']},
- animals:{name:'Animals 🐾',words:['dog','cat','lion','elephant','monkey','horse','chicken','fish','snake','camel','bear','rabbit','giraffe','penguin','shark','cow','duck','tiger','frog','owl']},
- places:{name:'Places 📍',words:['beach','airport','hospital','school','mall','restaurant','gym','church','park','zoo','movie theater','supermarket','library','hotel','bank','farm','kitchen','museum','gas station','wedding']},
- home:{name:'Things at home 🏠',words:['bed','couch','TV','fridge','phone','toothbrush','pillow','lamp','mirror','door','window','shower','oven','chair','table','clock','blanket','remote control','washing machine','carpet']},
- jobs:{name:'Jobs 👷',words:['doctor','teacher','police officer','chef','pilot','firefighter','dentist','farmer','barber','mechanic','nurse','lawyer','singer','soccer player','taxi driver','photographer','baker','engineer','firefighter','waiter'].filter((v,i,a)=>a.indexOf(v)===i)},
- sports:{name:'Sports & games ⚽',words:['soccer','basketball','swimming','tennis','boxing','football','baseball','bowling','chess','cards','running','volleyball','golf','dancing','karate','skiing','bingo','video games','hide and seek','yoga']},
-
- arabfood:{name:'Arab food 🧆',words:['hummus','falafel','shawarma','kebab','baklava','kunafa','dolma','tabbouleh','fattoush','mansaf','maqluba','kibbeh','pita bread','labneh',"za'atar",'shish tawook','kleicha','biryani','Arabic coffee','grape leaves']},
- celebs:{name:'Celebrities ⭐',words:['Taylor Swift','Cristiano Ronaldo','Messi','Beyoncé','Kim Kardashian','Drake','The Rock','Shakira','Michael Jackson','Mr. Bean','Jackie Chan','Rihanna','Will Smith','Justin Bieber','Haifa Wehbe','Amr Diab','Nancy Ajram','Mohamed Salah','Oprah','Elon Musk']},
- movies:{name:'Movies 🎬',words:['Titanic','Frozen','The Lion King','Aladdin','Toy Story','Home Alone','Shrek','Harry Potter','Spider-Man','Fast & Furious','Avatar','Finding Nemo','Barbie','Jaws','Star Wars','Minions','Cars','Coco','The Avengers','Batman']},
- reality:{name:'Reality TV 📺',words:['Love Is Blind','The Bachelor','Survivor','Shark Tank','Love Island','The Voice','Dancing with the Stars','Real Housewives','The Kardashians','Selling Sunset','Big Brother','Kitchen Nightmares','American Idol','The Masked Singer','90 Day Fiancé','Too Hot to Handle',"Hell's Kitchen",'Below Deck','Jersey Shore','Project Runway']},
- parties:{name:'Parties & holidays 🎉',words:['wedding','birthday','Christmas','Easter','New Year\'s Eve','Halloween','baby shower','graduation','engagement party','Thanksgiving','Eid','Valentine\'s Day','Fourth of July','bachelor party','anniversary','barbecue','picnic','prom','family reunion','game night']},
- clothes:{name:'Clothes 👗',words:['jeans','dress','suit','tie','sneakers','hat','scarf','gloves','jacket','hoodie','pajamas','sunglasses','socks','high heels','swimsuit','belt','watch','necklace','sandals','boots']},
- countries:{name:'Countries 🌍',words:['Iraq','Lebanon','Egypt','Jordan','Mexico','Italy','France','Japan','Brazil','Canada','Turkey','Greece','India','China','Spain','Saudi Arabia','Morocco','England','Germany','Australia']},
- travel:{name:'Ways to travel 🚗',words:['car','bus','train','airplane','bicycle','motorcycle','boat','taxi','helicopter','truck','scooter','subway','ambulance','fire truck','skateboard','cruise ship','tractor','limousine','rocket','horse']},
- fruit:{name:'Fruits & veggies 🍉',words:['apple','banana','watermelon','grapes','orange','strawberry','pineapple','mango','lemon','tomato','potato','carrot','onion','cucumber','pomegranate','dates','figs','avocado','cherry','coconut']},
- brands:{name:'Brands 🛍️',words:["McDonald's",'Starbucks','Apple','Nike','Amazon','Coca-Cola','Target','Costco','Netflix','Instagram','TikTok','Walmart','Disney','In-N-Out','Tesla','Gucci','Adidas','Uber','Google','IKEA']},
- mix:{name:'Mix it up! 🎲',words:[]}};
+const CATS_BI={
+ food:['Thanksgiving food 🍗','أكل عيد الشكر 🍗','turkey|ديك رومي,stuffing|حشوة الديك الرومي,mashed potatoes|بطاطا مهروسة,gravy|صلصة المرق,pumpkin pie|فطيرة اليقطين,cranberry sauce|صلصة التوت البري,corn|ذرة,sweet potato|بطاطا حلوة,apple pie|فطيرة التفاح,green beans|فاصوليا خضراء,rolls|خبز صغير,mac and cheese|معكرونة بالجبن,salad|سلطة,ice cream|آيس كريم,rice|رز,hummus|حمص,chocolate cake|كيكة شوكولاتة,soup|شوربة,pizza|بيتزا,popcorn|فشار,pecan pie|فطيرة البيكان,cornbread|خبز الذرة,deviled eggs|بيض محشي,roast chicken|دجاج مشوي,cheesecake|تشيز كيك,lasagna|لازانيا,meatballs|كرات اللحم,apple cider|عصير التفاح,whipped cream|كريمة مخفوقة,cookies|كوكيز'],
+ animals:['Animals 🐾','حيوانات 🐾','dog|كلب,cat|قطة,lion|أسد,elephant|فيل,monkey|قرد,horse|حصان,chicken|دجاجة,fish|سمكة,snake|أفعى,camel|جمل,bear|دب,rabbit|أرنب,giraffe|زرافة,penguin|بطريق,shark|قرش,cow|بقرة,duck|بطة,tiger|نمر,frog|ضفدع,owl|بومة,kangaroo|كنغر,dolphin|دلفين,zebra|حمار وحشي,sheep|خروف,goat|ماعز,parrot|ببغاء,butterfly|فراشة,crocodile|تمساح,wolf|ذئب,turkey|ديك رومي'],
+ places:['Places 📍','أماكن 📍','beach|شاطئ,airport|مطار,hospital|مستشفى,school|مدرسة,mall|مول,restaurant|مطعم,gym|نادي رياضي,church|كنيسة,park|حديقة عامة,zoo|حديقة حيوانات,movie theater|سينما,supermarket|سوبرماركت,library|مكتبة,hotel|فندق,bank|بنك,farm|مزرعة,kitchen|مطبخ,museum|متحف,gas station|محطة بنزين,wedding|عرس,Costco|كوستكو,barbershop|صالون حلاقة,pharmacy|صيدلية,bakery|مخبز,casino|كازينو,Disneyland|ديزني لاند,desert|صحراء,mountain|جبل,swimming pool|مسبح,car wash|مغسلة سيارات'],
+ home:['Things at home 🏠','أغراض البيت 🏠','bed|سرير,couch|كنبة,TV|تلفزيون,fridge|ثلاجة,phone|تلفون,toothbrush|فرشاة أسنان,pillow|مخدة,lamp|مصباح,mirror|مراية,door|باب,window|شباك,shower|دوش,oven|فرن,chair|كرسي,table|طاولة,clock|ساعة حائط,blanket|بطانية,remote control|ريموت,washing machine|غسالة,carpet|سجادة,vacuum|مكنسة كهربائية,microwave|مايكرويف,air fryer|قلاية هوائية,coffee maker|ماكينة قهوة,slippers|شبشب,laptop|لابتوب,candle|شمعة,fan|مروحة,towel|منشفة,hookah|أرجيلة'],
+ jobs:['Jobs 👷','مهن 👷','doctor|طبيب,teacher|معلم,police officer|شرطي,chef|طباخ,pilot|طيار,firefighter|رجل إطفاء,dentist|طبيب أسنان,farmer|مزارع,barber|حلاق,mechanic|ميكانيكي,nurse|ممرضة,lawyer|محامي,singer|مطرب,soccer player|لاعب كرة قدم,taxi driver|سائق تاكسي,photographer|مصور,baker|خباز,engineer|مهندس,pharmacist|صيدلي,waiter|نادل,real estate agent|وكيل عقارات,influencer|مؤثر سوشال ميديا,DJ|دي جي,astronaut|رائد فضاء,judge|قاضي,mailman|ساعي البريد,plumber|سباك,priest|كاهن,jeweler|صائغ ذهب,Uber driver|سائق أوبر'],
+ sports:['Sports & games ⚽','رياضة وألعاب ⚽','soccer|كرة القدم,basketball|كرة السلة,swimming|سباحة,tennis|تنس,boxing|ملاكمة,football|كرة القدم الأمريكية,baseball|بيسبول,bowling|بولينغ,chess|شطرنج,cards|ورق الشدة,running|ركض,volleyball|كرة الطائرة,golf|غولف,dancing|رقص,karate|كاراتيه,skiing|تزلج,bingo|بينغو,video games|ألعاب فيديو,hide and seek|الغميضة,yoga|يوغا,pickleball|بيكل بول,backgammon|طاولة زهر,ping pong|تنس طاولة,UFC|يو إف سي,surfing|ركوب الأمواج,cycling|ركوب الدراجات,hockey|هوكي,wrestling|مصارعة,Uno|أونو,dominoes|دومينو'],
+ arabfood:['Arab food 🧆','أكل عربي 🧆',"hummus|حمص,falafel|فلافل,shawarma|شاورما,kebab|كباب,baklava|بقلاوة,kunafa|كنافة,dolma|دولمة,tabbouleh|تبولة,fattoush|فتوش,mansaf|منسف,maqluba|مقلوبة,kibbeh|كبة,pita bread|خبز عربي,labneh|لبنة,za'atar|زعتر,shish tawook|شيش طاووق,kleicha|كليجة,biryani|برياني,Arabic coffee|قهوة عربية,grape leaves|ورق عنب,masgouf|مسكوف,tashreeb|تشريب,pacha|باجة,samoon|صمون,dates|تمر,halva|حلاوة,mujaddara|مجدرة,manakish|مناقيش,tea with cardamom|شاي بالهيل,kubba halab|كبة حلب"],
+ celebs:['Celebrities ⭐','مشاهير ⭐','Taylor Swift|تايلور سويفت,Cristiano Ronaldo|كريستيانو رونالدو,Messi|ميسي,Beyoncé|بيونسيه,Kim Kardashian|كيم كارداشيان,Drake|دريك,The Rock|ذا روك,Shakira|شاكيرا,Michael Jackson|مايكل جاكسون,Mr. Bean|مستر بين,Jackie Chan|جاكي شان,Rihanna|ريهانا,Will Smith|ويل سميث,Justin Bieber|جاستن بيبر,Haifa Wehbe|هيفاء وهبي,Amr Diab|عمرو دياب,Nancy Ajram|نانسي عجرم,Mohamed Salah|محمد صلاح,Oprah|أوبرا,Elon Musk|إيلون ماسك,Kadim Al Sahir|كاظم الساهر,Fairuz|فيروز,Elissa|إليسا,MrBeast|مستر بيست,Bad Bunny|باد باني,LeBron James|ليبرون جيمس,Adel Imam|عادل إمام,Mohamed Ramadan|محمد رمضان,Gigi Hadid|جيجي حديد,Steve Harvey|ستيف هارفي'],
+ movies:['Movies 🎬','أفلام 🎬','Titanic|تايتانيك,Frozen|فروزن (ملكة الثلج),The Lion King|الأسد الملك,Aladdin|علاء الدين,Toy Story|حكاية لعبة,Home Alone|وحيد في المنزل,Shrek|شريك,Harry Potter|هاري بوتر,Spider-Man|الرجل العنكبوت,Fast & Furious|السريع والغاضب,Avatar|أفاتار,Finding Nemo|البحث عن نيمو,Barbie|باربي,Jaws|الفك المفترس,Star Wars|حرب النجوم,Minions|المينيونز,Cars|سيارات,Coco|كوكو,The Avengers|المنتقمون,Batman|باتمان,Wicked|ويكد,Inside Out|قلباً وقالباً,Moana|موانا,Jurassic Park|الحديقة الجوراسية,Top Gun|توب غن,The Godfather|العراب,Mean Girls|فتيات لئيمات,Rocky|روكي,Encanto|إنكانتو,Despicable Me|أنا الحقير'],
+ reality:['Reality TV 📺','تلفزيون الواقع 📺',"Love Is Blind|الحب أعمى,The Bachelor|ذا باتشلر,Survivor|سرفايفر,Shark Tank|شارك تانك,Love Island|جزيرة الحب,The Voice|ذا فويس,Dancing with the Stars|الرقص مع النجوم,Real Housewives|ربات البيوت الحقيقيات,The Kardashians|عائلة كارداشيان,Selling Sunset|سيلينغ سانست,Big Brother|الأخ الأكبر,Kitchen Nightmares|كوابيس المطبخ,American Idol|أمريكان أيدول,The Masked Singer|المغني المقنّع,90 Day Fiancé|خطيب في 90 يوم,Too Hot to Handle|توو هوت تو هاندل,Hell's Kitchen|مطبخ الجحيم,Below Deck|بيلو ديك,Jersey Shore|جيرسي شور,Project Runway|بروجكت رنواي,Arab Idol|عرب أيدول,Squid Game: The Challenge|لعبة الحبار: التحدي,Married at First Sight|زواج من النظرة الأولى,The Amazing Race|السباق المذهل,Family Feud|فاميلي فيود,Wheel of Fortune|عجلة الحظ,Ramez Galal pranks|مقالب رامز جلال,Arabs Got Talent|عرب جوت تالنت,MasterChef|ماستر شيف,The Traitors|الخونة"],
+ parties:['Parties & holidays 🎉','حفلات ومناسبات 🎉',"wedding|عرس,birthday|عيد ميلاد,Christmas|عيد الميلاد,Easter|عيد القيامة,New Year's Eve|ليلة رأس السنة,Halloween|هالوين,baby shower|حفلة استقبال المولود,graduation|حفلة تخرج,engagement party|حفلة خطوبة,Thanksgiving|عيد الشكر,Eid|العيد,Valentine's Day|عيد الحب,Fourth of July|الرابع من يوليو,bachelor party|حفلة العزوبية,anniversary|ذكرى الزواج,barbecue|شوي,picnic|نزهة,prom|حفلة البروم,family reunion|لمة العائلة,game night|سهرة ألعاب,henna night|ليلة الحنة,baptism|معمودية,Super Bowl party|حفلة السوبر بول,gender reveal|حفلة كشف جنس المولود,housewarming|حفلة البيت الجديد,retirement party|حفلة التقاعد,first communion|القربانة الأولى,iftar|إفطار رمضان,surprise party|حفلة مفاجئة,New Year's Day brunch|فطور رأس السنة"],
+ clothes:['Clothes 👗','ملابس 👗','jeans|جينز,dress|فستان,suit|بدلة,tie|ربطة عنق,sneakers|حذاء رياضي,hat|قبعة,scarf|وشاح,gloves|كفوف,jacket|جاكيت,hoodie|هودي,pajamas|بيجامة,sunglasses|نظارة شمسية,socks|جوارب,high heels|كعب عالي,swimsuit|مايوه,belt|حزام,watch|ساعة يد,necklace|قلادة,sandals|صندل,boots|جزمة,abaya|عباية,gold bracelet|إسوارة ذهب,bow tie|بابيون,crown|تاج,backpack|حقيبة ظهر,wedding dress|فستان عرس,earrings|حلق,ring|خاتم,leggings|ليغنز,cap|كاب'],
+ countries:['Countries 🌍','دول 🌍','Iraq|العراق,Lebanon|لبنان,Egypt|مصر,Jordan|الأردن,Mexico|المكسيك,Italy|إيطاليا,France|فرنسا,Japan|اليابان,Brazil|البرازيل,Canada|كندا,Turkey|تركيا,Greece|اليونان,India|الهند,China|الصين,Spain|إسبانيا,Saudi Arabia|السعودية,Morocco|المغرب,England|إنجلترا,Germany|ألمانيا,Australia|أستراليا,Syria|سوريا,UAE|الإمارات,Palestine|فلسطين,Kuwait|الكويت,Argentina|الأرجنتين,Portugal|البرتغال,Russia|روسيا,Thailand|تايلاند,Costa Rica|كوستاريكا,Dominican Republic|جمهورية الدومينيكان'],
+ travel:['Ways to travel 🚗','وسائل النقل 🚗','car|سيارة,bus|باص,train|قطار,airplane|طيارة,bicycle|دراجة هوائية,motorcycle|دراجة نارية,boat|قارب,taxi|تاكسي,helicopter|هليكوبتر,truck|شاحنة,scooter|سكوتر,subway|مترو,ambulance|سيارة إسعاف,fire truck|سيارة إطفاء,skateboard|لوح تزلج,cruise ship|سفينة سياحية,tractor|جرار,limousine|ليموزين,rocket|صاروخ,horse|حصان,camel|جمل,hot air balloon|منطاد,jet ski|جت سكي,golf cart|عربة غولف,Uber|أوبر,private jet|طائرة خاصة,roller skates|حذاء تزلج بعجلات,submarine|غواصة,Tesla|تسلا,donkey|حمار'],
+ fruit:['Fruits & veggies 🍉','فواكه وخضار 🍉','apple|تفاح,banana|موز,watermelon|بطيخ,grapes|عنب,orange|برتقال,strawberry|فراولة,pineapple|أناناس,mango|مانجا,lemon|ليمون,tomato|طماطم,potato|بطاطا,carrot|جزر,onion|بصل,cucumber|خيار,pomegranate|رمان,dates|تمر,figs|تين,avocado|أفوكادو,cherry|كرز,coconut|جوز الهند,peach|خوخ,kiwi|كيوي,eggplant|باذنجان,garlic|ثوم,pumpkin|يقطين,corn|ذرة,blueberry|توت أزرق,apricot|مشمش,pepper|فلفل,lettuce|خس'],
+ brands:['Brands 🛍️','ماركات 🛍️',"McDonald's|ماكدونالدز,Starbucks|ستاربكس,Apple|آبل,Nike|نايكي,Amazon|أمازون,Coca-Cola|كوكا كولا,Target|تارغت,Costco|كوستكو,Netflix|نتفليكس,Instagram|إنستغرام,TikTok|تيك توك,Walmart|وولمارت,Disney|ديزني,In-N-Out|إن آند آوت,Tesla|تسلا,Gucci|غوتشي,Adidas|أديداس,Uber|أوبر,Google|غوغل,IKEA|إيكيا,Chick-fil-A|تشيك فيل إيه,Louis Vuitton|لويس فيتون,Rolex|رولكس,Snapchat|سناب شات,WhatsApp|واتساب,Sephora|سيفورا,Lululemon|لولوليمون,Chanel|شانيل,Taco Bell|تاكو بيل,Trader Joe's|تريدر جوز"],
+ trending:['Trending now 🔥','الترند الحالي 🔥','Labubu|لابوبو,Dubai chocolate|شوكولاتة دبي,pickleball|بيكل بول,Stanley cup|كوب ستانلي,matcha|ماتشا,ChatGPT|تشات جي بي تي,AirPods|إيربودز,air fryer|قلاية هوائية,ice bath|حمام ثلج,Pilates|بيلاتس,Crumbl cookies|كوكيز كرمبل,Cybertruck|سايبر ترك,podcast|بودكاست,selfie|سيلفي,TikTok dance|رقصة تيك توك,ring light|إضاءة دائرية,vlog|فلوق,iPhone|آيفون,Taylor Swift concert|حفلة تايلور سويفت,Squid Game|لعبة الحبار,protein shake|شيك بروتين,skincare routine|روتين العناية بالبشرة,Wordle|ووردل,emoji|إيموجي,meme|ميم,influencer|مؤثر,Uber Eats|أوبر إيتس,World Cup 2026|كأس العالم 2026,self checkout|الدفع الذاتي,smart watch|ساعة ذكية'],
+ mix:['Mix it up! 🎲','خليط من كل شي 🎲','']};
+const CATS={},WAR={};
+for(const k in CATS_BI){const[n,na,w]=CATS_BI[k];const pairs=w?w.split(',').map(x=>x.split('|')):[];CATS[k]={name:n,nameAr:na,words:pairs.map(p=>p[0])};pairs.forEach(p=>WAR[p[0]]=p[1])}
 CATS.mix.words=Object.keys(CATS).filter(k=>k!=='mix').flatMap(k=>CATS[k].words);
+let LANG='both';try{LANG=localStorage.getItem('tg-imp-lang')||'both'}catch(e){}
+const LANGS=['en','ar','both'];
+const wAr=w=>WAR[w]||w;
+const catName=(k,l=LANG)=>l==='ar'?CATS[k].nameAr:l==='both'?CATS[k].name+' · '+CATS[k].nameAr:CATS[k].name;
+const wordHTML=(w,l=LANG)=>l==='ar'?`<span dir="rtl" lang="ar">${esc(wAr(w))}</span>`:l==='both'?`${esc(w)}<div dir="rtl" lang="ar" style="font-size:.62em;margin-top:.25em;font-family:system-ui,sans-serif;font-weight:800">${esc(wAr(w))}</div>`:esc(w);
+const TX={en:{you:n=>`You are ${n}`,youN:n=>`You are player #${n}`,shh:'Shhh... you are the',imp:'IMPOSTER',cat:c=>`The category is <b>${c}</b>.<br>`,blend:"Blend in like gravy on mashed potatoes, and don't get caught! 😈",secret:'Your secret word',clue:'Give clues, but not too obvious... the imposter is listening! 👀'},
+ ar:{you:n=>`أنت ${n}`,youN:n=>`أنت اللاعب رقم ${n}`,shh:'ششش... أنت',imp:'المُندَس',cat:c=>`الفئة هي <b>${c}</b>.<br>`,blend:'اندمج معهم وما تخليهم يكشفوك! 😈',secret:'كلمتك السرية',clue:'أعطِ تلميحات بس مو واضحة كثير... المندس عم يسمع! 👀'}};
+
 const CK=Object.keys(CATS);
 // seeded random, the same on the TV and on every phone
 function rng(seedStr){let h=1779033703^seedStr.length;for(let i=0;i<seedStr.length;i++){h=Math.imul(h^seedStr.charCodeAt(i),3432918353);h=h<<13|h>>>19}
@@ -2658,7 +2669,7 @@ function randSeed(){const a=new Uint32Array(1);crypto.getRandomValues(a);return 
 // hash format: #p-<seed>-<seat>-<players>-<imposters>-<category>-<hint 0/1>
 function maxImp(){return Math.max(1,H.players.length)}
 function K(){return H.rk||1}
-function link(seat){return `${BASE}#p-${H.seed}-${seat}-${H.players.length}-${K()}-${H.cat}-${H.hint?1:0}`}
+function link(seat){return `${BASE}#p-${H.seed}-${seat}-${H.players.length}-${K()}-${H.cat}-${hv()}`}
 
 // ================= PLAYER =================
 function gameCode(){const ci=CK.indexOf(H.cat)+(H.hint?CK.length:0);return (H.seed.slice(0,4)+'-'+H.players.length.toString(36)+K().toString(36)+ci.toString(36)).toUpperCase()}
@@ -2675,12 +2686,14 @@ function joinView(){$('player').classList.remove('hidden');$('flip').classList.a
  $('iAmHost').onclick=()=>{try{sessionStorage.setItem('tg-imp-host','1')}catch(e){}$('player').classList.add('hidden');$('host').classList.remove('hidden');show('sSetup');renderSetup()}}
 const hexEnc=t=>[...new TextEncoder().encode(t)].map(b=>b.toString(16).padStart(2,'0')).join('');
 const hexDec=h=>{try{return new TextDecoder().decode(new Uint8Array(h.match(/../g).map(x=>parseInt(x,16))))}catch(e){return '?'}};
-function oneLink(){return `${BASE}#g-${H.seed}-${H.players.length}-${K()}-${H.cat}-${H.hint?1:0}-${H.players.map(hexEnc).join('x')}`}
+function hv(){return (H.hint?1:0)+2*Math.max(0,LANGS.indexOf(H.lang||'both'))}
+function linkLang(i){let man=null;try{man=localStorage.getItem('tg-imp-lang')}catch(e){}if(!man&&LANGS[i])LANG=LANGS[i]}
+function oneLink(){return `${BASE}#g-${H.seed}-${H.players.length}-${K()}-${H.cat}-${hv()}-${H.players.map(hexEnc).join('x')}`}
 function groupView(h){
- const m=h.match(/^#g-([a-z0-9]+)-(\d+)-(\d+)-([a-z]+)-([01])-([0-9a-fx]+)$/);
+ const m=h.match(/^#g-([a-z0-9]+)-(\d+)-(\d+)-([a-z]+)-([0-5])-([0-9a-fx]+)$/);
  $('player').classList.remove('hidden');
  if(!m||!CATS[m[4]]){$('flip').outerHTML='<div class="card err" style="padding:24px">😕 This link looks broken. Ask the host to show the QR code again.</div>';return}
- const seed=m[1],n=+m[2],k=+m[3],cat=m[4],hint=m[5]==='1',names=m[6].split('x').map(hexDec);
+ const seed=m[1],n=+m[2],k=+m[3],cat=m[4],hint=+m[5]%2===1,names=m[6].split('x').map(hexDec);linkLang(Math.floor(+m[5]/2));
  const key='tg-imp-seat-'+seed;let mine=null;try{mine=localStorage.getItem(key)}catch(e){}
  const showRole=seat=>{$('pick').classList.add('hidden');$('confirm').classList.add('hidden');$('flip').classList.remove('hidden');renderRole(seed,seat,n,k,cat,hint,names[seat])};
  if(mine!==null&&+mine<n){showRole(+mine);return}
@@ -2689,22 +2702,30 @@ function groupView(h){
  $('names').querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;$('pick').classList.add('hidden');$('confirm').classList.remove('hidden');$('cTxt').textContent=`Are you ${names[i]}?`;
   $('cYes').onclick=()=>{try{localStorage.setItem(key,String(i))}catch(e){}showRole(i)};$('cNo').onclick=()=>{$('confirm').classList.add('hidden');$('pick').classList.remove('hidden')}})}
 function playerView(h){
- const m=h.match(/^#p-([a-z0-9]+)-(\d+)-(\d+)-(\d+)-([a-z]+)-([01])$/);
+ const m=h.match(/^#p-([a-z0-9]+)-(\d+)-(\d+)-(\d+)-([a-z]+)-([0-5])$/);
  $('player').classList.remove('hidden');
  if(!m||!CATS[m[5]]){$('flip').outerHTML='<div class="card err" style="padding:24px">😕 This link looks broken. Ask the host to show your QR code again.</div>';return}
- const seed=m[1],seat=+m[2],n=+m[3],k=+m[4],cat=m[5],hint=m[6]==='1';
+ const seed=m[1],seat=+m[2],n=+m[3],k=+m[4],cat=m[5],hint=+m[6]%2===1;linkLang(Math.floor(+m[6]/2));
  renderRole(seed,seat,n,k,cat,hint,null)}
-function renderRole(seed,seat,n,k,cat,hint,name){
- const d=deal(seed,n,k,cat),imp=d.imps.includes(seat);
- $('pNum').textContent=name?`You are ${name}`:`You are player #${seat+1}`;
- $('back').className='face back '+(imp?'imp':'word');
- $('back').innerHTML=imp?`<div class="em">🕵️🦃</div><div class="lbl">Shhh... you are the</div><div class="w glitch" data-t="IMPOSTER">IMPOSTER</div><div class="tip">${hint?`The category is <b>${esc(CATS[cat].name)}</b>.<br>`:''}Blend in like gravy on mashed potatoes, and don't get caught! 😈</div>`
-  :`<div class="em">🔍</div><div class="lbl">Your secret word</div><div class="w">${esc(d.word)}</div><div class="tip">Give clues, but not too obvious... the imposter is listening! 👀</div>`;
+let lastRole=null;
+function langBtn(){let b=document.getElementById('langBtn');if(!b){b=document.createElement('button');b.id='langBtn';b.style.cssText='position:fixed;top:10px;right:10px;z-index:999;font:800 15px system-ui,sans-serif;padding:9px 14px;border-radius:22px;border:2px solid #3a2410;background:#fff3dc;color:#3a2410;box-shadow:0 3px 0 #3a2410';document.body.appendChild(b);
+ b.onclick=e=>{e.stopPropagation();LANG=LANGS[(LANGS.indexOf(LANG)+1)%3];try{localStorage.setItem('tg-imp-lang',LANG)}catch(x){}const was=$('flip').classList.contains('open');lastRole&&renderRole(...lastRole);if(was)$('flip').classList.add('open')}}
+ b.textContent={en:'🇺🇸 English',ar:'🇮🇶 عربي',both:'🌐 English + عربي'}[LANG]}
+document.head.insertAdjacentHTML('beforeend','<style>.back.imp .w,.back.imp .w *{-webkit-text-fill-color:#ff5d6c!important;color:#ff5d6c!important}[lang=ar],[dir=rtl]{letter-spacing:0!important}</style>');
+function renderRole(seed,seat,n,k,cat,hint,name){lastRole=[seed,seat,n,k,cat,hint,name];langBtn();
+ const d=deal(seed,n,k,cat),imp=d.imps.includes(seat),T=TX[LANG==='ar'?'ar':'en'],T2=LANG==='both'?TX.ar:null;
+ const two=(f,...a)=>T2?`${f(T,...a)}<div dir="rtl" style="font-size:.85em;opacity:.85;margin-top:4px">${f(T2,...a)}</div>`:f(T,...a);
+ const ttl={en:"Who's the Imposter?",ar:'مين المُندَس؟',both:"Who's the Imposter? · مين المُندَس؟"};$('pTitle').textContent=ttl[LANG];$('pTap').textContent=LANG==='ar'?'اضغط لتفتح ملفك':LANG==='both'?'Tap to open your file · اضغط لتفتح ملفك':'Tap to open your file';$('pHide').textContent=LANG==='ar'?'اضغط على الكرت مرة ثانية لتخبيه. خلي تلفونك معك! 😉':'Tap the card again to hide it. Keep your phone to yourself! 😉';$('back').style.fontSize=LANG==='both'?'.9em':'';
+ $('pNum').innerHTML=name?two((t,x)=>t.you(esc(x)),name):two((t,x)=>t.youN(x),seat+1);
+ $('back').className='face back '+(imp?'imp':'word');$('back').dir=LANG==='ar'?'rtl':'ltr';
+ $('back').innerHTML=imp?`<div class="em">🕵️🦃</div><div class="lbl">${two(t=>t.shh)}</div><div class="w glitch" data-t="${LANG==='ar'?'':T.imp}" style="color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T.imp}${T2?`<div style="font-size:.6em;color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T2.imp}</div>`:''}</div><div class="tip">${hint?two(t=>t.cat(esc(catName(cat,t===TX.ar?'ar':'en')))):''}${two(t=>t.blend)}</div>`
+  :`<div class="em">🔍</div><div class="lbl">${two(t=>t.secret)}</div><div class="w">${wordHTML(d.word)}</div><div class="tip">${two(t=>t.clue)}</div>`;
  $('flip').onclick=()=>{$('flip').classList.toggle('open');try{navigator.vibrate&&navigator.vibrate(imp&&$('flip').classList.contains('open')?[60,40,160]:30)}catch(e){}}}
 
 // ================= HOST =================
 let H={players:[],cat:'food',k:1,hint:true,time:120,seed:null,cur:0,seen:[]};
 try{const s=JSON.parse(localStorage.getItem('tg-imp'));if(s&&Array.isArray(s.players))H=Object.assign(H,s)}catch(e){}
+if(!H.lang)H.lang='both';if(!CATS[H.cat])H.cat='food';
 const save=()=>{try{localStorage.setItem('tg-imp',JSON.stringify(H))}catch(e){}};
 function show(id){['sSetup','sOne','sPass','sScan','sAll','sTalk','sVote','sReveal'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
 function seg(el,opts,get,set){$(el).innerHTML=opts.map(([v,l])=>`<button data-v="${v}" class="${get()==v?'on':''}">${l}</button>`).join('');
@@ -2712,10 +2733,11 @@ function seg(el,opts,get,set){$(el).innerHTML=opts.map(([v,l])=>`<button data-v=
 function renderSetup(){
  $('chips').innerHTML=H.players.map((p,i)=>`<div class="chip">${esc(p)}<button data-i="${i}">✕</button></div>`).join('')||'<span class="note">No players yet.</span>';
  $('chips').querySelectorAll('button').forEach(b=>b.onclick=()=>{H.players.splice(+b.dataset.i,1);save();renderSetup()});
- seg('catSeg',CK.map(k=>[k,CATS[k].name]),()=>H.cat,v=>H.cat=v);
+ seg('catSeg',CK.map(k=>[k,H.lang==='ar'?CATS[k].nameAr:CATS[k].name]),()=>H.cat,v=>H.cat=v);
  const maxK=maxImp();if(H.k!=='r'&&H.k>maxK)H.k=maxK;
  seg('impSeg',[['r','🎲 Random (secret!)'],...[...Array(maxK)].map((_,i)=>[i+1,i===maxK-1&&maxK>1?`${i+1} (everyone!)`:(i+1)+(i?' imposters':' imposter')])],()=>H.k,v=>H.k=v==='r'?'r':+v);
  $('impNote').textContent=H.k==='r'?`Each round the game secretly picks 1 to ${maxK} imposter${maxK>1?'s':''}. Nobody knows how many until the reveal! 😈`:`With ${H.players.length||0} players you can have up to ${maxK}. Yes, even everyone! 😂`;
+ seg('langSeg',[['en','🇺🇸 English'],['ar','🇮🇶 عربي Arabic'],['both','🌐 Both']],()=>H.lang,v=>H.lang=v);
  seg('hintSeg',[['1','💡 Yes, show category'],['0','🙈 No hint (hard mode)']],()=>H.hint?'1':'0',v=>H.hint=v==='1');
  seg('timeSeg',[[60,'1 min'],[120,'2 min'],[180,'3 min'],[300,'5 min']],()=>H.time,v=>H.time=+v);
  $('startBtn').disabled=H.players.length<3}
@@ -2747,8 +2769,8 @@ let passI=0,passOpened=false;
 function renderPass(){const n=H.players.length,d=deal(H.seed,n,K(),H.cat),imp=d.imps.includes(passI);passOpened=false;
  $('passFlip').classList.remove('open');$('passStep').textContent=`Player ${passI+1} of ${n}`;$('passWho').textContent=`📲 Pass the phone to ${H.players[passI]}`;
  $('passBack').className='face back '+(imp?'imp':'word');
- $('passBack').innerHTML=imp?`<div class="em" style="font-size:8vh">🕵️🦃</div><div class="lbl" style="font-size:2.6vh">Shhh... ${esc(H.players[passI])}, you are the</div><div class="w" style="font-size:6vh">IMPOSTER!</div><div class="tip" style="font-size:2.4vh">${H.hint?`The category is <b>${esc(CATS[H.cat].name)}</b>.<br>`:''}Blend in and don't get caught! 😈</div>`
-  :`<div class="em" style="font-size:8vh">🤫</div><div class="lbl" style="font-size:2.6vh">${esc(H.players[passI])}, the secret word is</div><div class="w" style="font-size:6.4vh">${esc(d.word)}</div><div class="tip" style="font-size:2.4vh">Give clues, but not too obvious! 👀</div>`;
+ $('passBack').innerHTML=imp?`<div class="em" style="font-size:8vh">🕵️🦃</div><div class="lbl" style="font-size:2.6vh">Shhh... ${esc(H.players[passI])}, you are the</div><div class="w" style="font-size:6vh">IMPOSTER!</div><div class="tip" style="font-size:2.4vh">${H.hint?`The category is <b>${esc(catName(H.cat,H.lang))}</b>.<br>`:''}Blend in and don't get caught! 😈</div>`
+  :`<div class="em" style="font-size:8vh">🤫</div><div class="lbl" style="font-size:2.6vh">${esc(H.players[passI])}, the secret word is</div><div class="w" style="font-size:6.4vh">${wordHTML(d.word,H.lang)}</div><div class="tip" style="font-size:2.4vh">Give clues, but not too obvious! 👀</div>`;
  $('passNext').textContent=passI===n-1?"Hide it! Everyone's ready, let's talk 🗣️":'Hide it & pass the phone ▶';$('passNext').disabled=true}
 $('passFlip').onclick=()=>{$('passFlip').classList.toggle('open');passOpened=true;$('passNext').disabled=false;try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}};
 $('passNext').onclick=()=>{$('passFlip').classList.remove('open');if(passI>=H.players.length-1){setTimeout(toTalk,350);return}passI++;tick();setTimeout(renderPass,400)};
@@ -2764,7 +2786,7 @@ function reveal(){const d=deal(H.seed,H.players.length,K(),H.cat);show('sReveal'
  const all=d.imps.length===H.players.length,many=d.imps.length>1,them=many?'the imposters':'the imposter';
  $('revLbl').textContent=all?'Plot twist... 😱':many?`There were ${d.imps.length} turkeys hiding at the table! 😱 They were...`:'The turkey hiding at the table was...';
  $('revName').textContent=all?'🕵️ EVERYONE was the imposter! 😂':'🕵️ '+d.imps.map(i=>H.players[i]).join(' & ');
- $('revWord').textContent=all?'There was no secret word... you were ALL bluffing! 🤣':`🔍 The secret word was: ${d.word}`;
+ $('revWord').innerHTML=all?'There was no secret word... you were ALL bluffing! 🤣':`🔍 The secret word was: ${wordHTML(d.word,H.lang==='en'?'en':'both')}`;
  $('revWord').classList.add('hidden');$('verdict').className='verdict';$('verdict').textContent='';$('endRow').classList.add('hidden');renderTally();
  ['revName'].forEach(id=>{const e=$(id);e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')});{const f=$('rflash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go')}
  leaves();

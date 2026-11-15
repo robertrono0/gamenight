@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Who's the Imposter? Thanksgiving Edition</title>
+<title>Who's the Imposter? Game Night Edition</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Special+Elite&family=Fredoka:wght@400..700&family=Patrick+Hand&display=swap">
 <style>
 :root{--ink:#3a2410;--cream:#fff4e0;--pump:#f28c28;--dor:#d9601a;--cran:#b8323f;--must:#f2c14e;--brown:#6b3e1f;--sage:#9cbf7a;--plum:#c8607a}
@@ -198,7 +198,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
 
 <!-- ============ PLAYER VIEW (opened from the QR code) ============ -->
 <div id="player" class="hidden">
-  <div><span class="pill">🔍 Case file · Thanksgiving edition</span></div>
+  <div><span class="pill">🔍 Case file · Game Night edition</span></div>
   <h1 class="bubble" id="pTitle">Who's the Imposter?</h1>
   <div class="pnum" id="pNum"></div>
   <div id="join" class="hidden" style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%">
@@ -223,7 +223,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
   </div>
   <div class="flip" id="flip">
     <div class="flipin">
-      <div class="face front"><div class="stampx">TOP SECRET</div><div class="q">🦃</div><div class="hand" style="font-size:16px;opacity:.8">The Thanksgiving Dinner Case</div><div class="t" id="pTap">Tap to open your file</div><div class="hand" style="font-size:18px">Make sure nobody is looking...</div></div>
+      <div class="face front"><div class="stampx">TOP SECRET</div><div class="q">🕵️</div><div class="hand" style="font-size:16px;opacity:.8">The Game Night Case</div><div class="t" id="pTap">Tap to open your file</div><div class="hand" style="font-size:18px">Make sure nobody is looking...</div></div>
       <div class="face back" id="back"></div>
     </div>
   </div>
@@ -231,13 +231,13 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
 </div>
 
 <!-- ============ HOST VIEW (TV / laptop) ============ -->
-<div id="rflash"></div><div class="fog"></div><div class="candle c1">🕯️</div><div class="candle c2">🕯️</div><div class="feast">🍂 🥧 🌽 🦃 🍗 🥧 🍂</div>
+<div id="rflash"></div><div class="fog"></div><div class="candle c1">🕯️</div><div class="candle c2">🕯️</div><div class="feast">🔍 🕵️ ❓ 🗝️ ❓ 🕵️ 🔍</div>
 <div id="host" class="hidden">
   <div class="tools"><button id="songBtn" title="Spy music on/off">🎵 Music</button><button id="musicBtn" title="Sound effects on/off">🔔</button><button id="fsBtn" title="Full screen">⛶</button><button id="homeBtn" title="Back to setup">⚙️</button></div>
   <div class="htitle">
-    <span class="pill">🔍 Case file · Thanksgiving edition</span>
+    <span class="pill">🔍 Case file · Game Night edition</span>
     <h1 class="bubble">Who's the Imposter?</h1>
-    <div class="sub">Someone at the Thanksgiving table is lying... 🦃🕯️</div>
+    <div class="sub">Someone in this room is lying... 🕵️🕯️</div>
   </div>
 
   <!-- setup -->
@@ -281,7 +281,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
     <div class="h2 bubble" id="passWho"></div>
     <div class="flip" id="passFlip" style="width:min(44vh,80vw);height:min(52vh,70vh)">
       <div class="flipin">
-        <div class="face front"><div class="stampx">TOP SECRET</div><div class="q" style="font-size:12vh">🦃</div><div class="t" style="font-size:3vh">Tap to open your file</div><div class="hand" style="font-size:2.2vh">Make sure nobody is looking!</div></div>
+        <div class="face front"><div class="stampx">TOP SECRET</div><div class="q" style="font-size:12vh">🕵️</div><div class="t" style="font-size:3vh">Tap to open your file</div><div class="hand" style="font-size:2.2vh">Make sure nobody is looking!</div></div>
         <div class="face back" id="passBack"></div>
       </div>
     </div>
@@ -2642,7 +2642,7 @@ var qrcode = function() {
 // ===== Who's the Imposter? =====
 const BASE='https://robertrono0.github.io/gamenight/imposter.html';
 const CATS_BI={
- food:['Thanksgiving food 🍗','أكل عيد الشكر 🍗','turkey|ديك رومي,stuffing|حشوة الديك الرومي,mashed potatoes|بطاطا مهروسة,gravy|صلصة المرق,pumpkin pie|فطيرة اليقطين,cranberry sauce|صلصة التوت البري,corn|ذرة,sweet potato|بطاطا حلوة,apple pie|فطيرة التفاح,green beans|فاصوليا خضراء,rolls|خبز صغير,mac and cheese|معكرونة بالجبن,salad|سلطة,ice cream|آيس كريم,rice|رز,hummus|حمص,chocolate cake|كيكة شوكولاتة,soup|شوربة,pizza|بيتزا,popcorn|فشار,pecan pie|فطيرة البيكان,cornbread|خبز الذرة,deviled eggs|بيض محشي,roast chicken|دجاج مشوي,cheesecake|تشيز كيك,lasagna|لازانيا,meatballs|كرات اللحم,apple cider|عصير التفاح,whipped cream|كريمة مخفوقة,cookies|كوكيز'],
+ food:['Party food 🍕','أكل الحفلات 🍕','pizza|بيتزا,burger|برجر,tacos|تاكو,sushi|سوشي,french fries|بطاطا مقلية,hot dog|هوت دوغ,mashed potatoes|بطاطا مهروسة,sweet potato|بطاطا حلوة,apple pie|فطيرة التفاح,mac and cheese|معكرونة بالجبن,salad|سلطة,ice cream|آيس كريم,rice|رز,hummus|حمص,chocolate cake|كيكة شوكولاتة,soup|شوربة,popcorn|فشار,shawarma|شاورما,falafel|فلافل,roast chicken|دجاج مشوي,cheesecake|تشيز كيك,lasagna|لازانيا,meatballs|كرات اللحم,nachos|ناتشوز,whipped cream|كريمة مخفوقة,cookies|كوكيز,donuts|دونات,chicken wings|أجنحة دجاج,pancakes|بان كيك,spaghetti|سباغيتي'],
  animals:['Animals 🐾','حيوانات 🐾','dog|كلب,cat|قطة,lion|أسد,elephant|فيل,monkey|قرد,horse|حصان,chicken|دجاجة,fish|سمكة,snake|أفعى,camel|جمل,bear|دب,rabbit|أرنب,giraffe|زرافة,penguin|بطريق,shark|قرش,cow|بقرة,duck|بطة,tiger|نمر,frog|ضفدع,owl|بومة,kangaroo|كنغر,dolphin|دلفين,zebra|حمار وحشي,sheep|خروف,goat|ماعز,parrot|ببغاء,butterfly|فراشة,crocodile|تمساح,wolf|ذئب,turkey|ديك رومي'],
  places:['Places 📍','أماكن 📍','beach|شاطئ,airport|مطار,hospital|مستشفى,school|مدرسة,mall|مول,restaurant|مطعم,gym|نادي رياضي,church|كنيسة,park|حديقة عامة,zoo|حديقة حيوانات,movie theater|سينما,supermarket|سوبرماركت,library|مكتبة,hotel|فندق,bank|بنك,farm|مزرعة,kitchen|مطبخ,museum|متحف,gas station|محطة بنزين,wedding|عرس,Costco|كوستكو,barbershop|صالون حلاقة,pharmacy|صيدلية,bakery|مخبز,casino|كازينو,Disneyland|ديزني لاند,desert|صحراء,mountain|جبل,swimming pool|مسبح,car wash|مغسلة سيارات'],
  home:['Things at home 🏠','أغراض البيت 🏠','bed|سرير,couch|كنبة,TV|تلفزيون,fridge|ثلاجة,phone|تلفون,toothbrush|فرشاة أسنان,pillow|مخدة,lamp|مصباح,mirror|مراية,door|باب,window|شباك,shower|دوش,oven|فرن,chair|كرسي,table|طاولة,clock|ساعة حائط,blanket|بطانية,remote control|ريموت,washing machine|غسالة,carpet|سجادة,vacuum|مكنسة كهربائية,microwave|مايكرويف,air fryer|قلاية هوائية,coffee maker|ماكينة قهوة,slippers|شبشب,laptop|لابتوب,candle|شمعة,fan|مروحة,towel|منشفة,hookah|أرجيلة'],
@@ -2668,7 +2668,7 @@ const LANGS=['en','ar','both'];
 const wAr=w=>WAR[w]||w;
 const catName=(k,l=LANG)=>l==='ar'?CATS[k].nameAr:l==='both'?CATS[k].name+' · '+CATS[k].nameAr:CATS[k].name;
 const wordHTML=(w,l=LANG)=>l==='ar'?`<span dir="rtl" lang="ar">${esc(wAr(w))}</span>`:l==='both'?`${esc(w)}<div dir="rtl" lang="ar" style="font-size:.62em;margin-top:.25em;font-family:system-ui,sans-serif;font-weight:800">${esc(wAr(w))}</div>`:esc(w);
-const TX={en:{you:n=>`You are ${n}`,youN:n=>`You are player #${n}`,shh:'Shhh... you are the',imp:'IMPOSTER',cat:c=>`The category is <b>${c}</b>.<br>`,blend:"Blend in like gravy on mashed potatoes, and don't get caught! 😈",secret:'Your secret word',clue:'Give clues, but not too obvious... the imposter is listening! 👀'},
+const TX={en:{you:n=>`You are ${n}`,youN:n=>`You are player #${n}`,shh:'Shhh... you are the',imp:'IMPOSTER',cat:c=>`The category is <b>${c}</b>.<br>`,blend:"Blend in like a chameleon, and don't get caught! 😈",secret:'Your secret word',clue:'Give clues, but not too obvious... the imposter is listening! 👀'},
  ar:{you:n=>`أنت ${n}`,youN:n=>`أنت اللاعب رقم ${n}`,shh:'ششش... أنت',imp:'المُندَس',cat:c=>`الفئة هي <b>${c}</b>.<br>`,blend:'اندمج معهم وما تخليهم يكشفوك! 😈',secret:'كلمتك السرية',clue:'أعطِ تلميحات بس مو واضحة كثير... المندس عم يسمع! 👀'}};
 
 const CK=Object.keys(CATS);
@@ -2736,7 +2736,7 @@ function renderRole(seed,seat,n,k,cat,hint,name){lastRole=[seed,seat,n,k,cat,hin
  const ttl={en:"Who's the Imposter?",ar:'مين المُندَس؟',both:"Who's the Imposter? · مين المُندَس؟"};$('pTitle').textContent=ttl[LANG];$('pTap').textContent=LANG==='ar'?'اضغط لتفتح ملفك':LANG==='both'?'Tap to open your file · اضغط لتفتح ملفك':'Tap to open your file';$('pHide').textContent=LANG==='ar'?'اضغط على الكرت مرة ثانية لتخبيه. خلي تلفونك معك! 😉':'Tap the card again to hide it. Keep your phone to yourself! 😉';$('back').style.fontSize=LANG==='both'?'.9em':'';
  $('pNum').innerHTML=name?two((t,x)=>t.you(esc(x)),name):two((t,x)=>t.youN(x),seat+1);
  $('back').className='face back '+(imp?'imp':'word');$('back').dir=LANG==='ar'?'rtl':'ltr';
- $('back').innerHTML=imp?`<div class="em">🕵️🦃</div><div class="lbl">${two(t=>t.shh)}</div><div class="w glitch" data-t="${LANG==='ar'?'':T.imp}" style="color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T.imp}${T2?`<div style="font-size:.6em;color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T2.imp}</div>`:''}</div><div class="tip">${hint?two(t=>t.cat(esc(catName(cat,t===TX.ar?'ar':'en')))):''}${two(t=>t.blend)}</div>`
+ $('back').innerHTML=imp?`<div class="em">🕵️🎭</div><div class="lbl">${two(t=>t.shh)}</div><div class="w glitch" data-t="${LANG==='ar'?'':T.imp}" style="color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T.imp}${T2?`<div style="font-size:.6em;color:#ff5d6c;-webkit-text-fill-color:#ff5d6c">${T2.imp}</div>`:''}</div><div class="tip">${hint?two(t=>t.cat(esc(catName(cat,t===TX.ar?'ar':'en')))):''}${two(t=>t.blend)}</div>`
   :`<div class="em">🔍</div><div class="lbl">${two(t=>t.secret)}</div><div class="w">${wordHTML(d.word)}</div><div class="tip">${two(t=>t.clue)}</div>`;
  $('flip').onclick=()=>{$('flip').classList.toggle('open');try{navigator.vibrate&&navigator.vibrate(imp&&$('flip').classList.contains('open')?[60,40,160]:30)}catch(e){}}}
 
@@ -2788,7 +2788,7 @@ let passI=0,passOpened=false;
 function renderPass(){const n=H.players.length,d0=deal(H.seed,n,K(),H.cat),isImp=d0.imps.includes(passI),d=H.uc&&isImp?{...d0,word:decoy(H.seed,H.cat,d0.word)}:d0,imp=isImp&&!H.uc;passOpened=false;
  $('passFlip').classList.remove('open');$('passStep').textContent=`Player ${passI+1} of ${n}`;$('passWho').textContent=`📲 Pass the phone to ${H.players[passI]}`;
  $('passBack').className='face back '+(imp?'imp':'word');
- $('passBack').innerHTML=imp?`<div class="em" style="font-size:8vh">🕵️🦃</div><div class="lbl" style="font-size:2.6vh">Shhh... ${esc(H.players[passI])}, you are the</div><div class="w" style="font-size:6vh">IMPOSTER!</div><div class="tip" style="font-size:2.4vh">${H.hint?`The category is <b>${esc(catName(H.cat,H.lang))}</b>.<br>`:''}Blend in and don't get caught! 😈</div>`
+ $('passBack').innerHTML=imp?`<div class="em" style="font-size:8vh">🕵️🎭</div><div class="lbl" style="font-size:2.6vh">Shhh... ${esc(H.players[passI])}, you are the</div><div class="w" style="font-size:6vh">IMPOSTER!</div><div class="tip" style="font-size:2.4vh">${H.hint?`The category is <b>${esc(catName(H.cat,H.lang))}</b>.<br>`:''}Blend in and don't get caught! 😈</div>`
   :`<div class="em" style="font-size:8vh">🤫</div><div class="lbl" style="font-size:2.6vh">${esc(H.players[passI])}, the secret word is</div><div class="w" style="font-size:6.4vh">${wordHTML(d.word,H.lang)}</div><div class="tip" style="font-size:2.4vh">Give clues, but not too obvious! 👀</div>`;
  $('passNext').textContent=passI===n-1?"Hide it! Everyone's ready, let's talk 🗣️":'Hide it & pass the phone ▶';$('passNext').disabled=true}
 $('passFlip').onclick=()=>{$('passFlip').classList.toggle('open');passOpened=true;$('passNext').disabled=false;try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}};
@@ -2803,7 +2803,7 @@ $('toVote').onclick=()=>{clearInterval(tmr);running=false;show('sVote');setMood(
 $('drum').onclick=()=>{if(mOn&&mac)mBus.gain.setTargetAtTime(.35,mac.currentTime,.3);drumroll();$('drum').disabled=true;setTimeout(()=>{$('drum').disabled=false;reveal()},2200)};
 function reveal(){const d=deal(H.seed,H.players.length,K(),H.cat);show('sReveal');stinger();
  const all=d.imps.length===H.players.length,many=d.imps.length>1,them=many?'the imposters':'the imposter';
- $('revLbl').textContent=all?'Plot twist... 😱':many?`There were ${d.imps.length} turkeys hiding at the table! 😱 They were...`:'The turkey hiding at the table was...';
+ $('revLbl').textContent=all?'Plot twist... 😱':many?`There were ${d.imps.length} imposters hiding in the room! 😱 They were...`:'The imposter hiding in the room was...';
  $('revName').textContent=all?'🕵️ EVERYONE was the imposter! 😂':'🕵️ '+d.imps.map(i=>H.players[i]).join(' & ');
  $('revWord').innerHTML=all?'There was no secret word... you were ALL bluffing! 🤣':`🔍 The secret word was: ${wordHTML(d.word,H.lang==='en'?'en':'both')}`+(H.uc?`<div style="margin-top:1vh;font-size:.8em">🎭 The imposter's word was: ${wordHTML(decoy(H.seed,H.cat,d.word),H.lang==='en'?'en':'both')}</div>`:'');
  $('revWord').classList.add('hidden');$('verdict').className='verdict';$('verdict').textContent='';$('endRow').classList.add('hidden');renderTally();
@@ -2814,7 +2814,7 @@ function reveal(){const d=deal(H.seed,H.players.length,K(),H.cat);show('sReveal'
  setTimeout(()=>ask(`Did you vote for ${many?'an imposter':'the right person'}?`,[
   ['✅ Yes, we caught '+(many?'them':'them!'),()=>ask(`${many?'Imposters':'Imposter'}: one guess! What was the secret word? 🤔`,[
      ['🎯 They guessed it!',()=>verdict(`😈 ${many?'IMPOSTERS STEAL':'IMPOSTER STEALS'} THE WIN!`,'imp')],
-     ['❌ Wrong guess',()=>verdict('🦃 DETECTIVES WIN!','group')]])],
+     ['❌ Wrong guess',()=>verdict('🕵️ DETECTIVES WIN!','group')]])],
   ['❌ No, wrong person',()=>verdict(`😈 ${many?'IMPOSTERS WIN':'IMPOSTER WINS'}!`,'imp')]]),1200)}
 function verdict(txt,who){$('qRow').innerHTML='';$('revTip').textContent='';const v=$('verdict');v.textContent=txt;v.className='verdict show '+who;
  if(who!=='tie'){H.score=H.score||{group:0,imp:0};H.score[who]++;save()}renderTally();
@@ -2892,7 +2892,7 @@ function drumroll(){if(!ctx())return;const t=ac.currentTime;for(let i=0;i<40;i++
  const s=ac.createBufferSource(),g=ac.createGain();s.buffer=b;g.gain.value=.08+i*.004;s.connect(g).connect(ac.destination);s.start(t+i*.05)}}
 function fanfare(){if(!ctx())return;const t=ac.currentTime;[[523,0],[659,.12],[784,.24],[1047,.42]].forEach(([f,d],i)=>tone(f,t+d,i===3?1.4:.4,.09,'triangle'))}
 $('musicBtn').onclick=()=>{soundOn=!soundOn;$('musicBtn').textContent=soundOn?'🔔':'🔕'};
-function leaves(){const syms=['?','🦃','?','🔍','🍂','?','🥧','🕵️','?','🌽','🗝️','🍗'];for(let i=0;i<34;i++){const s=document.createElement('div');s.className='leaf q';const w=3+Math.random()*4;
+function leaves(){const syms=['?','🎭','?','🔍','❓','?','🕯️','🕵️','?','🔎','🗝️','👀'];for(let i=0;i<34;i++){const s=document.createElement('div');s.className='leaf q';const w=3+Math.random()*4;
  s.style.cssText=`left:${Math.random()*100}vw;font-size:${w}vh;--r:${(Math.random()*240-120)|0}deg;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*1.2}s`;s.textContent=syms[i%syms.length];document.body.appendChild(s);setTimeout(()=>s.remove(),8000)}}
 // decorations like the slide deck
 (function(){const L=(c,x,y,w,r)=>`<svg class="deco" style="left:${x};top:${y};width:${w}vh;transform:rotate(${r}deg)" viewBox="0 0 100 110"><path d="M50 4 C82 24 92 62 50 94 C8 62 18 24 50 4 Z" fill="${c}" stroke="#3a2410" stroke-width="5"/><path d="M50 14 L50 106 M50 44 L68 32 M50 44 L32 32 M50 64 L72 50 M50 64 L28 50" stroke="#3a2410" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;
@@ -2904,7 +2904,7 @@ function route(){const h=location.hash||'';let host=false;try{host=sessionStorag
  if(h.startsWith('#g-')){$('host').classList.add('hidden');groupView(h)}else if(h.startsWith('#p-')){$('host').classList.add('hidden');playerView(h)}else{$('player').classList.add('hidden');$('host').classList.remove('hidden');show('sSetup');renderSetup()}}
 window.addEventListener('hashchange',()=>location.reload());
 // ===== TV in Arabic when language = Arabic =====
-const TVAR={"🎵 Music": "🎵 موسيقى", "🔍 Case file · Thanksgiving edition": "🔍 ملف القضية · نسخة عيد الشكر", "Who's the Imposter?": "مين المُندَس؟", "Someone at the Thanksgiving table is lying... 🦃🕯️": "واحد على سفرة عيد الشكر يكذب... 🦃🕯️", "👥 Who's playing?": "👥 مين يلعب؟", "+ Add": "+ إضافة", "Need at least 3 players. Everyone needs a phone to scan their QR code.": "تحتاجون ٣ لاعبين على الأقل. كل واحد يحتاج تلفون حتى يمسح الكود.", "🍽️ Category": "🍽️ الفئة", "🕵️ Imposters": "🕵️ عدد المندسين", "🌐 Language on phones": "🌐 اللغة", "Everyone can also flip it on their own phone with the 🌐 button.": "كل واحد يقدر يغيّرها من تلفونه بزر 🌐.", "💡 Imposter hint": "💡 تلميح للمندس", "With a hint, the imposter sees the category so they can bluff.": "مع التلميح، المندس يشوف الفئة حتى يقدر يمثّل.", "⏱️ Talking time": "⏱️ وقت الكلام", "Start the round! 🎲": "ابدأ الجولة! 🎲", "📱 Everyone scan this!": "📱 الكل يمسح هذا الكود!", "1. Scan with your phone camera": "١. امسح بكاميرا التلفون", "2. Tap": "٢. اضغط على", "your own name": "اسمك أنت", "3. Flip the card, don't show anyone! 🤫": "٣. اقلب الكرت، ولا تورّيه لأحد! 🤫", "Nothing showing on your phone? Open the game link and type": "ما طلع شي على تلفونك؟ افتح رابط اللعبة واكتب", "game code": "كود اللعبة", "then your number:": "وبعدين رقمك:", "Everyone ready? Let's talk! 🗣️": "الكل جاهز؟ يلا نحكي! 🗣️", "Or: one QR code per person": "أو: كود لكل شخص", "📲 No scanning: pass one phone around": "📲 بدون مسح: مرّروا تلفون واحد", "TOP SECRET": "سرّي للغاية", "Tap to open your file": "اضغط لتفتح ملفك", "Make sure nobody is looking!": "تأكد ما أحد يشوف!", "Hide it & pass the phone ▶": "خبّيه ومرّر التلفون ▶", "🎟️ One at a time: scan your secret": "🎟️ واحد واحد: امسح سرّك", "Your turn! Scan with your camera, peek at your card, then tap Next for the next person 🤫": "دورك! امسح بالكاميرا، شوف كرتك، وبعدين اضغط التالي للشخص اللي بعدك 🤫", "◀ Back": "◀ رجوع", "Next player ▶": "اللاعب التالي ▶", "📱 Everyone at once instead (pick your name)": "📱 الكل مرة وحدة (اختار اسمك)", "🔳 Show all QR codes": "🔳 اعرض كل الأكواد", "Everyone scanned? Let's talk! 🗣️": "الكل مسح؟ يلا نحكي! 🗣️", "🔳 Everyone scan your own name": "🔳 كل واحد يمسح اسمه", "◀ One at a time": "◀ واحد واحد", "Let's talk! 🗣️": "يلا نحكي! 🗣️", "Go around the circle. Each person says": "لفّوا بالدور. كل شخص يقول", "ONE word": "كلمة وحدة", "about the secret word. Don't make it too easy... the imposter is listening! 👀": "عن الكلمة السرية. لا تسهّلوها كثير... المندس يسمع! 👀", "⏯️ Pause": "⏯️ إيقاف", "+30 sec": "+٣٠ ثانية", "Time to vote! 🗳️": "وقت التصويت! 🗳️", "🗳️ Who's the imposter?": "🗳️ مين المندس؟", "On 3, everybody point at who you think it is! 1... 2... 3! 👉": "على ٣، الكل يأشّر على اللي يظنه المندس! ١... ٢... ٣! 👉", "🥁 Reveal the imposter!": "🥁 اكشف المندس!", "The imposter was...": "المندس كان...", "Play again! 🔁": "العب مرة ثانية! 🔁", "⚙️ Change players or category": "⚙️ غيّر اللاعبين أو الفئة", "🦃 DETECTIVES WIN!": "🦃 المحققين فازوا!", "😈 IMPOSTER WINS!": "😈 المندس فاز!", "😈 IMPOSTERS WIN!": "😈 المندسين فازوا!", "😈 IMPOSTER STEALS THE WIN!": "😈 المندس سرق الفوز!", "😈 IMPOSTERS STEAL THE WIN!": "😈 المندسين سرقوا الفوز!", "🤣 NOBODY WINS... OR EVERYBODY?": "🤣 ما أحد فاز... أو الكل فاز؟", "The turkey hiding at the table was...": "الديك الرومي المخبّى على السفرة كان..."};
+const TVAR={"🎵 Music": "🎵 موسيقى", "🔍 Case file · Game Night edition": "🔍 ملف القضية · نسخة عيد الشكر", "Who's the Imposter?": "مين المُندَس؟", "Someone in this room is lying... 🕵️🕯️": "واحد في هالغرفة يكذب... 🕵️🕯️", "👥 Who's playing?": "👥 مين يلعب؟", "+ Add": "+ إضافة", "Need at least 3 players. Everyone needs a phone to scan their QR code.": "تحتاجون ٣ لاعبين على الأقل. كل واحد يحتاج تلفون حتى يمسح الكود.", "🍽️ Category": "🍽️ الفئة", "🕵️ Imposters": "🕵️ عدد المندسين", "🌐 Language on phones": "🌐 اللغة", "Everyone can also flip it on their own phone with the 🌐 button.": "كل واحد يقدر يغيّرها من تلفونه بزر 🌐.", "💡 Imposter hint": "💡 تلميح للمندس", "With a hint, the imposter sees the category so they can bluff.": "مع التلميح، المندس يشوف الفئة حتى يقدر يمثّل.", "⏱️ Talking time": "⏱️ وقت الكلام", "Start the round! 🎲": "ابدأ الجولة! 🎲", "📱 Everyone scan this!": "📱 الكل يمسح هذا الكود!", "1. Scan with your phone camera": "١. امسح بكاميرا التلفون", "2. Tap": "٢. اضغط على", "your own name": "اسمك أنت", "3. Flip the card, don't show anyone! 🤫": "٣. اقلب الكرت، ولا تورّيه لأحد! 🤫", "Nothing showing on your phone? Open the game link and type": "ما طلع شي على تلفونك؟ افتح رابط اللعبة واكتب", "game code": "كود اللعبة", "then your number:": "وبعدين رقمك:", "Everyone ready? Let's talk! 🗣️": "الكل جاهز؟ يلا نحكي! 🗣️", "Or: one QR code per person": "أو: كود لكل شخص", "📲 No scanning: pass one phone around": "📲 بدون مسح: مرّروا تلفون واحد", "TOP SECRET": "سرّي للغاية", "Tap to open your file": "اضغط لتفتح ملفك", "Make sure nobody is looking!": "تأكد ما أحد يشوف!", "Hide it & pass the phone ▶": "خبّيه ومرّر التلفون ▶", "🎟️ One at a time: scan your secret": "🎟️ واحد واحد: امسح سرّك", "Your turn! Scan with your camera, peek at your card, then tap Next for the next person 🤫": "دورك! امسح بالكاميرا، شوف كرتك، وبعدين اضغط التالي للشخص اللي بعدك 🤫", "◀ Back": "◀ رجوع", "Next player ▶": "اللاعب التالي ▶", "📱 Everyone at once instead (pick your name)": "📱 الكل مرة وحدة (اختار اسمك)", "🔳 Show all QR codes": "🔳 اعرض كل الأكواد", "Everyone scanned? Let's talk! 🗣️": "الكل مسح؟ يلا نحكي! 🗣️", "🔳 Everyone scan your own name": "🔳 كل واحد يمسح اسمه", "◀ One at a time": "◀ واحد واحد", "Let's talk! 🗣️": "يلا نحكي! 🗣️", "Go around the circle. Each person says": "لفّوا بالدور. كل شخص يقول", "ONE word": "كلمة وحدة", "about the secret word. Don't make it too easy... the imposter is listening! 👀": "عن الكلمة السرية. لا تسهّلوها كثير... المندس يسمع! 👀", "⏯️ Pause": "⏯️ إيقاف", "+30 sec": "+٣٠ ثانية", "Time to vote! 🗳️": "وقت التصويت! 🗳️", "🗳️ Who's the imposter?": "🗳️ مين المندس؟", "On 3, everybody point at who you think it is! 1... 2... 3! 👉": "على ٣، الكل يأشّر على اللي يظنه المندس! ١... ٢... ٣! 👉", "🥁 Reveal the imposter!": "🥁 اكشف المندس!", "The imposter was...": "المندس كان...", "Play again! 🔁": "العب مرة ثانية! 🔁", "⚙️ Change players or category": "⚙️ غيّر اللاعبين أو الفئة", "🕵️ DETECTIVES WIN!": "🕵️ المحققين فازوا!", "😈 IMPOSTER WINS!": "😈 المندس فاز!", "😈 IMPOSTERS WIN!": "😈 المندسين فازوا!", "😈 IMPOSTER STEALS THE WIN!": "😈 المندس سرق الفوز!", "😈 IMPOSTERS STEAL THE WIN!": "😈 المندسين سرقوا الفوز!", "🤣 NOBODY WINS... OR EVERYBODY?": "🤣 ما أحد فاز... أو الكل فاز؟", "The imposter hiding in the room was...": "الديك الرومي المخبّى على السفرة كان..."};
 function trNode(n){if(n._en===undefined)n._en=n.nodeValue;const k=n._en.trim();const want=(H.lang==='ar'&&TVAR[k])?n._en.replace(k,TVAR[k]):n._en;if(n.nodeValue!==want)n.nodeValue=want}
 function trHost(){const root=document.getElementById('host');if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.nodeValue.trim())trNode(n)}root.dir='ltr'}
 let _trq=0;new MutationObserver(()=>{if(_trq)return;_trq=requestAnimationFrame(()=>{_trq=0;trHost()})}).observe(document.getElementById('host'),{childList:true,subtree:true});
@@ -2914,5 +2914,50 @@ route();
 <script>/*TGHOOK*/(function(){const host=document.getElementById('host');if(host&&!host.classList.contains('hidden')){tgHome('left:14px;bottom:14px');
  if(!H.players.length&&tgRoster().length){H.players=tgRoster().slice(0,30);save();renderSetup()}}
  const sb=document.getElementById('startBtn');if(sb)sb.addEventListener('click',()=>tgSetRoster(H.players));
- const ov=verdict;verdict=function(txt,who){ov.apply(this,arguments);try{if(typeof TVAR!=='undefined'&&H.lang==='ar'&&TVAR[txt])document.getElementById('verdict').textContent=TVAR[txt];const d=deal(H.seed,H.players.length,K(),H.cat);const imps=d.imps.map(i=>H.players[i]),crew=H.players.filter((p,i)=>!d.imps.includes(i));const w=who==='imp'?imps:who==='group'?crew:[];if(w.length)tgNight('Imposter',[[],[],w],H.seed+'-'+H.cur+'-'+who)}catch(e){}}})();</script></body>
+ const ov=verdict;verdict=function(txt,who){ov.apply(this,arguments);try{if(typeof TVAR!=='undefined'&&H.lang==='ar'&&TVAR[txt])document.getElementById('verdict').textContent=TVAR[txt];const d=deal(H.seed,H.players.length,K(),H.cat);const imps=d.imps.map(i=>H.players[i]),crew=H.players.filter((p,i)=>!d.imps.includes(i));const w=who==='imp'?imps:who==='group'?crew:[];if(w.length)tgNight('Imposter',[[],[],w],H.seed+'-'+H.cur+'-'+who)}catch(e){}}})();</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+(function(){
+if(window.TGDEPTH)return;window.TGDEPTH=1;
+let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}
+if(off||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const css=document.createElement('style');css.textContent=`
+#tgStage{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#tgStage .floor{position:absolute;left:-50%;right:-50%;bottom:-8vh;height:62vh;transform-origin:50% 100%;transform:perspective(60vh) rotateX(72deg);
+ background-image:linear-gradient(rgba(255,215,120,.22) 2px,transparent 2px),linear-gradient(90deg,rgba(255,215,120,.22) 2px,transparent 2px);background-size:9vh 9vh;
+ -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%);animation:tgFloor 6s linear infinite}
+@keyframes tgFloor{to{background-position:0 9vh,0 0}}
+#tgStage .spot{position:absolute;top:-20vh;width:70vh;height:150vh;transform-origin:50% 0;background:conic-gradient(from 168deg at 50% 0,transparent 0deg,rgba(255,240,200,.10) 10deg,rgba(255,240,200,.16) 12deg,rgba(255,240,200,.10) 14deg,transparent 24deg);filter:blur(6px);mix-blend-mode:screen}
+#tgStage .spot.a{left:-10vh;animation:tgSwA 9s ease-in-out infinite alternate}#tgStage .spot.b{right:-10vh;animation:tgSwB 11s ease-in-out infinite alternate}
+@keyframes tgSwA{from{transform:rotate(-28deg)}to{transform:rotate(12deg)}}@keyframes tgSwB{from{transform:rotate(26deg)}to{transform:rotate(-14deg)}}
+#tgStage .bk{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,236,180,.55),rgba(255,236,180,0) 70%);animation:tgFloat linear infinite;mix-blend-mode:screen}
+@keyframes tgFloat{from{transform:translate3d(0,10vh,0)}to{transform:translate3d(var(--dx),-110vh,0)}}
+#tgStage .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.45) 100%)}
+.tgTilt{transition:rotate .25s ease-out,scale .2s ease-out,box-shadow .25s ease-out;will-change:rotate}
+.tgPress{scale:.95!important;transition:scale .08s!important}
+.tgBurst{position:fixed;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;pointer-events:none;z-index:99999;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,220,120,.6) 40%,transparent 70%);animation:tgB .5s ease-out forwards}
+@keyframes tgB{to{transform:scale(18);opacity:0}}
+.tgGlare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 55%);mix-blend-mode:soft-light;opacity:0;transition:opacity .25s}
+.tgTilt:hover>.tgGlare{opacity:1}`;
+(document.head||document.documentElement).appendChild(css);
+function stage(){if(document.getElementById('tgStage'))return;const st=document.createElement('div');st.id='tgStage';
+ st.innerHTML='<div class="spot a"></div><div class="spot b"></div><div class="floor"></div><div class="vig"></div>';
+ for(let i=0;i<22;i++){const b=document.createElement('div'),z=Math.random(),s=(1.2+z*7)+'vh';b.className='bk';b.style.width=b.style.height=s;b.style.left=Math.random()*100+'vw';b.style.bottom='-10vh';
+  b.style.opacity=(.25+z*.55).toFixed(2);b.style.filter=`blur(${((1-z)*3).toFixed(1)}px)`;b.style.setProperty('--dx',(Math.random()*20-10)+'vw');b.style.animationDuration=(14+(1-z)*22)+'s';b.style.animationDelay=(-Math.random()*30)+'s';st.appendChild(b)}
+ const bg=document.getElementById('bg');
+ if(bg&&getComputedStyle(bg).position==='fixed'){bg.appendChild(st);st.style.position='absolute'}
+ else document.body.insertBefore(st,document.body.firstChild)}
+// interactive tilt on cards, tiles and buttons (uses the separate rotate/scale properties so game transforms keep working)
+const SEL='.tile:not(.used),.slot,.g,.case,.panel,.team,.tbtn,.card2,.board .cell,.sq,.chip,.bb,.big,.big2,.big-btn,.key,.kb button,.gotB,.skipB,button.gold';
+let cur=null;
+function tiltOn(el,e){const r=el.getBoundingClientRect();if(r.width<30||r.height<20||r.width>innerWidth*.8)return;const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5,big=r.width*r.height>60000,amt=big?4:9;
+ el.classList.add('tgTilt');el.style.rotate=`${(-py).toFixed(3)} ${px.toFixed(3)} 0 ${(Math.hypot(px,py)*amt*2).toFixed(2)}deg`;
+ el.style.setProperty('--gx',((px+.5)*100).toFixed(0)+'%');el.style.setProperty('--gy',((py+.5)*100).toFixed(0)+'%');
+ if(!el.querySelector(':scope>.tgGlare')&&getComputedStyle(el).position!=='static'){const g=document.createElement('span');g.className='tgGlare';el.appendChild(g)}}
+function tiltOff(el){if(!el)return;el.style.rotate='';}
+document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest(SEL);if(el!==cur){tiltOff(cur);cur=el}if(el)tiltOn(el,e)},{passive:true});
+document.addEventListener('pointerleave',()=>{tiltOff(cur);cur=null});
+document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('button,'+SEL);if(!el)return;el.classList.add('tgPress');setTimeout(()=>el.classList.remove('tgPress'),140);
+ const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
+if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
+})();
+</script></body>
 </html>

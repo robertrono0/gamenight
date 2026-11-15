@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deal or No Deal</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
+<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deal or No Deal</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:#1d0a10;color:var(--cream);font-family:var(--fb)}
+html,body{height:100%;overflow:hidden;background:#0b0718;color:var(--cream);font-family:var(--fb)}
 button{font-family:var(--fb);cursor:pointer;border:0}input,textarea,select{font-family:var(--fb)}
 .hidden{display:none!important}
-#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,var(--bgA,#7a2410) 0%,var(--bgB,#4a1420) 38%,#1d0a10 78%)}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,var(--bgA,#5b1f9a) 0%,var(--bgB,#2a1050) 38%,#0b0718 78%)}
 #bg::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 60%,rgba(255,204,61,.05) 0 6deg,transparent 6deg 18deg);animation:cspin 70s linear infinite}
 @keyframes cspin{to{transform:rotate(360deg)}}
 #fx{position:fixed;inset:0;z-index:60;pointer-events:none}
@@ -193,7 +193,7 @@ function toggleMusic(){A.on=!A.on;LS.set('tg-music',A.on);music(A.mode==='off'?'
 // ---------------- FX ----------------
 let _cv,_cx,_parts=[];
 function fxInit(){_cv=$('#fx');_cx=_cv.getContext('2d');const rs=()=>{_cv.width=innerWidth;_cv.height=innerHeight};addEventListener('resize',rs);rs();(function loop(){_cx.clearRect(0,0,_cv.width,_cv.height);_parts=_parts.filter(p=>p.life>0&&p.y<_cv.height+40);for(const p of _parts){p.vy+=.25;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.life-=p.dec;_cx.save();_cx.globalAlpha=Math.min(1,p.life*1.5);_cx.translate(p.x,p.y);_cx.rotate(p.r);if(p.c){_cx.fillStyle=p.c;_cx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2)}else{_cx.font=(p.sz*2.6)+'px serif';_cx.fillText(p.e,-p.sz,p.sz)}_cx.restore()}requestAnimationFrame(loop)})()}
-function burst(x=innerWidth/2,y=innerHeight/3,n=100,emo){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());_parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc','#a78bfa']):null,e:pick(emo||['🦃','🥧','⭐','🍂','🌽']),sz:7+Math.random()*8})}}
+function burst(x=innerWidth/2,y=innerHeight/3,n=100,emo){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());_parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc','#a78bfa']):null,e:pick(emo||['🎉','⭐','💵','✨','🎊']),sz:7+Math.random()*8})}}
 function rain(emo,n=14){for(let i=0;i<n;i++){const e=document.createElement('div');e.className='falling';e.textContent=pick(emo);e.style.left=rnd(100)+'vw';e.style.animationDuration=(4+rnd(5))+'s';e.style.animationDelay=(rnd(30)/10)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),13000)}}
 async function countdown(n=3,go='GO!'){const d=document.createElement('div');d.className='countdown';document.body.appendChild(d);for(let i=n;i>0;i--){d.innerHTML=`<span>${i}</span>`;SFX.tick(i===1);await sleep(800)}d.innerHTML=`<span>${go}</span>`;SFX.horn();await sleep(700);d.remove()}
 // ---------------- TIMER ----------------
@@ -201,7 +201,7 @@ function Timer(el,secs,onEnd,onTick){let left=secs,iv=null,paused=false;const dr
  return{start(){clearInterval(iv);iv=setInterval(()=>{if(paused)return;left=Math.max(0,left-.1);draw();if(Math.abs(left-Math.round(left))<.05&&left<=5&&left>0)SFX.tick(left<=3);onTick&&onTick(left);if(left<=0){clearInterval(iv);SFX.buzz();onEnd&&onEnd()}},100)},stop(){clearInterval(iv)},pause(p){paused=p},add(s){left=Math.min(secs,left+s);draw()},get left(){return left}}}
 // ---------------- TEAMS ----------------
 const TC=['var(--t0)','var(--t1)','var(--t2)','var(--t3)'];
-const TNAMES=[['The Gravy Boats','The Pie Hards','The Stuffing Squad','The Cranberry Crew'],['Team Turkey','Team Pumpkin','Team Yalla','Team Habibi']];
+const TNAMES=[['The Smarty Pants','The Know-It-Alls','The Wildcards','The Underdogs'],['Team Fire','Team Ice','Team Yalla','Team Habibi']];
 const parseNames=txt=>{const seen=new Set();return txt.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))};
 function splitTeams(names,n){const sh=shuffle(names),t=Array.from({length:n},()=>[]);sh.forEach((x,i)=>t[i%n].push(x));return t}
 // standard setup block: <div id="teamSetup"></div>
@@ -352,9 +352,54 @@ function end(){music('party');SFX.win();const r=S.results.slice().sort((a,b)=>b.
  try{tgNight('Deal or No Deal',tgPlaces(r.map(x=>({names:[x.n],v:x.w}))),'dond-'+r.map(x=>x.n+x.w).join('|'))}catch(e){}
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${esc(r[0].n)} IS THE BIG WINNER!</div><div class="rank" style="margin:3vh auto">${r.map((x,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(x.n)} ${x.deal?'🤝':'💼'}</span><b>${money(x.w)}</b></div>`).join('')}</div><div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;
  $('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['💵','💰','🏆']);if(window.FXX)FXX.bigWin('🏆 '+r[0].n.toUpperCase(),r[0].w,'Tonight\'s Deal or No Deal champion!');$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
-shellInit({game:'Deal or No Deal',style:'swing',rain:['💵','💼','🦃'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#offerOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
+shellInit({game:'Deal or No Deal',style:'swing',rain:['💵','💼','💰'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#offerOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S&&S.g){$('#setupOv').classList.add('hidden');if(S.g.phase==='offer'){S.g.phase='offerWait';S.g.offers.pop()}if(S.g.phase==='reveal')S.g.phase='final';render()}
 </script>
 <script>/*TGBUZZ*/(function(){function boot(){TGB.init({game:'Deal or No Deal',hostOnly:true,names:()=>[],onAct:id=>{if(id==='call')showOffer();else if(id==='deal')decide(true);else if(id==='nodeal')decide(false)}});hostView()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794689456';s.onload=boot;document.head.appendChild(s)})();</script>
-</body></html>
+const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();</script>
+<script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+(function(){
+if(window.TGDEPTH)return;window.TGDEPTH=1;
+let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}
+if(off||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const css=document.createElement('style');css.textContent=`
+#tgStage{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#tgStage .floor{position:absolute;left:-50%;right:-50%;bottom:-8vh;height:62vh;transform-origin:50% 100%;transform:perspective(60vh) rotateX(72deg);
+ background-image:linear-gradient(rgba(255,215,120,.22) 2px,transparent 2px),linear-gradient(90deg,rgba(255,215,120,.22) 2px,transparent 2px);background-size:9vh 9vh;
+ -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%);animation:tgFloor 6s linear infinite}
+@keyframes tgFloor{to{background-position:0 9vh,0 0}}
+#tgStage .spot{position:absolute;top:-20vh;width:70vh;height:150vh;transform-origin:50% 0;background:conic-gradient(from 168deg at 50% 0,transparent 0deg,rgba(255,240,200,.10) 10deg,rgba(255,240,200,.16) 12deg,rgba(255,240,200,.10) 14deg,transparent 24deg);filter:blur(6px);mix-blend-mode:screen}
+#tgStage .spot.a{left:-10vh;animation:tgSwA 9s ease-in-out infinite alternate}#tgStage .spot.b{right:-10vh;animation:tgSwB 11s ease-in-out infinite alternate}
+@keyframes tgSwA{from{transform:rotate(-28deg)}to{transform:rotate(12deg)}}@keyframes tgSwB{from{transform:rotate(26deg)}to{transform:rotate(-14deg)}}
+#tgStage .bk{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,236,180,.55),rgba(255,236,180,0) 70%);animation:tgFloat linear infinite;mix-blend-mode:screen}
+@keyframes tgFloat{from{transform:translate3d(0,10vh,0)}to{transform:translate3d(var(--dx),-110vh,0)}}
+#tgStage .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.45) 100%)}
+.tgTilt{transition:rotate .25s ease-out,scale .2s ease-out,box-shadow .25s ease-out;will-change:rotate}
+.tgPress{scale:.95!important;transition:scale .08s!important}
+.tgBurst{position:fixed;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;pointer-events:none;z-index:99999;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,220,120,.6) 40%,transparent 70%);animation:tgB .5s ease-out forwards}
+@keyframes tgB{to{transform:scale(18);opacity:0}}
+.tgGlare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 55%);mix-blend-mode:soft-light;opacity:0;transition:opacity .25s}
+.tgTilt:hover>.tgGlare{opacity:1}`;
+(document.head||document.documentElement).appendChild(css);
+function stage(){if(document.getElementById('tgStage'))return;const st=document.createElement('div');st.id='tgStage';
+ st.innerHTML='<div class="spot a"></div><div class="spot b"></div><div class="floor"></div><div class="vig"></div>';
+ for(let i=0;i<22;i++){const b=document.createElement('div'),z=Math.random(),s=(1.2+z*7)+'vh';b.className='bk';b.style.width=b.style.height=s;b.style.left=Math.random()*100+'vw';b.style.bottom='-10vh';
+  b.style.opacity=(.25+z*.55).toFixed(2);b.style.filter=`blur(${((1-z)*3).toFixed(1)}px)`;b.style.setProperty('--dx',(Math.random()*20-10)+'vw');b.style.animationDuration=(14+(1-z)*22)+'s';b.style.animationDelay=(-Math.random()*30)+'s';st.appendChild(b)}
+ const bg=document.getElementById('bg');
+ if(bg&&getComputedStyle(bg).position==='fixed'){bg.appendChild(st);st.style.position='absolute'}
+ else document.body.insertBefore(st,document.body.firstChild)}
+// interactive tilt on cards, tiles and buttons (uses the separate rotate/scale properties so game transforms keep working)
+const SEL='.tile:not(.used),.slot,.g,.case,.panel,.team,.tbtn,.card2,.board .cell,.sq,.chip,.bb,.big,.big2,.big-btn,.key,.kb button,.gotB,.skipB,button.gold';
+let cur=null;
+function tiltOn(el,e){const r=el.getBoundingClientRect();if(r.width<30||r.height<20||r.width>innerWidth*.8)return;const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5,big=r.width*r.height>60000,amt=big?4:9;
+ el.classList.add('tgTilt');el.style.rotate=`${(-py).toFixed(3)} ${px.toFixed(3)} 0 ${(Math.hypot(px,py)*amt*2).toFixed(2)}deg`;
+ el.style.setProperty('--gx',((px+.5)*100).toFixed(0)+'%');el.style.setProperty('--gy',((py+.5)*100).toFixed(0)+'%');
+ if(!el.querySelector(':scope>.tgGlare')&&getComputedStyle(el).position!=='static'){const g=document.createElement('span');g.className='tgGlare';el.appendChild(g)}}
+function tiltOff(el){if(!el)return;el.style.rotate='';}
+document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest(SEL);if(el!==cur){tiltOff(cur);cur=el}if(el)tiltOn(el,e)},{passive:true});
+document.addEventListener('pointerleave',()=>{tiltOff(cur);cur=null});
+document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('button,'+SEL);if(!el)return;el.classList.add('tgPress');setTimeout(()=>el.classList.remove('tgPress'),140);
+ const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
+if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
+})();
+</script></body></html>

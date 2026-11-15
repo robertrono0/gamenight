@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Charades: Thanksgiving Edition</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
+<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Charades: Game Night</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:#1d0a10;color:var(--cream);font-family:var(--fb)}
+html,body{height:100%;overflow:hidden;background:#0b0718;color:var(--cream);font-family:var(--fb)}
 button{font-family:var(--fb);cursor:pointer;border:0}input,textarea,select{font-family:var(--fb)}
 .hidden{display:none!important}
-#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,var(--bgA,#7a2410) 0%,var(--bgB,#4a1420) 38%,#1d0a10 78%)}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,var(--bgA,#5b1f9a) 0%,var(--bgB,#2a1050) 38%,#0b0718 78%)}
 #bg::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 60%,rgba(255,204,61,.05) 0 6deg,transparent 6deg 18deg);animation:cspin 70s linear infinite}
 @keyframes cspin{to{transform:rotate(360deg)}}
 #fx{position:fixed;inset:0;z-index:60;pointer-events:none}
@@ -64,6 +64,13 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .subT{font-size:2.6vh;opacity:.9;margin:1vh 0 2vh}
 </style>
 <style>
+.secret{position:relative;display:flex;flex-direction:column;align-items:center;gap:1.4vh}
+.mystery{width:34vh;height:20vh;border-radius:3vh;display:grid;place-items:center;font-family:var(--fd);font-size:8vh;color:#fff;background:linear-gradient(135deg,#7b2ff7,#f107a3);box-shadow:0 0 0 .6vh rgba(255,255,255,.25),0 0 6vh rgba(241,7,163,.6);animation:myst 1.6s ease-in-out infinite alternate}
+@keyframes myst{0%{transform:rotate(-3deg) scale(1)}100%{transform:rotate(3deg) scale(1.05)}}
+.secretT{font-family:var(--fd);font-size:5vh;color:var(--gold);letter-spacing:.06em}
+.floaty{position:absolute;inset:-6vh -20vw;pointer-events:none;overflow:hidden}.floaty span{position:absolute;font-size:4vh;animation:flo 4s ease-in-out infinite;opacity:.8}
+@keyframes flo{0%{transform:translateY(4vh)}50%{transform:translateY(-4vh) rotate(12deg)}100%{transform:translateY(4vh)}}
+.gotFlash{font-family:var(--fd);font-size:9vh;color:#5cf09a;text-shadow:0 0 4vh rgba(92,240,154,.8)}
 :root{--bgA:#5b1f7a;--bgB:#3a1240}
 .mode{display:inline-flex;align-items:center;gap:1vh;font-family:var(--fd);font-size:3vh;padding:1vh 2.4vh;border-radius:4vh;background:var(--mc,#ff7a1a);color:#fff;box-shadow:0 .6vh 0 rgba(0,0,0,.35)}
 .word{font-family:var(--fd);font-size:11vh;line-height:1.05;color:#fff;text-shadow:0 .8vh 0 rgba(0,0,0,.35),0 0 4vh rgba(255,204,61,.35);max-width:90vw;word-break:break-word}
@@ -85,6 +92,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <div class="ov" id="setupOv"><div class="card">
  <h2>🎭 Set up Charades</h2>
  <div id="teamSetup"></div>
+ <h3>📱 Where does the secret word show?</h3>
+ <div class="seg" id="segW"><button data-v="host" class="on">📱 Host's phone (TV stays secret)</button><button data-v="giver">🎭 Clue giver's phone</button><button data-v="tv">📺 On the TV</button></div>
+ <div class="hint" style="margin-top:.6vh">Sharing your screen? Pick <b>Host's phone</b>: the TV only shows the timer and effects, and the word appears on the host's phone to show the clue giver. Connect it with <b>📱 Buzzers</b> → host QR.</div>
  <h3>How do clues get given?</h3>
  <div class="seg" id="segMode"><button data-v="mix" class="on">🎲 Mix it up</button><button data-v="act">🎭 Act only</button><button data-v="describe">🗣️ Describe only</button><button data-v="hum">🎵 Hum only (songs)</button></div>
  <h3>Categories</h3><div class="chips" id="cats"></div>
@@ -93,7 +103,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
   <div><h3>Turns per team</h3><div class="seg" id="segR"><button data-v="2">2</button><button data-v="3" class="on">3</button><button data-v="4">4</button><button data-v="5">5</button></div></div>
  </div>
  <h3>Your own words <span class="hint">(optional, one per line, inside jokes welcome)</span></h3>
- <textarea class="field" id="custom" placeholder="Fadi parallel parking&#10;Ronak's honeymoon"></textarea>
+ <textarea class="field" id="custom" placeholder="Fadi parallel parking&#10;Mom on the phone"></textarea>
  <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">LET'S PLAY! 🎉</button></div>
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
@@ -172,7 +182,7 @@ function toggleMusic(){A.on=!A.on;LS.set('tg-music',A.on);music(A.mode==='off'?'
 // ---------------- FX ----------------
 let _cv,_cx,_parts=[];
 function fxInit(){_cv=$('#fx');_cx=_cv.getContext('2d');const rs=()=>{_cv.width=innerWidth;_cv.height=innerHeight};addEventListener('resize',rs);rs();(function loop(){_cx.clearRect(0,0,_cv.width,_cv.height);_parts=_parts.filter(p=>p.life>0&&p.y<_cv.height+40);for(const p of _parts){p.vy+=.25;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.life-=p.dec;_cx.save();_cx.globalAlpha=Math.min(1,p.life*1.5);_cx.translate(p.x,p.y);_cx.rotate(p.r);if(p.c){_cx.fillStyle=p.c;_cx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2)}else{_cx.font=(p.sz*2.6)+'px serif';_cx.fillText(p.e,-p.sz,p.sz)}_cx.restore()}requestAnimationFrame(loop)})()}
-function burst(x=innerWidth/2,y=innerHeight/3,n=100,emo){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());_parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc','#a78bfa']):null,e:pick(emo||['🦃','🥧','⭐','🍂','🌽']),sz:7+Math.random()*8})}}
+function burst(x=innerWidth/2,y=innerHeight/3,n=100,emo){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());_parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc','#a78bfa']):null,e:pick(emo||['🎉','⭐','💵','✨','🎊']),sz:7+Math.random()*8})}}
 function rain(emo,n=14){for(let i=0;i<n;i++){const e=document.createElement('div');e.className='falling';e.textContent=pick(emo);e.style.left=rnd(100)+'vw';e.style.animationDuration=(4+rnd(5))+'s';e.style.animationDelay=(rnd(30)/10)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),13000)}}
 async function countdown(n=3,go='GO!'){const d=document.createElement('div');d.className='countdown';document.body.appendChild(d);for(let i=n;i>0;i--){d.innerHTML=`<span>${i}</span>`;SFX.tick(i===1);await sleep(800)}d.innerHTML=`<span>${go}</span>`;SFX.horn();await sleep(700);d.remove()}
 // ---------------- TIMER ----------------
@@ -180,7 +190,7 @@ function Timer(el,secs,onEnd,onTick){let left=secs,iv=null,paused=false;const dr
  return{start(){clearInterval(iv);iv=setInterval(()=>{if(paused)return;left=Math.max(0,left-.1);draw();if(Math.abs(left-Math.round(left))<.05&&left<=5&&left>0)SFX.tick(left<=3);onTick&&onTick(left);if(left<=0){clearInterval(iv);SFX.buzz();onEnd&&onEnd()}},100)},stop(){clearInterval(iv)},pause(p){paused=p},add(s){left=Math.min(secs,left+s);draw()},get left(){return left}}}
 // ---------------- TEAMS ----------------
 const TC=['var(--t0)','var(--t1)','var(--t2)','var(--t3)'];
-const TNAMES=[['The Gravy Boats','The Pie Hards','The Stuffing Squad','The Cranberry Crew'],['Team Turkey','Team Pumpkin','Team Yalla','Team Habibi']];
+const TNAMES=[['The Smarty Pants','The Know-It-Alls','The Wildcards','The Underdogs'],['Team Fire','Team Ice','Team Yalla','Team Habibi']];
 const parseNames=txt=>{const seen=new Set();return txt.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))};
 function splitTeams(names,n){const sh=shuffle(names),t=Array.from({length:n},()=>[]);sh.forEach((x,i)=>t[i%n].push(x));return t}
 // standard setup block: <div id="teamSetup"></div>
@@ -267,18 +277,18 @@ const DECK={
  tv:{e:'📺',n:'TV & Reality',m:['act','describe'],w:['Friends','The Office','Squid Game','Stranger Things','Love Is Blind','The Kardashians','The Real Housewives','Dancing with the Stars','Survivor','Game of Thrones','Wednesday','The Bachelor','Shark Tank','Family Feud','SpongeBob','The Simpsons','Breaking Bad','Grey\'s Anatomy','American Idol','Love Island','Bridgerton','Selling Sunset','The Voice','Wheel of Fortune','Jeopardy','Tom and Jerry','Sesame Street','The Bear','Ramy','Arab Idol']},
  songs:{e:'🎵',n:'Songs',m:['hum','act'],w:['Happy Birthday','Baby Shark','Macarena','Bohemian Rhapsody','Despacito','Shake It Off','Thriller','Single Ladies','Uptown Funk','Gangnam Style','Habibi Ya Nour El Ain','Tamally Maak','Ah W Noss','Cupid Shuffle','Cha Cha Slide','YMCA','Old Town Road','Espresso','APT.','Die With A Smile','All I Want for Christmas Is You','We Will Rock You','Hips Don\'t Lie','Waka Waka','Sweet Caroline','Levitating','Not Like Us','Lose Yourself','Dancing Queen','Jingle Bells','Twinkle Twinkle Little Star','Let It Go','Ya Lili','Boshret Kheir','Hello (Adele)']},
  celebs:{e:'⭐',n:'Celebrities',m:['act','describe'],w:['Taylor Swift','Beyoncé','The Rock','Kim Kardashian','Cristiano Ronaldo','Lionel Messi','Mohamed Salah','Oprah','Elon Musk','Drake','Bad Bunny','Michael Jackson','Elvis','Gordon Ramsay','MrBeast','Kevin Hart','Rihanna','Amr Diab','Nancy Ajram','Haifa Wehbe','Khaby Lame','Steve Harvey','Adam Sandler','Zendaya','Lady Gaga','Shakira','LeBron James','Serena Williams','DJ Khaled','Bella Hadid','Snoop Dogg','Usain Bolt','Mike Tyson','Spider-Man actor Tom Holland','Kylie Jenner']},
- actions:{e:'🏃',n:'Actions',m:['act'],w:['Brushing teeth','Changing a diaper','Riding a horse','Playing golf','Taking a selfie','Doing yoga','Carving the turkey','Parallel parking','Walking a dog','Skydiving','Milking a cow','Making Turkish coffee','Rolling grape leaves','Dancing dabke','Haggling at the market','Putting on makeup','Fixing a flat tire','Surfing','Bowling','Washing dishes','Ironing a shirt','Hula hooping','Playing pickleball','Doing a TikTok dance','Losing your keys','Stepping on a Lego','Stuck in traffic','Being chased by a bee','Eating something too spicy','Opening a stuck jar','Sneaking a second plate','Falling asleep in a meeting','Getting caught by mom','Proposing on one knee','Flipping a pancake']},
- thanks:{e:'🦃',n:'Thanksgiving',m:['act','describe'],w:['Turkey','Pilgrim','Mayflower','Football','Pumpkin pie','Leftovers','Black Friday','Wishbone','Parade balloon','Food coma','Stretchy pants','Gravy boat','Cornucopia','Carving knife','Cranberry sauce','Stuffing','Sweet potato casserole','Saying grace','Kids\' table','Grandma\'s recipe','Pardoning a turkey','Mashed potatoes','Corn on the cob','Pie eating contest','Macy\'s Parade','Turkey trot']},
+ actions:{e:'🏃',n:'Actions',m:['act'],w:['Brushing teeth','Changing a diaper','Riding a horse','Playing golf','Taking a selfie','Doing yoga','Grilling burgers','Parallel parking','Walking a dog','Skydiving','Milking a cow','Making Turkish coffee','Rolling grape leaves','Dancing dabke','Haggling at the market','Putting on makeup','Fixing a flat tire','Surfing','Bowling','Washing dishes','Ironing a shirt','Hula hooping','Playing pickleball','Doing a TikTok dance','Losing your keys','Stepping on a Lego','Stuck in traffic','Being chased by a bee','Eating something too spicy','Opening a stuck jar','Sneaking a second plate','Falling asleep in a meeting','Getting caught by mom','Proposing on one knee','Flipping a pancake']},
+ party:{e:'🎉',n:'Party Time',m:['act','describe'],w:['Birthday cake','Blowing out candles','Piñata','Limbo','Karaoke','Musical chairs','DJ','Conga line','Taking a group selfie','Popping a balloon','Surprise party','Opening presents','Dabke','Slow dance','Party hat','Confetti','Bouncy castle','Dance battle','Fireworks','New Year\'s countdown','Toasting with champagne','Wedding cake','Throwing the bouquet','Spilling a drink','Charades (yes, really)']},
  arab:{e:'🧆',n:'Arab Life',m:['act','describe'],w:['Shawarma','Hookah','Dabke','Kunafa','Baklava','Dolma','Kubba','Teta','Henna party','Zaffa','Evil eye','Turkish coffee','Fighting over the bill','Yalla','Wallah','Falafel','Hummus','Tabbouleh','Pita bread','Chai with mint','Grape leaves','The flying slipper','Mom\'s voice notes','Uncle at the BBQ','Pistachios','Wedding drums','Masgouf','Klecha','Khaleeji dance','Arab wedding entrance','Kissing on both cheeks','Leaving the party for an hour','Za\'atar man\'oushe','Tea in a small glass']},
  trend:{e:'🔥',n:'Trending',m:['act','describe'],w:['Labubu','Dubai chocolate','Pickleball','Stanley cup','Matcha','Rizz','Skibidi','Eras Tour','Brainrot','Mewing','Slay','Ice bath','Pilates','Cold plunge','Crumbl cookies','AirPods','Air fryer','Tesla Cybertruck','ChatGPT','Hot girl walk','Girl dinner','6-7','Clean girl look','Demure','Brat summer','Moo Deng','Quiet quitting','Ring light','Podcast mic','Self checkout']},
- animals:{e:'🐘',n:'Animals',m:['act'],w:['Elephant','Kangaroo','Penguin','Monkey','Snake','Giraffe','Chicken','Camel','Flamingo','Octopus','Sloth','Gorilla','T-Rex','Turkey','Crab','Frog','Bunny','Cat','Dog','Shark','Bear','Peacock','Horse','Owl','Lobster']}};
+ animals:{e:'🐘',n:'Animals',m:['act'],w:['Elephant','Kangaroo','Penguin','Monkey','Snake','Giraffe','Chicken','Camel','Flamingo','Octopus','Sloth','Gorilla','T-Rex','Peacock','Crab','Frog','Bunny','Cat','Dog','Shark','Bear','Peacock','Horse','Owl','Lobster']}};
 const MODES={act:{t:'🎭 ACT IT',s:'No talking! No sounds!',c:'#ff7a1a'},describe:{t:'🗣️ DESCRIBE IT',s:"Don't say the word!",c:'#2a8fdb'},hum:{t:'🎵 HUM IT',s:'Hum or whistle. No words!',c:'#a33fd1'}};
 setStyle('pop');
 let S=LS.get('tg-charades',null);const save=()=>LS.set('tg-charades',S);
 const TS=teamSetup($('#teamSetup'),'tg-charades');
-let cfg=LS.get('tg-charades-cfg',{mode:'mix',t:60,r:3,cats:Object.keys(DECK)});
+let cfg=LS.get('tg-charades-cfg',{mode:'mix',t:60,r:3,cats:Object.keys(DECK)});if(!cfg.where)cfg.where='host';cfg.cats=cfg.cats.filter(k=>DECK[k]);if(!cfg.cats.length)cfg.cats=Object.keys(DECK);
 function segInit(id,key){$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[key]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[key]=val;LS.set('tg-charades-cfg',cfg);SFX.click()}})}
-segInit('segMode','mode');segInit('segT','t');segInit('segR','r');
+segInit('segW','where');segInit('segMode','mode');segInit('segT','t');segInit('segR','r');
 $('#cats').innerHTML=Object.entries(DECK).map(([k,d])=>`<button class="chip${cfg.cats.includes(k)?' on':''}" data-c="${k}">${d.e} ${d.n}</button>`).join('');
 $$('#cats .chip').forEach(b=>b.onclick=()=>{const k=b.dataset.c;cfg.cats=cfg.cats.includes(k)?cfg.cats.filter(x=>x!==k):[...cfg.cats,k];b.classList.toggle('on');LS.set('tg-charades-cfg',cfg)});
 function buildPile(){let cards=[];const cats=cfg.mode==='hum'?['songs']:cfg.cats.length?cfg.cats:Object.keys(DECK);
@@ -289,9 +299,9 @@ $('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('
 const curTeam=()=>S.turn%S.teams.length;
 const giverName=()=>{const t=S.teams[curTeam()];return t.m[S.giver[curTeam()]%t.m.length]};
 let timer=null,card=null,streak=0;
-function render(){$('#scores').innerHTML=scoreBar(S.teams,curTeam());const st=$('#stage'),t=S.teams[curTeam()];
+function render(){setTimeout(()=>{try{phoneView()}catch(e){}},0);$('#scores').innerHTML=scoreBar(S.teams,curTeam());const st=$('#stage'),t=S.teams[curTeam()];
  if(S.phase==='ready'){st.innerHTML=`<div class="panel popIn" style="--tc:${t.c}"><div class="kicker">TURN ${S.turn+1} OF ${S.total}</div><div class="huge" style="color:${t.c};filter:brightness(1.2)">${esc(t.name)}</div>
-  <div style="font-size:3.4vh;margin:1.6vh 0">🎤 <b style="color:var(--gold)">${esc(giverName())}</b>, you're giving the clues!</div>${phoneOn(giverName())?`<div class="backs" style="color:#5cf09a">📱 The words go to ${esc(giverName())}'s phone. Everyone can face the TV!</div>`:`<div class="backs">🙈 Everyone else on ${esc(t.name)}: TURN YOUR BACKS TO THE TV!</div><div class="keys" style="margin-top:.6vh">Tip: tap 📱 Buzzers and have ${esc(giverName())} scan, so the word shows on their phone instead</div>`}${S.lightning?'<div class="fire" style="margin-top:1vh">⚡ LIGHTNING ROUND: 30 seconds, every card worth DOUBLE!</div>':''}
+  <div style="font-size:3.4vh;margin:1.6vh 0">🎤 <b style="color:var(--gold)">${esc(giverName())}</b>, you're giving the clues!</div>${wordWhere()==='host'?`<div class="backs" style="color:#5cf09a">📱 The word is on the HOST's phone. Host: show it to ${esc(giverName())}. Everyone can watch the TV!</div>`:wordWhere()==='giver'?`<div class="backs" style="color:#5cf09a">📱 The words go to ${esc(giverName())}'s phone. Everyone can face the TV!</div>`:`<div class="backs">🙈 Everyone else on ${esc(t.name)}: TURN YOUR BACKS TO THE TV!</div>${cfg.where!=='tv'?`<div class="keys" style="margin-top:.6vh;color:#ffb3b3;opacity:1">⚠️ No ${cfg.where==='host'?'host':esc(giverName())+"'s"} phone connected yet, so the word will show on the TV. Tap 📱 Buzzers to connect it.</div>`:''}`}${S.lightning?'<div class="fire" style="margin-top:1vh">⚡ LIGHTNING ROUND: 30 seconds, every card worth DOUBLE!</div>':''}
   <div class="ctr"><button class="bb big gold" id="bGo">START ${S.t}s ⏱️</button></div><div class="keys">Tip: → key = Got it, ← key = Skip</div></div>`;$('#bGo').onclick=go}
  else if(S.phase==='play'){st.innerHTML=`<div class="panel" id="cardP" style="min-width:70vw;min-height:34vh;display:flex;flex-direction:column;align-items:center;justify-content:center"></div><div class="playRow"><button class="big2 skipB" id="bSkip">⏭ SKIP</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:1.4vh"><div class="ring" id="ring"><span>${S.t}</span></div><div class="tally"><span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span></div><div class="fire" id="fire"></div></div>
@@ -301,24 +311,70 @@ function render(){$('#scores').innerHTML=scoreBar(S.teams,curTeam());const st=$(
   <div class="btns"><button class="bb ghost" id="bFix">↩️ Undo last "Got it"</button><button class="bb big" id="bNext">${S.turn+1>=S.total?'🏆 FINAL RESULTS':'NEXT TEAM ➜'}</button></div></div>`;
   $('#bNext').onclick=next;$('#bFix').onclick=()=>{if(!S.got.length)return;S.got.pop();const v=(S.gp||[]).pop()||1;S.teams[curTeam()].score-=v;S.lastPts-=v;save();render()}}}
 function showCard(){if(!S.pile.length)S.pile=buildPile();card=S.pile.pop();const M=MODES[card.m],d=DECK[card.c]||{e:'⭐',n:'Inside joke'};
- const p=$('#cardP'),onPh=S.phone;p.innerHTML=`<div class="mode" style="--mc:${M.c}">${M.t}</div><div class="cat" style="margin-top:1vh">${d.e} ${d.n} · ${M.s}</div>${onPh?`<div class="word flipIn" style="font-size:6vh">📱 Look at ${esc(giverName())}'s phone!</div>`:`<div class="word flipIn">${esc(card.w)}</div>`}`;save();phoneView()}
+ const p=$('#cardP'),onPh=S.phone;p.innerHTML=`<div class="mode" style="--mc:${M.c}">${M.t}</div><div class="cat" style="margin-top:1vh">${d.e} ${d.n} · ${M.s}</div>${onPh?`<div class="secret flipIn"><div class="floaty">${['🎭','🤫','❓','🎬','⭐','🔥','🎉','❓'].map((e,i)=>`<span style="left:${6+i*12}%;top:${20+(i%3)*25}%;animation-delay:${-i*.5}s">${e}</span>`).join('')}</div><div class="mystery">🤫</div><div class="secretT">SECRET WORD</div><div class="cat">📱 ${S.phone==='host'?'On the host\'s phone':'On '+esc(giverName())+'\'s phone'} · ${esc(giverName())} is up!</div></div>`:`<div class="word flipIn">${esc(card.w)}</div>`}`;save();phoneView()}
+function wordWhere(){if(!window.TGB)return 'tv';if(cfg.where==='host'&&TGB.hostCount&&TGB.hostCount()>0)return 'host';if(cfg.where==='giver'&&phoneOn(giverName()))return 'giver';return 'tv'}
 function phoneOn(n){return !!(window.TGB&&TGB.connected().includes(n))||!!(window.TGB&&TGB.isHost(n))}
-function phoneView(){if(!window.TGB)return;if(S&&S.phase==='play'&&S.phone&&card){const M=MODES[card.m],d=DECK[card.c]||{e:'⭐',n:'Inside joke'};TGB.host({title:`${M.t} · ${d.e} ${d.n}`,a:card.w,note:M.s+(S.lightning?' · ⚡ DOUBLE POINTS':''),actions:[{id:'got',label:'✅ GOT IT',k:'ok'},{id:'skip',label:'⏭ SKIP',k:'no'}],noBuzzBtns:true})}else TGB.host({title:'🎭 Charades',note:'Waiting for the next turn',actions:[],noBuzzBtns:true})}
-async function go(){S.phase='play';S.got=[];S.skip=[];S.gp=[];streak=0;S.phone=false;if(window.TGB&&phoneOn(giverName())){S.phone=true;TGB.makeHost(giverName())}save();$('#stage').innerHTML='';await countdown(3,'ACT!');render();music('tense');
+function phoneView(){if(!window.TGB)return;if(S&&S.phase==='play'&&S.phone&&card){const M=MODES[card.m],d=DECK[card.c]||{e:'⭐',n:'Inside joke'};TGB.host({title:`${M.t} · ${d.e} ${d.n}`,q:`🎤 ${giverName()} is up · ✅ ${S.got.length}  ⏭ ${S.skip.length}`,a:card.w,note:M.s+(S.phone==='host'?' · Show this to '+giverName():'')+(S.lightning?' · ⚡ DOUBLE POINTS':''),actions:[{id:'got',label:'✅ GOT IT',k:'ok'},{id:'skip',label:'⏭ SKIP',k:'no'}],noBuzzBtns:true})}else if(S&&S.phase==='ready'){TGB.host({title:'🎭 Charades',q:`Next up: ${giverName()} (${S.teams[curTeam()].name})`,note:'Start the turn when they are ready',actions:[{id:'go',label:'▶️ START TURN',k:'ok'}],noBuzzBtns:true})}else if(S&&S.phase==='sum'){TGB.host({title:'🎭 Turn over',q:`+${S.lastPts} for ${S.teams[curTeam()].name}`,actions:[{id:'next',label:'NEXT TEAM ➜',k:'y'}],noBuzzBtns:true})}else TGB.host({title:'🎭 Charades',note:'Set up the game on the TV',actions:[],noBuzzBtns:true})}
+async function go(){S.phase='play';S.got=[];S.skip=[];S.gp=[];streak=0;S.phone=false;const ww=wordWhere();if(ww==='giver'){S.phone='giver';TGB.makeHost(giverName())}else if(ww==='host')S.phone='host';save();$('#stage').innerHTML='';await countdown(3,'ACT!');render();music('tense');
  timer=Timer($('#ring'),S.t,endTurn);timer.start()}
-function got(){if(S.phase!=='play')return;streak++;const v=(streak>3?2:1)*(S.lightning?2:1);S.got.push(card.w);S.gp.push(v);S.teams[curTeam()].score+=v;SFX.ok();bumpScore(curTeam());burst(innerWidth*.82,innerHeight*.5,streak>3?60:30);
+function got(){if(S.phase!=='play')return;if(S.phone)t2(`✅ ${esc(card.w)}!<small>+${(streak+1>3?2:1)*(S.lightning?2:1)} point${(streak+1>3?2:1)*(S.lightning?2:1)>1?'s':''}</small>`,1300);streak++;const v=(streak>3?2:1)*(S.lightning?2:1);S.got.push(card.w);S.gp.push(v);S.teams[curTeam()].score+=v;SFX.ok();bumpScore(curTeam());burst(innerWidth*.82,innerHeight*.5,streak>3?60:30);
  if(streak===3){t2('🔥 ON FIRE!<small>Every card is worth 2 now!</small>',1300);SFX.horn()}$('#fire').textContent=streak>=3?'🔥 ON FIRE x2':'';$('.tally').innerHTML=`<span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span>`;$('#scores').innerHTML=scoreBar(S.teams,curTeam());showCard()}
-function skip(){if(S.phase!=='play')return;streak=0;S.skip.push(card.w);SFX.skip();$('#fire').textContent='';$('.tally').innerHTML=`<span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span>`;showCard()}
-function endTurn(){timer&&timer.stop();if(window.TGB&&S.phone){TGB.unHost(giverName());S.phone=false;phoneView()}S.pile.unshift(card);S.phase='sum';S.lastPts=(S.gp||[]).reduce((a,b)=>a+b,0);save();music('chill');
+function skip(){if(S.phase!=='play')return;if(S.phone)t2(`⏭ SKIPPED<small>It was: ${esc(card.w)}</small>`,1200);streak=0;S.skip.push(card.w);SFX.skip();$('#fire').textContent='';$('.tally').innerHTML=`<span class="g">✅ ${S.got.length}</span><span class="k">⏭ ${S.skip.length}</span>`;showCard()}
+function endTurn(){timer&&timer.stop();if(window.TGB&&S.phone){if(S.phone==='giver')TGB.unHost(giverName());S.phone=false;phoneView()}S.pile.unshift(card);S.phase='sum';S.lastPts=(S.gp||[]).reduce((a,b)=>a+b,0);save();music('chill');
  if(S.got.length>=5){SFX.win();burst(innerWidth/2,innerHeight/3,140)}else SFX.sad();render()}
 function next(){S.giver[curTeam()]++;S.turn++;if(S.turn>=S.total){if(!S.lightning){S.lightning=true;S.total+=S.teams.length;S.t=30;S.phase='ready';save();render();SFX.horn();t2('⚡ LIGHTNING ROUND!<small>Every team gets 30 seconds. Every card is worth DOUBLE!</small>',3200);burst(innerWidth/2,innerHeight/3,140,['⚡','🎭','⭐']);return}end();return}S.phase='ready';save();render();SFX.whoosh()}
 function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score-a.score);const tie=w[1]&&w[0].score===w[1].score;
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${tie?"IT'S A TIE!":esc(w[0].name)+' WIN!'}</div>${podium(S.teams)}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;
  $('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240);$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
 document.addEventListener('keydown',e=>{if(!S||S.phase!=='play'||e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();got()}if(e.key==='ArrowLeft'){e.preventDefault();skip()}});
-shellInit({game:'Charades',style:'pop',rain:['🎭','🦃','🍂','🎬'],onNew:()=>{timer&&timer.stop();S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
+shellInit({game:'Charades',style:'pop',rain:['🎭','🎬','⭐','🎉'],onNew:()=>{timer&&timer.stop();S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){if(S.phase==='play')S.phase='ready';$('#setupOv').classList.add('hidden');render()}
 </script><script>/*TGBUZZ*/(function(){
 function boot(){TGB.init({game:'Charades',names:()=>S&&S.teams?S.teams.flatMap(t=>t.m):(window.tgRoster?tgRoster():[]),teamOf:n=>{if(!S||!S.teams)return null;const t=S.teams.find(x=>x.m.includes(n));return t?{label:t.name,color:'#ffcc3d'}:null},
- onAct:id=>{if(!S||S.phase!=='play')return;if(id==='got')got();else if(id==='skip')skip();phoneView()}});phoneView();let lastOn=null;setInterval(()=>{if(S&&S.phase==='ready'){const o=phoneOn(giverName());if(o!==lastOn){lastOn=o;render()}}},1500)}
-const s=document.createElement('script');s.src='buzzer.js?v=1794689456';s.onload=boot;document.head.appendChild(s)})();</script></body></html>
+ onAct:id=>{if(!S)return;if(id==='go'&&S.phase==='ready'){const b=$('#bGo');b&&b.click();return}if(id==='next'&&S.phase==='sum'){const b=$('#bNext');b&&b.click();return}if(S.phase!=='play')return;if(id==='got')got();else if(id==='skip')skip();phoneView()}});phoneView();let lastOn=null;setInterval(()=>{if(S&&S.phase==='ready'){const o=phoneOn(giverName());const w2=wordWhere();if(o+w2!==lastOn){lastOn=o+w2;render()}}},1500)}
+const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+(function(){
+if(window.TGDEPTH)return;window.TGDEPTH=1;
+let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}
+if(off||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const css=document.createElement('style');css.textContent=`
+#tgStage{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#tgStage .floor{position:absolute;left:-50%;right:-50%;bottom:-8vh;height:62vh;transform-origin:50% 100%;transform:perspective(60vh) rotateX(72deg);
+ background-image:linear-gradient(rgba(255,215,120,.22) 2px,transparent 2px),linear-gradient(90deg,rgba(255,215,120,.22) 2px,transparent 2px);background-size:9vh 9vh;
+ -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%);animation:tgFloor 6s linear infinite}
+@keyframes tgFloor{to{background-position:0 9vh,0 0}}
+#tgStage .spot{position:absolute;top:-20vh;width:70vh;height:150vh;transform-origin:50% 0;background:conic-gradient(from 168deg at 50% 0,transparent 0deg,rgba(255,240,200,.10) 10deg,rgba(255,240,200,.16) 12deg,rgba(255,240,200,.10) 14deg,transparent 24deg);filter:blur(6px);mix-blend-mode:screen}
+#tgStage .spot.a{left:-10vh;animation:tgSwA 9s ease-in-out infinite alternate}#tgStage .spot.b{right:-10vh;animation:tgSwB 11s ease-in-out infinite alternate}
+@keyframes tgSwA{from{transform:rotate(-28deg)}to{transform:rotate(12deg)}}@keyframes tgSwB{from{transform:rotate(26deg)}to{transform:rotate(-14deg)}}
+#tgStage .bk{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,236,180,.55),rgba(255,236,180,0) 70%);animation:tgFloat linear infinite;mix-blend-mode:screen}
+@keyframes tgFloat{from{transform:translate3d(0,10vh,0)}to{transform:translate3d(var(--dx),-110vh,0)}}
+#tgStage .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.45) 100%)}
+.tgTilt{transition:rotate .25s ease-out,scale .2s ease-out,box-shadow .25s ease-out;will-change:rotate}
+.tgPress{scale:.95!important;transition:scale .08s!important}
+.tgBurst{position:fixed;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;pointer-events:none;z-index:99999;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,220,120,.6) 40%,transparent 70%);animation:tgB .5s ease-out forwards}
+@keyframes tgB{to{transform:scale(18);opacity:0}}
+.tgGlare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 55%);mix-blend-mode:soft-light;opacity:0;transition:opacity .25s}
+.tgTilt:hover>.tgGlare{opacity:1}`;
+(document.head||document.documentElement).appendChild(css);
+function stage(){if(document.getElementById('tgStage'))return;const st=document.createElement('div');st.id='tgStage';
+ st.innerHTML='<div class="spot a"></div><div class="spot b"></div><div class="floor"></div><div class="vig"></div>';
+ for(let i=0;i<22;i++){const b=document.createElement('div'),z=Math.random(),s=(1.2+z*7)+'vh';b.className='bk';b.style.width=b.style.height=s;b.style.left=Math.random()*100+'vw';b.style.bottom='-10vh';
+  b.style.opacity=(.25+z*.55).toFixed(2);b.style.filter=`blur(${((1-z)*3).toFixed(1)}px)`;b.style.setProperty('--dx',(Math.random()*20-10)+'vw');b.style.animationDuration=(14+(1-z)*22)+'s';b.style.animationDelay=(-Math.random()*30)+'s';st.appendChild(b)}
+ const bg=document.getElementById('bg');
+ if(bg&&getComputedStyle(bg).position==='fixed'){bg.appendChild(st);st.style.position='absolute'}
+ else document.body.insertBefore(st,document.body.firstChild)}
+// interactive tilt on cards, tiles and buttons (uses the separate rotate/scale properties so game transforms keep working)
+const SEL='.tile:not(.used),.slot,.g,.case,.panel,.team,.tbtn,.card2,.board .cell,.sq,.chip,.bb,.big,.big2,.big-btn,.key,.kb button,.gotB,.skipB,button.gold';
+let cur=null;
+function tiltOn(el,e){const r=el.getBoundingClientRect();if(r.width<30||r.height<20||r.width>innerWidth*.8)return;const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5,big=r.width*r.height>60000,amt=big?4:9;
+ el.classList.add('tgTilt');el.style.rotate=`${(-py).toFixed(3)} ${px.toFixed(3)} 0 ${(Math.hypot(px,py)*amt*2).toFixed(2)}deg`;
+ el.style.setProperty('--gx',((px+.5)*100).toFixed(0)+'%');el.style.setProperty('--gy',((py+.5)*100).toFixed(0)+'%');
+ if(!el.querySelector(':scope>.tgGlare')&&getComputedStyle(el).position!=='static'){const g=document.createElement('span');g.className='tgGlare';el.appendChild(g)}}
+function tiltOff(el){if(!el)return;el.style.rotate='';}
+document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest(SEL);if(el!==cur){tiltOff(cur);cur=el}if(el)tiltOn(el,e)},{passive:true});
+document.addEventListener('pointerleave',()=>{tiltOff(cur);cur=null});
+document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('button,'+SEL);if(!el)return;el.classList.add('tgPress');setTimeout(()=>el.classList.remove('tgPress'),140);
+ const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
+if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
+})();
+</script></body></html>

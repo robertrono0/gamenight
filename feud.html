@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Family Feud: Thanksgiving Edition</title>
+<title>Family Feud: Game Night</title>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--a:#2ec4b6;--b:#ff4d6d}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:#1d0a10;color:var(--cream);font-family:var(--fb)}
+html,body{height:100%;overflow:hidden;background:#050b26;color:var(--cream);font-family:var(--fb)}
 button{font-family:var(--fb);cursor:pointer;border:0}input,textarea{font-family:var(--fb)}
 .hidden{display:none!important}
-#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,#7a2410 0%,#4a1420 38%,#1d0a10 78%)}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 115%,#1d4fc4 0%,#0d2266 38%,#050b260a10 78%)}
 #bg::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 60%,rgba(255,204,61,.05) 0 6deg,transparent 6deg 18deg);animation:spin 60s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #fx{position:fixed;inset:0;z-index:60;pointer-events:none}
@@ -32,7 +32,7 @@ header{display:flex;align-items:center;justify-content:space-between}
 .q{text-align:center;font-family:var(--fd);font-size:3.6vh;line-height:1.2;padding:1.4vh 3vw;border-radius:2vh;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.2));border:1px solid rgba(255,204,61,.35)}
 .q small{display:block;font-family:var(--fb);font-size:1.8vh;color:var(--gold);letter-spacing:.2em;margin-bottom:.5vh;font-weight:700}
 .boardWrap{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:1.4vh;min-height:0;position:relative}
-.board{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1.2vh 1.2vw;padding:1.6vh;border-radius:2.4vh;background:linear-gradient(180deg,#5d1322,#3f0b17);box-shadow:inset 0 0 0 .5vh var(--gold),0 0 0 1vh #8a3a07,0 2vh 4vh rgba(0,0,0,.5);perspective:1200px;min-height:0}
+.board{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1.2vh 1.2vw;padding:1.6vh;border-radius:2.4vh;background:linear-gradient(180deg,#0b1f5c,#061238);box-shadow:inset 0 0 0 .5vh var(--gold),0 0 0 1vh #b8860b,0 2vh 4vh rgba(0,0,0,.5);perspective:1200px;min-height:0}
 .slot{position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.4,.5,1);cursor:pointer}
 .slot.open{transform:rotateX(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:1.4vh;display:flex;align-items:center;justify-content:center;font-family:var(--fd)}
@@ -74,6 +74,12 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .et{border-radius:2.4vh;padding:2.4vh;border:.5vh solid var(--tc);background:rgba(255,255,255,.07)}.et.win{background:color-mix(in srgb,var(--tc) 30%,transparent);box-shadow:0 0 6vh var(--tc);transform:scale(1.04)}
 .et h4{font-family:var(--fd);font-size:3.4vh;color:var(--tc)}.et .s{font-family:var(--fd);font-size:7vh}.et p{font-size:2.2vh;font-weight:600}
 #toast{position:fixed;left:50%;bottom:12vh;transform:translateX(-50%) translateY(20vh);background:var(--gold);color:var(--ink);font-weight:700;font-size:2.4vh;padding:1.2vh 2.6vh;border-radius:3vh;z-index:90;transition:.4s}#toast.on{transform:translateX(-50%)}
+.clock{position:absolute;right:1.2vw;top:.4vh;width:12vh;height:12vh;z-index:5;cursor:pointer;display:grid;place-items:center;border-radius:50%;background:radial-gradient(#0b1a4a,#050b26);box-shadow:0 0 3vh rgba(0,0,0,.6)}
+.clock svg{position:absolute;inset:0;transform:rotate(-90deg)}.clock .ct{fill:none;stroke:rgba(255,255,255,.12);stroke-width:9}.clock .cr{fill:none;stroke:var(--gold);stroke-width:9;stroke-linecap:round;stroke-dasharray:276.5;transition:stroke-dashoffset .2s linear,stroke .3s}
+.clock span{font-family:var(--fd);font-size:5vh;color:#fff;line-height:1;position:relative}.clock small{position:absolute;bottom:1.6vh;font-size:1.1vh;letter-spacing:.2em;font-weight:700;opacity:.75}
+.clock.low .cr{stroke:#ff3b3b}.clock.low span{color:#ff6b6b;animation:cpulse .5s ease-in-out infinite alternate}.clock.paused{opacity:.55}
+@keyframes cpulse{to{transform:scale(1.18)}}
+.q{position:relative;padding-right:15vh!important;padding-left:15vh!important}
 </style></head><body><script>(function(){
 const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
@@ -102,6 +108,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
   <div class="q" id="qBox"><small id="roundLbl">ROUND 1</small><span id="qText"></span></div>
   <div class="board" id="board"></div>
   <div class="strikes" id="strikes"></div>
+  <div class="clock hidden" id="clock" title="Tap to pause"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" class="ct"/><circle cx="50" cy="50" r="44" class="cr" id="clockR"/></svg><span id="clockN"></span><small id="clockL">TIME</small></div>
  </div>
  <div class="ctl">
   <div class="status" id="status"></div>
@@ -118,14 +125,16 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
  <textarea class="field" id="names" placeholder="Fadi&#10;Rita&#10;Anita&#10;..."></textarea>
  <div class="row" style="margin-top:.6vh"><span class="hint" id="nCount">0 players</span> <button class="bb ghost" id="bMix" style="font-size:1.6vh;padding:.5vh 1.2vh;color:var(--ink);background:#ffd9a8">🎲 Shuffle families</button></div>
  <div class="two" style="margin-top:1vh">
-  <div><h3 style="color:#0b6b62">Family 1 name</h3><input class="field" id="nA" value="The Gravy Boats"><div class="hint" id="mA"></div></div>
-  <div><h3 style="color:#b0183a">Family 2 name</h3><input class="field" id="nB" value="The Pie Hards"><div class="hint" id="mB"></div></div>
+  <div><h3 style="color:#0b6b62">Family 1 name</h3><input class="field" id="nA" value="The Smarty Pants"><div class="hint" id="mA"></div></div>
+  <div><h3 style="color:#b0183a">Family 2 name</h3><input class="field" id="nB" value="The Know-It-Alls"><div class="hint" id="mB"></div></div>
  </div>
  <h3>2. How many rounds?</h3>
  <div class="seg" id="segR"><button data-v="3">3 (~15 min)</button><button data-v="5" class="on">5 (~25 min)</button><button data-v="7">7 (~35 min)</button></div>
  <div class="hint" style="margin-top:.6vh">Round 4 is worth DOUBLE and the last round is worth TRIPLE, just like the show.</div>
- <h3>3. Your own questions <span class="hint">(optional, one per line: Question | answer 30 | answer 25 | ...)</span></h3>
- <textarea class="field" id="custom" placeholder="Name something Ronak always says | yalla 35 | habibi 25 | wallah 20 | let's eat 20"></textarea>
+ <h3>3. Answer clock <span class="hint">(seconds to answer; when it runs out it's a strike)</span></h3>
+ <div class="seg" id="segC"><button data-v="7">7 sec</button><button data-v="10" class="on">10 sec</button><button data-v="15">15 sec</button><button data-v="20">20 sec</button><button data-v="0">No clock</button></div>
+ <h3>4. Your own questions <span class="hint">(optional, one per line: Question | answer 30 | answer 25 | ...)</span></h3>
+ <textarea class="field" id="custom" placeholder="Name something Dad always says | yalla 35 | habibi 25 | wallah 20 | let's eat 20"></textarea>
  <div class="ctr"><button class="bb ghost" id="bHow2" style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb" id="bStart">SURVEY SAYS... START! 🎉</button></div>
 </div></div>
 
@@ -154,21 +163,17 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2200)}
 // survey: [answer, points, aliases...]
 const Q=[
- ['Name something people eat on Thanksgiving',[['Turkey',36,'turkey','bird','gobbler','the bird','turkey meat','roast turkey'],['Mashed potatoes',18,'mashed potato','potatoes','potato','taters','spuds','mash','mashed'],['Stuffing',14,'stuffing','dressing','stuff','bread stuffing'],['Pumpkin pie',12,'pie','pumpkin','dessert'],['Cranberry sauce',10,'cranberry','cranberries','cranberry jelly','sauce'],['Mac and cheese',10,'mac','macaroni','cheese','mac n cheese','mac & cheese','mac and cheeze','macaroni and cheese']]],
  ['Name something your mom yells when you leave the house',[['Where are you going?',30,'where are you going','where','going','where you going','where u going','who are you going with'],['Take a jacket!',22,'jacket','coat','sweater','its cold','cold','bring a jacket','wear a jacket','put on a jacket','take a coat'],['Text me when you get there',18,'text','text me','call me','call','let me know','call me when you get there'],['Come home early!',15,'early','come back early','dont be late','curfew','late','dont come home late','be home early','be back early'],['Did you eat?',9,'eat','food','hungry','eat something','are you hungry','eat first'],['Be careful!',6,'careful','be safe','drive safe','safe','be careful','watch out']]],
  ['Name something you always see at an Arab or Chaldean wedding',[['Dabke / dancing',32,'dabke','dance','dancing','khigga','line dance','dabka','dabkeh','line dancing'],['Loud music',20,'music','dj','band','loud','singer','speakers'],['So much food',18,'food','buffet','mezza','dinner','meat','lots of food','too much food'],['Way too many guests',14,'people','guests','crowd','cousins','family','relatives','too many people','so many people','big crowd'],['Zaffa / drums',10,'zaffa','drum','drums','entrance','grand entrance','drummers','tabla'],['Money throwing',6,'money','cash','throwing money','dollars','money dance']]],
  ['Name an app everyone has on their phone',[['Instagram',30,'instagram','ig','insta'],['TikTok',24,'tiktok','tik tok'],['Snapchat',16,'snapchat','snap'],['WhatsApp',14,'whatsapp','whats app'],['YouTube',10,'youtube'],['Uber',6,'uber','lyft']]],
- ['Name something people do on Black Friday',[['Shop',40,'shop','shopping','buy','buy stuff','sales','deals','go shopping'],['Wait in long lines',20,'line','lines','wait','camp out','wait in line','camping out'],['Sleep in',15,'sleep','nap','rest','sleep in','stay home'],['Eat leftovers',13,'leftovers','eat','leftover'],['Shop online',12,'online','amazon','online shopping']]],
  ['Name a reason you show up late to a family party',[['Traffic',34,'traffic','freeway','cars','traffic jam'],['Getting ready',26,'getting ready','ready','makeup','hair','outfit','clothes','shower','doing hair','doing makeup'],['Overslept / nap',16,'sleep','slept','overslept','nap','tired'],['No parking',12,'parking','park','couldnt park'],['Picking up food',12,'food','dessert','pick up','picking up','grocery','bakery','picking up dessert']]],
  ['Name a show everyone was watching on Netflix',[['Stranger Things',28,'stranger things','stranger'],['Squid Game',22,'squid game','squid'],['Wednesday',16,'wednesday'],['Love Is Blind',14,'love is blind','love blind'],['The Office',12,'the office','office'],['Bridgerton',8,'bridgerton']]],
  ['Name something you would find in an Arab grandma\'s kitchen',[['Spices',26,'spices','spice','zaatar','sumac','cumin'],['Tea',20,'tea','chai','shai','teapot'],['Bread',18,'bread','pita','khubz','samoon'],['Dates',14,'dates','date','tamar'],['Olive oil',12,'olive oil','oil','olives','olive'],['A drawer full of plastic bags',10,'bags','plastic bags','plastic bag','bag']]],
  ['Name a fast food place',[['McDonald\'s',34,'mcdonalds','mcdonald','mickey d','mcd'],['In-N-Out',22,'in n out','in and out','innout','in-n-out'],['Chick-fil-A',18,'chick fil a','chickfila','chick-fil-a'],['Taco Bell',12,'taco bell'],['Wendy\'s',8,'wendys','wendy'],['Burger King',6,'burger king','bk']]],
  ['Name something people post on Instagram',[['Food',30,'food','dinner','lunch','brunch'],['Selfies',26,'selfie','selfies','face','pictures of themselves'],['Vacations',18,'vacation','travel','trip','beach','holiday'],['Gym pics',12,'gym','workout','gym selfie','fitness'],['Pets',8,'dog','cat','pet','pets','puppy'],['Outfits',6,'outfit','fit','ootd','clothes','fashion']]],
- ['Name something people do after a huge Thanksgiving dinner',[['Take a nap',36,'nap','sleep','pass out','food coma'],['Watch football',22,'football','watch tv','tv','game','watch the game','the game'],['Eat dessert',16,'dessert','pie','eat more','sweets','more food'],['Unbutton their pants',12,'unbutton','pants','belt','loosen','loosen belt','sweatpants'],['Wash the dishes',8,'dishes','clean','clean up','wash','cleaning'],['Go for a walk',6,'walk','go for a walk','walking']]],
  ['Name something an Arab dad always says',[['Turn off the lights!',30,'lights','turn off the lights','light'],['Go ask your mother',22,'ask your mom','mother','mom','ask your mother'],['Yalla!',16,'yalla','let\'s go','lets go','hurry'],['Do you know how much this costs?',14,'cost','costs','expensive','money','bills'],['When I was your age...',10,'your age','when i was your age','back home','back in my day'],['Close the door!',8,'door','close the door','shut the door']]],
  ['Name a famous singer',[['Taylor Swift',28,'taylor swift','taylor'],['Beyoncé',20,'beyonce','beyoncé','queen b'],['Drake',16,'drake'],['Bad Bunny',14,'bad bunny'],['Amr Diab',12,'amr diab','amr'],['Michael Jackson',10,'michael jackson','mj']]],
  ['Name something you bring to a party',[['Food / a dish',32,'food','dish','dessert','plate'],['Drinks',24,'drinks','soda','juice','drink','water'],['Flowers',14,'flowers','flower'],['A gift',12,'gift','present'],['Baklava / sweets',10,'baklava','sweets','pastries','kunafa','cookies'],['Your appetite',8,'appetite','hungry','stomach']]],
- ['Name something people are thankful for',[['Family',42,'family','parents','kids','mom','dad'],['Health',22,'health','being healthy','life','healthy','being alive'],['Friends',14,'friends','friend','friendship'],['Food',10,'food'],['Their job',7,'job','work','career'],['Money',5,'money','cash']]],
  ['Name a sport people love to watch',[['Soccer',32,'soccer','futbol','world cup'],['Football',26,'football','nfl','american football'],['Basketball',22,'basketball','nba'],['Baseball',8,'baseball','padres','mlb'],['Boxing / UFC',6,'boxing','ufc','mma','fighting'],['Tennis',6,'tennis']]],
  ['Name something that is trending right now',[['Dubai chocolate',26,'dubai chocolate','dubai','pistachio chocolate'],['Labubu',22,'labubu','labubus'],['Pickleball',18,'pickleball'],['Matcha',14,'matcha','matcha latte'],['Stanley cups',12,'stanley','stanley cup','tumbler'],['ChatGPT / AI',8,'chatgpt','ai','chat gpt','claude']]],
  ['Name something you always lose in your house',[['Keys',36,'keys','key','car keys'],['Phone',24,'phone','cell phone','iphone','cell','cellphone'],['TV remote',18,'remote','tv remote','controller','clicker'],['Socks',10,'socks','sock'],['Charger',7,'charger','phone charger','cord'],['Wallet',5,'wallet','purse','id']]],
@@ -184,25 +189,82 @@ const Q=[
  ['Name a holiday people decorate for',[['Christmas',46,'christmas','xmas'],['Halloween',24,'halloween'],['Easter',10,'easter'],['Thanksgiving',8,'thanksgiving'],['Fourth of July',6,'4th of july','fourth of july','july 4th','independence day'],['Eid / Ramadan',6,'eid','ramadan']]],
  ['Name something you always forget when you travel',[['Phone charger',34,'charger','phone charger'],['Toothbrush',22,'toothbrush','toothpaste'],['Socks',12,'socks','sock'],['Passport / ID',12,'passport','id','license'],['Underwear',10,'underwear','boxers'],['Sunglasses',10,'sunglasses','glasses']]],
  ['Name a Taylor Swift song',[['Shake It Off',30,'shake it off'],['Love Story',22,'love story'],['Anti-Hero',16,'anti hero','antihero'],['Blank Space',14,'blank space'],['Cruel Summer',10,'cruel summer'],['You Belong With Me',8,'you belong with me']]],
- ['Name something people complain about at Thanksgiving',[['Too much food',26,'too much food','full','stuffed','overate'],['Dry turkey',22,'dry turkey','turkey','dry'],['Waiting too long to eat',16,'waiting','hungry','late','taking forever'],['Doing the dishes',14,'dishes','cleaning','clean up'],['Traffic / travel',12,'traffic','travel','driving','flight'],['Family drama',10,'family','drama','relatives']]],
  ['Name a dessert at an Arab party',[['Baklava',36,'baklava'],['Kunafa',28,'kunafa','knafeh','kanafeh'],['Cake',12,'cake','wedding cake'],['Klecha / date cookies',10,'klecha','kleicha','maamoul','date cookies'],['Fruit',8,'fruit','fruits','watermelon'],['Ice cream / booza',6,'ice cream','booza']]],
  ['Name a reason you would leave a party early',[['Tired',34,'tired','sleepy','sleep'],['Work tomorrow',24,'work','early shift','job'],['Feeling sick',14,'sick','not feeling well','ate too much'],['Boring party',12,'boring','bored','lame'],['Babysitter / kids',10,'kids','baby','babysitter'],['Food ran out',6,'food','no food','hungry']]],
  ['Name something a teenager is always doing',[['On their phone',42,'phone','texting','tiktok','social media'],['Sleeping',20,'sleep','sleeping','nap'],['Eating',14,'eating','eat','snacking'],['Playing video games',12,'video games','games','gaming','xbox','playstation'],['Rolling their eyes',6,'eye roll','rolling eyes','attitude'],['Asking for money',6,'money','asking for money']]],
- ['Name a city people love to visit',[['Las Vegas',28,'vegas','las vegas'],['New York',24,'new york','nyc','new york city'],['Dubai',16,'dubai'],['Paris',14,'paris'],['Los Angeles',10,'la','los angeles'],['Cancun',8,'cancun']]]];
+ ['Name a city people love to visit',[['Las Vegas',28,'vegas','las vegas'],['New York',24,'new york','nyc','new york city'],['Dubai',16,'dubai'],['Paris',14,'paris'],['Los Angeles',10,'la','los angeles'],['Cancun',8,'cancun']]],
+ ['Name something people order at a coffee shop',[['Latte',30,'latte','lattes'],['Iced coffee',24,'iced coffee','cold brew','ice coffee'],['Cappuccino',14,'cappuccino'],['Frappuccino',12,'frappuccino','frap','frappe'],['Matcha',10,'matcha','matcha latte','green tea'],['Pastry',10,'pastry','croissant','muffin','donut','danish']]],
+ ['Name something you do before going to bed',[['Brush your teeth',38,'brush teeth','teeth','brush my teeth'],['Scroll on your phone',24,'phone','scroll','tiktok','check phone'],['Shower',14,'shower','bath'],['Set an alarm',10,'alarm','set alarm'],['Pray',8,'pray','prayer'],['Skincare',6,'skincare','wash face','skin care','face mask']]],
+ ['Name a reason people get a tattoo',[['To remember someone',30,'remember someone','memorial','loved one','in memory'],['They think it looks cool',24,'looks cool','cool','style','art'],['Meaningful date or name',16,'name','date','meaning','meaningful'],['Drunk decision',14,'drunk','dare','impulse','vegas'],['Matching with a friend',10,'matching','friend','best friend','couple'],['To cover a scar',6,'scar','cover up']]],
+ ['Name something people do on a first date',[['Go to dinner',40,'dinner','eat','restaurant','food'],['Watch a movie',20,'movie','movies','cinema'],['Get coffee',14,'coffee','cafe'],['Talk',12,'talk','get to know','conversation'],['Go for a walk',8,'walk','beach walk'],['Check their phone',6,'phone']]],
+ ['Name something that is always in a junk drawer',[['Batteries',28,'battery','batteries'],['Rubber bands',20,'rubber band','rubber bands'],['Pens',18,'pen','pens','pencil'],['Takeout menus',12,'menus','takeout menu','menu'],['Random keys',12,'keys','key'],['Tape',10,'tape','scotch tape']]],
+ ['Name something you need to bring on a road trip',[['Snacks',34,'snacks','snack','food'],['Music / playlist',22,'music','playlist','aux','spotify'],['Phone charger',16,'charger','car charger','cable'],['Water',12,'water','drinks'],['Pillow',8,'pillow','blanket'],['Gas money',8,'gas','money']]],
+ ['Name a job that requires a uniform',[['Police officer',30,'police','cop','officer','policeman'],['Nurse',22,'nurse','doctor','medical'],['Firefighter',16,'firefighter','fireman'],['Military',14,'military','soldier','army','navy','marine'],['Chef',10,'chef','cook'],['Flight attendant',8,'flight attendant','pilot','stewardess']]],
+ ['Name something people splurge on',[['Clothes',30,'clothes','clothing','outfits','shoes','designer'],['Vacations',24,'vacation','vacations','travel','trip','trips'],['Food / eating out',16,'food','restaurant','eating out','dinner'],['Cars',12,'car','cars'],['Jewelry',10,'jewelry','watch','gold','rolex'],['Tech',8,'phone','iphone','tech','electronics']]],
+ ['Name something you see at a gym',[['Weights',32,'weights','dumbbells','dumbbell','barbell'],['Treadmill',24,'treadmill','treadmills','cardio'],['Mirrors',14,'mirror','mirrors','people taking selfies'],['People flexing',12,'flexing','flex','gym bros','muscles'],['Sweaty people',10,'sweat','sweaty'],['Water fountain',8,'water','fountain']]],
+ ['Name a reason a phone dies fast',[['Too many apps open',30,'apps','apps open','too many apps'],['Old battery',26,'old battery','battery','old phone'],['Social media',18,'social media','tiktok','instagram','scrolling'],['Brightness up',12,'brightness','screen brightness'],['Games',8,'games','gaming'],['GPS / maps',6,'gps','maps','location']]],
+ ['Name something you would hate to forget on vacation',[['Passport',34,'passport','id'],['Phone charger',22,'charger','phone charger'],['Wallet / money',16,'wallet','money','cards','credit card'],['Medicine',12,'medicine','meds','pills'],['Clothes',8,'clothes','underwear','bathing suit','swimsuit'],['Toothbrush',8,'toothbrush','toiletries']]],
+ ['Name something kids beg their parents for',[['Candy',30,'candy','sweets','chocolate'],['Toys',26,'toys','toy'],['A phone / iPad',18,'phone','ipad','tablet','iphone'],['A pet',12,'pet','dog','puppy','cat'],['Money',8,'money','cash'],['Stay up late',6,'stay up late','sleepover','bedtime']]],
+ ['Name a reason you would call in sick to work',[['Actually sick',38,'sick','flu','cold','fever','ill'],['Hungover',22,'hungover','hangover'],['Mental health day',16,'mental health','tired','burnout','stress'],['Kids are sick',12,'kids','child','kid sick'],['Too tired',6,'too tired','overslept'],['Want a long weekend',6,'long weekend','vacation','day off']]],
+ ['Name something people do when they cannot sleep',[['Scroll on their phone',36,'phone','scroll','tiktok','social media'],['Watch TV',22,'tv','netflix','movie','watch tv'],['Count sheep',14,'count sheep','counting sheep'],['Read',10,'read','book','reading'],['Eat a snack',10,'snack','eat','food','fridge'],['Drink warm milk / tea',8,'milk','tea','warm milk']]],
+ ['Name a famous athlete',[['Cristiano Ronaldo',26,'ronaldo','cristiano','cr7'],['Lionel Messi',24,'messi','lionel messi'],['LeBron James',20,'lebron','lebron james'],['Michael Jordan',14,'jordan','michael jordan','mj'],['Serena Williams',8,'serena','serena williams'],['Tom Brady',8,'tom brady','brady']]],
+ ['Name something people do to save money',[['Cook at home',32,'cook','cook at home','meal prep','home cooking'],['Use coupons',22,'coupons','coupon','deals','sales'],['Cancel subscriptions',16,'cancel','subscriptions','netflix'],['Stop eating out',12,'eat out less','no eating out','stop eating out'],['Shop at Costco',10,'costco','bulk'],['Carpool',8,'carpool','walk','bike','public transport']]],
+ ['Name a scary movie',[['The Conjuring',24,'conjuring','the conjuring'],['It',22,'it','pennywise','clown'],['Halloween',16,'halloween','michael myers'],['Scream',14,'scream','ghostface'],['The Exorcist',12,'exorcist','the exorcist'],['Annabelle',12,'annabelle']]],
+ ['Name something that makes people cry',[['Sad movies',32,'sad movie','movie','movies','notebook','titanic'],['Weddings',20,'wedding','weddings'],['Onions',18,'onion','onions','cutting onions'],['Breakups',14,'breakup','break up','heartbreak'],['Funerals',10,'funeral','death'],['Stubbing a toe',6,'stub toe','toe','pain']]],
+ ['Name something you find in a hotel room',[['Bed',32,'bed','beds','pillows'],['TV',22,'tv','television','remote'],['Mini bar',16,'minibar','mini bar','fridge','mini fridge'],['Towels',12,'towel','towels','robe'],['Little shampoos',10,'shampoo','soap','toiletries'],['Bible',8,'bible']]],
+ ['Name something people do at a wedding reception',[['Dance',40,'dance','dancing','dabke'],['Eat',24,'eat','food','dinner'],['Drink',14,'drink','drinks','toast'],['Take pictures',10,'pictures','photos','photo booth','selfies'],['Cut the cake',6,'cake','cut the cake'],['Catch the bouquet',6,'bouquet','throw bouquet']]],
+ ['Name a fruit you eat in the summer',[['Watermelon',44,'watermelon'],['Mango',16,'mango','mangoes'],['Strawberries',14,'strawberry','strawberries'],['Peaches',10,'peach','peaches'],['Pineapple',8,'pineapple'],['Cherries',8,'cherry','cherries']]],
+ ['Name something you hate waiting for',[['Food',28,'food','restaurant','order'],['Doctor',22,'doctor','doctor office','hospital','dentist'],['Traffic',18,'traffic','red light'],['A package / delivery',14,'package','delivery','amazon','mail'],['A text back',10,'text','text back','reply'],['The bathroom',8,'bathroom','restroom','line']]],
+ ['Name a reason to throw a party',[['Birthday',44,'birthday','bday'],['Wedding / engagement',20,'wedding','engagement','engaged'],['Graduation',14,'graduation','graduate'],['New house',10,'new house','housewarming','house warming'],['Baby shower',6,'baby','baby shower','gender reveal'],['Holiday',6,'holiday','new year','new years','christmas']]],
+ ['Name something that is hard to do with your eyes closed',[['Drive',36,'drive','driving'],['Walk',22,'walk','walking'],['Read',14,'read','reading'],['Put on makeup',12,'makeup'],['Cook',8,'cook','cooking'],['Text',8,'text','texting','type']]],
+ ['Name a car brand',[['Toyota',28,'toyota'],['Tesla',22,'tesla'],['BMW',16,'bmw'],['Honda',14,'honda'],['Mercedes',12,'mercedes','benz','mercedes benz'],['Ford',8,'ford']]],
+ ['Name something you would find at a sleepover',[['Sleeping bags',28,'sleeping bag','sleeping bags'],['Pillows / blankets',24,'pillow','pillows','blanket','blankets'],['Snacks',20,'snacks','popcorn','candy','pizza'],['Movies',14,'movie','movies','tv'],['Pajamas',8,'pajamas','pjs','pj'],['Truth or dare',6,'truth or dare','games']]],
+ ['Name something your doctor tells you to do',[['Exercise',34,'exercise','work out','workout','walk'],['Eat healthy',26,'eat healthy','diet','vegetables','eat better'],['Drink water',16,'water','drink water','hydrate'],['Get more sleep',12,'sleep','rest'],['Lose weight',6,'lose weight','weight'],['Stop smoking',6,'stop smoking','quit smoking','smoking']]],
+ ['Name something people do on a long flight',[['Sleep',38,'sleep','nap'],['Watch movies',26,'movie','movies','watch','tv','netflix'],['Eat',12,'eat','food','snacks'],['Read',10,'read','book'],['Listen to music',8,'music','headphones','podcast'],['Walk the aisle',6,'walk','stretch','bathroom']]],
+ ['Name something you put on french fries',[['Ketchup',52,'ketchup','catsup'],['Salt',16,'salt'],['Cheese',12,'cheese','nacho cheese'],['Ranch',8,'ranch'],['Mayo',6,'mayo','mayonnaise','aioli','garlic sauce','toum'],['Vinegar',6,'vinegar']]],
+ ['Name something a person does when they get a new phone',[['Take selfies',26,'selfie','selfies','pictures','camera'],['Download apps',24,'apps','download apps','set up'],['Buy a case',20,'case','phone case','screen protector'],['Show it off',14,'show off','show it off','brag'],['Transfer contacts',8,'contacts','transfer','backup'],['Change the wallpaper',8,'wallpaper','background']]],
+ ['Name something people hate doing on a Monday',[['Waking up early',36,'wake up','waking up','getting up','alarm'],['Going to work',30,'work','going to work','job'],['Meetings',12,'meetings','meeting'],['Emails',10,'email','emails'],['Traffic',6,'traffic','commute'],['Working out',6,'gym','workout','exercise']]],
+ ['Name something you see at an airport',[['Planes',34,'plane','planes','airplane'],['Luggage',22,'luggage','bags','suitcase','suitcases'],['Security / TSA',18,'security','tsa'],['Long lines',12,'lines','line','long lines'],['Pilots',8,'pilot','pilots','flight attendants'],['Overpriced food',6,'food','starbucks','restaurants']]],
+ ['Name a reality TV show',[['Love Is Blind',22,'love is blind'],['The Bachelor',20,'bachelor','the bachelor','bachelorette'],['Kardashians',18,'kardashians','keeping up with the kardashians','the kardashians'],['Love Island',16,'love island'],['Survivor',12,'survivor'],['Real Housewives',12,'housewives','real housewives']]],
+ ['Name something you would hate to hear your pilot say',[['We are going down',34,'going down','crash','we are crashing','mayday'],['Oops',22,'oops','uh oh','oh no'],['I have never flown before',16,'first time','never flown','never done this'],['We are out of fuel',14,'out of fuel','no gas','fuel','gas'],['Brace for impact',8,'brace','brace for impact'],['Where are we',6,'where are we','lost','we are lost']]],
+ ['Name a sound that wakes you up at night',[['Alarm',24,'alarm','alarm clock'],['Dog barking',22,'dog','barking','dogs'],['Baby crying',18,'baby','crying','baby crying'],['Snoring',16,'snore','snoring'],['Phone',12,'phone','notification','text','phone ringing'],['Thunder',8,'thunder','storm','rain']]],
+ ['Name something you would see at a carnival',[['Rides',32,'rides','ferris wheel','roller coaster'],['Cotton candy',22,'cotton candy','candy'],['Games',18,'games','carnival games','ring toss'],['Clowns',12,'clown','clowns'],['Funnel cake',8,'funnel cake','corn dogs','food'],['Prizes',8,'prizes','stuffed animals','teddy bear']]],
+ ['Name a reason people move to a new city',[['A new job',44,'job','new job','work','career'],['Cheaper rent',16,'cheaper','cost of living','rent','cheaper rent'],['Family',14,'family','to be near family'],['Love',12,'love','boyfriend','girlfriend','spouse','marriage'],['School',8,'school','college','university'],['Better weather',6,'weather','warmer']]],
+ ['Name something people do when nobody is watching',[['Pick their nose',30,'pick nose','pick their nose','nose'],['Sing',24,'sing','singing','sing in the shower'],['Dance',20,'dance','dancing'],['Eat junk food',12,'eat','junk food','snack'],['Talk to themselves',8,'talk to themselves','talk to myself'],['Fart',6,'fart','gas']]],
+ ['Name something you might lose at the beach',[['Sunglasses',30,'sunglasses','glasses','shades'],['Flip flops',22,'flip flops','sandals','shoes','slippers'],['Keys',16,'keys','car keys'],['Phone',14,'phone'],['Jewelry',10,'jewelry','ring','earring','necklace'],['Your tan lines',8,'swimsuit','bikini','towel']]],
+ ['Name something people do in the shower',[['Sing',36,'sing','singing'],['Wash their hair',26,'wash hair','shampoo','hair'],['Think',14,'think','thinking','overthink'],['Shave',12,'shave','shaving'],['Cry',6,'cry','crying'],['Brush their teeth',6,'brush teeth','teeth']]],
+ ['Name a famous cartoon character',[['Mickey Mouse',32,'mickey','mickey mouse'],['SpongeBob',26,'spongebob','sponge bob'],['Bugs Bunny',16,'bugs bunny','bugs'],['Homer Simpson',12,'homer','simpsons','bart','homer simpson'],['Scooby-Doo',8,'scooby','scooby doo'],['Tom and Jerry',6,'tom and jerry','tom','jerry']]],
+ ['Name something you do at a red carpet event',[['Pose for pictures',38,'pose','pictures','photos','photo'],['Wave',18,'wave','waving'],['Show off your outfit',16,'outfit','dress','fashion','show off'],['Give interviews',12,'interview','interviews','talk'],['Sign autographs',10,'autographs','autograph'],['Walk slowly',6,'walk','walking']]],
+ ['Name a reason someone might be in a great mood',[['Got paid',30,'paid','payday','money','got paid'],['In love',22,'love','in love','date','crush'],['Good news',16,'good news','news'],['Weekend',14,'weekend','friday','day off'],['Good food',10,'food','ate','good meal'],['Slept well',8,'sleep','slept well','good sleep']]],
+ ['Name something associated with New Year\'s Eve',[['Fireworks',32,'fireworks','firework'],['Countdown',24,'countdown','ball drop','midnight'],['Champagne',18,'champagne','drinks','toast'],['A kiss at midnight',12,'kiss','kissing'],['Resolutions',8,'resolution','resolutions'],['Party',6,'party','parties']]],
+ ['Name something you need to make a sandwich',[['Bread',46,'bread','bun','roll'],['Meat',18,'meat','turkey','ham','chicken','deli meat'],['Cheese',14,'cheese'],['Mayo',10,'mayo','mayonnaise','mustard','sauce'],['Lettuce',6,'lettuce','vegetables','tomato'],['A knife',6,'knife','plate']]],
+ ['Name something people collect',[['Stamps',26,'stamps','stamp'],['Coins',22,'coins','coin'],['Shoes / sneakers',16,'shoes','sneakers','jordans'],['Cards',14,'cards','pokemon cards','baseball cards','trading cards'],['Labubus',12,'labubu','labubus','toys','figures'],['Magnets',10,'magnets','magnet','souvenirs']]],
+ ['Name something you would find in a backpack',[['Books',30,'books','book','notebook'],['Laptop',22,'laptop','computer','ipad'],['Pens / pencils',18,'pen','pens','pencil','pencils'],['Water bottle',12,'water','water bottle','bottle'],['Snacks',10,'snacks','food','lunch'],['Charger',8,'charger','headphones']]],
+ ['Name a word people say when they are surprised',[['Wow',34,'wow'],['Oh my God',28,'oh my god','omg','oh my gosh'],['What',16,'what','whaaat'],['No way',12,'no way'],['Wallah',6,'wallah','wallahi'],['Holy cow',4,'holy cow','holy moly']]],
+ ['Name something that goes up and down',[['Elevator',34,'elevator','lift'],['Roller coaster',20,'roller coaster','ride'],['Stock market',14,'stocks','stock market','prices'],['Yo-yo',12,'yoyo','yo yo','yo-yo'],['Seesaw',12,'seesaw','see saw','teeter totter'],['Your weight',8,'weight','scale']]],
+ ['Name something people check before leaving the house',[['Phone',32,'phone'],['Keys',28,'keys','key'],['Wallet',18,'wallet','money','purse'],['Mirror / hair',10,'mirror','hair','outfit','looks'],['Stove is off',6,'stove','oven','lights'],['Weather',6,'weather']]],
+ ['Name a game people play at parties',[['Charades',26,'charades'],['Cards / Uno',22,'cards','uno','card games','poker'],['Truth or dare',16,'truth or dare'],['Beer pong',14,'beer pong'],['Musical chairs',12,'musical chairs'],['Heads Up',10,'heads up','pictionary','taboo']]],
+ ['Name a bad habit people have',[['Biting nails',32,'bite nails','biting nails','nail biting','nails'],['Smoking',24,'smoking','smoke','vaping','vape'],['Being late',14,'late','being late'],['Too much phone',14,'phone','scrolling','screen time'],['Cracking knuckles',8,'knuckles','cracking knuckles'],['Procrastinating',8,'procrastinating','procrastination','lazy']]]
+];
+// ---------- no repeats across games ----------
+const USED=new Set(LS.get('tg-feud-used',[]));const saveUsed=()=>LS.set('tg-feud-used',[...USED]);
+function freshFrom(pool,n,avoid){const av=new Set(avoid||[]);let p=pool.filter(q=>!USED.has(q[0])&&!av.has(q[0]));if(p.length<n){pool.forEach(q=>USED.delete(q[0]));saveUsed();p=pool.filter(q=>!av.has(q[0]));try{toast('🔄 You have played every survey! Shuffling the whole deck again')}catch(e){}}const out=shuffle(p).slice(0,n);out.forEach(q=>USED.add(q[0]));saveUsed();return out}
 // ---------- matching ----------
-const STOP=new Set(['a','an','the','my','your','their','his','her','to','of','and','or','some','is','are','be','it','in','on','at','for','with','i','you','they','we','that','this','go']);
+const STOP=new Set(['a','an','the','my','your','their','his','her','to','of','and','or','some','is','are','be','it','in','on','at','for','with','i','you','they','we','that','this','go','um','uh','like','just','really','very','thing','things','something','stuff','people','person','get','got','do','does','did','have','has','had','make','would','will','can','so','too','its','them','she','he','yeah','maybe','kind','sort','lot','lots','alot','from','into','out','up','by','when','what','about']);
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
 const stem=w=>{if(w.length>5&&w.endsWith('ing'))w=w.slice(0,-3);else if(w.length>4&&w.endsWith('ed'))w=w.slice(0,-2);if(w.length>4&&w.endsWith('es')&&/(oes|ches|shes|xes|ses)$/.test(w))w=w.slice(0,-2);else if(w.length>3&&w.endsWith('s')&&!w.endsWith('ss'))w=w.slice(0,-1);return w};
 const toks=s=>norm(s).split(' ').filter(w=>w&&!STOP.has(w)).map(stem);
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m||!n)return m||n;let p=Array(n+1).fill(0).map((_,i)=>i);for(let i=1;i<=m;i++){let c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
-const close=(a,b)=>a===b||(a.length>=4&&b.length>=4&&lev(a,b)<=(Math.max(a.length,b.length)>=7?2:1));
+const close=(a,b)=>a===b||(a.length>=3&&b.length>=3&&lev(a,b)<=(Math.max(a.length,b.length)>=8?3:Math.max(a.length,b.length)>=5?2:1))||(Math.min(a.length,b.length)>=4&&(a.startsWith(b)||b.startsWith(a)));
 function score(input,alias){const A=toks(input),B=toks(alias);if(!A.length||!B.length)return 0;const na=norm(input),nb=norm(alias);if(na===nb)return 1;
  if(na.replace(/ /g,'')===nb.replace(/ /g,''))return 1;
  const hitB=B.filter(b=>A.some(a=>close(a,b))).length,hitA=A.filter(a=>B.some(b=>close(a,b))).length;
  const cov=hitB/B.length,prec=hitA/A.length;
  if(cov===1&&prec===1)return .95;          // every word accounted for (typos ok)
  if(cov===1&&prec>=.5)return .55;          // answer + extra words -> host decides
- if(cov>=.5&&prec===1&&B.length>1)return .5;// part of a longer answer -> host decides
+ if(cov>=.5&&prec===1&&B.length>1)return .5;// part of a longer answer
+ if(hitB>0)return .3+.2*cov;                // shares a real word (bad grammar, extra words) -> still counts
+ const ca=na.replace(/ /g,''),cb=nb.replace(/ /g,'');if(ca.length>=5&&cb.length>=5&&(lev(ca,cb)<=Math.ceil(Math.max(ca.length,cb.length)*.3)||ca.includes(cb)||cb.includes(ca)))return .35;
  return 0}
 function matchS(input,answers){let best=-1,bs=0;answers.forEach((a,i)=>{const al=[a[0],...a.slice(2)];for(const x of al){const sc=score(input,x);if(sc>bs){bs=sc;best=i}}});return{i:best,s:bs}}
 function match(input,answers){const r=matchS(input,answers);return r.s>=.9?r.i:-1}
@@ -222,10 +284,12 @@ const SFX={ding(){if(!ac())return;const t=A.ctx.currentTime;[[88,0],[96,.0],[88,
  buzz(){if(!ac())return;const t=A.ctx.currentTime;[150,156,75].forEach((f,k)=>v(t,f,1.05,{type:k<2?'square':'sawtooth',g:k<2?.22:.3,lp:2200,a:.01}));v(t+.02,300,1,{type:'square',g:.06,lp:2400})},
  survey(){if(!ac())return;const t=A.ctx.currentTime;for(let i=0;i<16;i++)nz(t+i*.05,.05,{ft:'bandpass',f:200,g:.1+.02*i});v(t,mt(55),.8,{type:'triangle',g:.12,f2:mt(67)})},
  win(){if(!ac())return;const t=A.ctx.currentTime;[[60,64,67],[65,69,72],[67,71,74],[72,76,79,84]].forEach((c,i)=>c.forEach(n=>v(t+i*.16,mt(n),i==3?1.4:.22,{type:'sawtooth',g:.06,lp:4000})));for(let i=0;i<30;i++)nz(t+.3+i*.04,.05,{ft:'bandpass',f:2000+rnd(2000),g:.08})},
- click(){if(!ac())return;v(A.ctx.currentTime,1100,.05,{type:'square',g:.05})}};
+ click(){if(!ac())return;v(A.ctx.currentTime,1100,.05,{type:'square',g:.05})},
+ tick(){if(!ac())return;v(A.ctx.currentTime,1500,.06,{type:'square',g:.07})},
+ theme(){if(!ac())return;const t=A.ctx.currentTime;[[67,0],[72,.15],[76,.3],[79,.45],[76,.62],[79,.75],[84,.9]].forEach(([n,d],i)=>{v(t+d,mt(n),i==6?1.2:.2,{type:'sawtooth',g:.07,lp:3500});v(t+d,mt(n-12),i==6?1.2:.2,{type:'square',g:.04,lp:1800})});[0,.45,.9].forEach(d=>v(t+d,90,.3,{f2:40,g:.5}))}};
 // ---------- fx ----------
 const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};addEventListener('resize',rs);rs();
-function burst(x,y,n=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc']):null,e:pick(['🦃','🥧','⭐','💵','🍂']),sz:7+Math.random()*8})}}
+function burst(x,y,n=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=9*(.4+Math.random());parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,life:1,dec:.008+Math.random()*.01,r:0,vr:(Math.random()-.5)*.3,c:Math.random()<.7?pick(['#ffcc3d','#ff7a1a','#2ec4b6','#ff4d6d','#fff3dc']):null,e:pick(['⭐','💵','🎉','💰','✨']),sz:7+Math.random()*8})}}
 (function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life>0&&p.y<cv.height+40);for(const p of parts){p.vy+=.25;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.life-=p.dec;cx.save();cx.globalAlpha=Math.min(1,p.life*1.5);cx.translate(p.x,p.y);cx.rotate(p.r);if(p.c){cx.fillStyle=p.c;cx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2)}else{cx.font=(p.sz*2.6)+'px serif';cx.fillText(p.e,-p.sz,p.sz)}cx.restore()}requestAnimationFrame(loop)})();
 function t2(html,ms=1800){const b=$('#t2');b.innerHTML=html;b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),ms)}
 // ---------- state ----------
@@ -234,15 +298,17 @@ let fam=[[],[]];
 function parseNames(){const seen=new Set();return $('#names').value.split(/[\n,]+/).map(s=>s.trim()).filter(s=>s&&!seen.has(s.toLowerCase())&&seen.add(s.toLowerCase()))}
 function split(){const n=shuffle(parseNames());fam=[[],[]];n.forEach((x,i)=>fam[i%2].push(x));$('#mA').textContent=fam[0].join(', ');$('#mB').textContent=fam[1].join(', ');$('#nCount').textContent=n.length+' players'}
 $('#names').oninput=()=>{LS.set('tg-feud-names',$('#names').value);tgSetRoster(parseNames());split()};$('#bMix').onclick=()=>{split();SFX.click()};
+let nClock=LS.get('tg-feud-clock',10);$$('#segC button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===nClock);b.onclick=()=>{$$('#segC button').forEach(x=>x.classList.remove('on'));b.classList.add('on');nClock=+b.dataset.v;LS.set('tg-feud-clock',nClock)}});
 let nR=5;$$('#segR button').forEach(b=>b.onclick=()=>{$$('#segR button').forEach(x=>x.classList.remove('on'));b.classList.add('on');nR=+b.dataset.v});
 const mult=(r,n)=>r===n-1&&n>=3?3:r===3&&n>=5?2:1;
 $('#bStart').onclick=()=>{if(parseNames().length<2){toast('Add at least 2 players 🙂');return}if(!fam[0].length)split();ac();
  const custom=$('#custom').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length>=3).map(p=>[p[0],p.slice(1).map(x=>{const m=x.match(/^(.*?)\s+(\d+)$/);return m?[m[1],+m[2],m[1]]:[x,10,x]}).sort((a,b)=>b[1]-a[1]).slice(0,8)]);
- const qs=shuffle(custom).concat(shuffle(Q)).slice(0,nR);
- S={teams:[{name:$('#nA').value||'Family 1',m:fam[0],score:0},{name:$('#nB').value||'Family 2',m:fam[1],score:0}],qs,r:0,undo:[]};newRound();save();$('#setupOv').classList.add('hidden');render();music('play');
+ const qs=shuffle(custom).slice(0,nR);qs.push(...freshFrom(Q,nR-qs.length));
+ S={teams:[{name:$('#nA').value||'Family 1',m:fam[0],score:0},{name:$('#nB').value||'Family 2',m:fam[1],score:0}],qs,r:0,undo:[],clock:nClock};SFX.theme();newRound();save();$('#setupOv').classList.add('hidden');render();music('play');
  let seen=null;try{seen=sessionStorage.getItem('tg-rules-feud')}catch(e){}if(!seen){$('#howOv').classList.remove('hidden');try{sessionStorage.setItem('tg-rules-feud','1')}catch(e){}}else t2(`ROUND 1<small>${esc(S.qs[0][0])}</small>`,2600)};
 function newRound(){S.cur={open:[],bank:0,ctrl:-1,strikes:0,phase:'faceoff',done:false,missed:false}}
 function pushUndo(){S.undo.push(JSON.stringify({teams:S.teams,cur:S.cur,r:S.r}));if(S.undo.length>40)S.undo.shift()}
+const foP=i=>{const m=S.teams[i].m;return m.length?m[S.r%m.length]:''};
 function render(){const q=S.qs[S.r],c=S.cur,m=mult(S.r,S.qs.length);
  $('#tnA').textContent=S.teams[0].name;$('#tnB').textContent=S.teams[1].name;$('#tmA').textContent=S.teams[0].m.join(', ');$('#tmB').textContent=S.teams[1].m.join(', ');
  $('#tsA').textContent='$'+S.teams[0].score;$('#tsB').textContent='$'+S.teams[1].score;$('#bankV').textContent='$'+c.bank;
@@ -256,17 +322,20 @@ function render(){const q=S.qs[S.r],c=S.cur,m=mult(S.r,S.qs.length);
  $('#board').innerHTML=h;$('#board').style.gridTemplateRows=`repeat(${rows/2},1fr)`;
  $$('#board .slot[data-i]').forEach(e=>e.onclick=()=>{const i=+e.dataset.i;if(S.cur.open.includes(i))return;if(S.cur.done){reveal(i,true);return}if(confirm2(i))reveal(i)});
  let st='',btn='';const T=i=>`<b style="color:var(--${i?'b':'a'})">${esc(S.teams[i].name)}</b>`;
- if(c.phase==='faceoff'){st=c.fo?`🤔 Host: which family PLAYS? The family with the <b>higher answer</b> wins control. Tap below 👇`:(c.bz?`🔔 <b style="color:var(--gold)">${esc(c.bz)}</b> buzzed first! Answer out loud. Host: type it in 👇`:`🙋 <b>FACE-OFF!</b> One player from each family, come up! First to buzz answers.`);btn=`<button class="bb ta" data-ctrl="0">🎤 ${esc(S.teams[0].name)} plays</button><button class="bb tb" data-ctrl="1">🎤 ${esc(S.teams[1].name)} plays</button>`}
- else if(c.phase==='play'){const fm=S.teams[c.ctrl].m,nu=fm.length?fm[(c.nu||0)%fm.length]:'';st=`🎤 ${T(c.ctrl)} are playing${nu?` · <b style="color:var(--gold);font-size:1.25em">${esc(nu)}</b>, you're up!`:''} · ${'❌'.repeat(c.strikes)}${'⬜'.repeat(3-c.strikes)} <span style="opacity:.85">${3-c.strikes} strike${3-c.strikes===1?'':'s'} left</span>`;btn=`<button class="bb ghost" id="bEndRound">🏁 End round (give bank to ${esc(S.teams[c.ctrl].name)})</button>`}
+ if(c.phase==='faceoff'){st=c.fo?`🤔 Host: which family PLAYS? The family with the <b>higher answer</b> wins control. Tap below 👇`:(c.bz?`🔔 <b style="color:var(--gold)">${esc(c.bz)}</b> buzzed first! Answer out loud. Host: type it in 👇`:(foP(0)&&foP(1)?`🙋 <b>FACE-OFF!</b> <b style="color:var(--a)">${esc(foP(0))}</b> 🆚 <b style="color:var(--b)">${esc(foP(1))}</b>, come up! First to buzz answers.`:`🙋 <b>FACE-OFF!</b> One player from each family, come up! First to buzz answers.`));btn=`<button class="bb ta" data-ctrl="0">🎤 ${esc(S.teams[0].name)} plays</button><button class="bb tb" data-ctrl="1">🎤 ${esc(S.teams[1].name)} plays</button><button class="bb ghost" id="bSwap">🔄 New question</button>`}
+ else if(c.phase==='play'){const fm=S.teams[c.ctrl].m,nu=fm.length?fm[(c.nu||0)%fm.length]:'';st=`🎤 ${T(c.ctrl)} are playing${nu?` · <b style="color:var(--gold);font-size:1.25em">${esc(nu)}</b>, you're up!`:''} · ${'❌'.repeat(c.strikes)}${'⬜'.repeat(3-c.strikes)} <span style="opacity:.85">${3-c.strikes} strike${3-c.strikes===1?'':'s'} left</span>`;btn=`<button class="bb ghost" id="bEndRound">🏁 End round (give bank to ${esc(S.teams[c.ctrl].name)})</button><button class="bb ghost" id="bSwap">🔄 New question</button>`}
  else if(c.phase==='steal'){st=`🕵️ 3 STRIKES! ${T(1-c.ctrl)}: huddle up and agree on ONE answer to steal <b style="color:var(--gold)">$${c.bank}</b>!`;btn=`<button class="bb ghost" id="bNoSteal">❌ Steal failed</button>`}
  else if(c.phase==='done'){st=c.winner>=0?`🏆 ${T(c.winner)} win <b style="color:var(--gold)">$${c.bank}</b>! Tap any card to see the rest, then <b>Next round</b>.`:'Round over! Tap any card to reveal the rest.';btn=`<button class="bb ghost" id="bRevealAll">👀 Reveal all</button><button class="bb" id="bNext">${S.r>=S.qs.length-1?'🏆 Final scores':'Next round ➜'}</button>`}
  $('#status').innerHTML=st;$('#btns').innerHTML=btn;$('#inputRow').classList.toggle('hidden',c.phase==='done');
  $('#ans').placeholder=c.phase==='steal'?'Type the STEAL answer and press Enter…':'Type what they said and press Enter…';
  $$('[data-ctrl]').forEach(b=>b.onclick=()=>{pushUndo();c.ctrl=+b.dataset.ctrl;c.phase='play';save();render();SFX.click();t2(`🎤 ${esc(S.teams[c.ctrl].name)} PLAYS!`,1400)});
+ const eS=$('#bSwap');if(eS)eS.onclick=swapQ;
  const e1=$('#bEndRound');if(e1)e1.onclick=()=>{pushUndo();awardRound(c.ctrl)};const e2=$('#bNoSteal');if(e2)e2.onclick=()=>{pushUndo();stealFail()};
  const e3=$('#bRevealAll');if(e3)e3.onclick=()=>{q[1].forEach((_,i)=>{if(!c.open.includes(i))setTimeout(()=>reveal(i,true),i*250)})};
- const e4=$('#bNext');if(e4)e4.onclick=()=>{if(S.r>=S.qs.length-1){gameEnd();return}S.r++;newRound();save();render();SFX.click();const m2=mult(S.r,S.qs.length);t2(`ROUND ${S.r+1}${m2>1?(m2===2?' · DOUBLE!':' · TRIPLE!'):''}<small>${esc(S.qs[S.r][0])}</small>`,2600)};
- if(c.phase!=='done')setTimeout(()=>$('#ans').focus(),50)}
+ const e4=$('#bNext');if(e4)e4.onclick=()=>{if(S.r>=S.qs.length-1){gameEnd();return}S.r++;newRound();save();render();SFX.click();const m2=mult(S.r,S.qs.length);t2(`ROUND ${S.r+1}${m2>1?(m2===2?' · DOUBLE!':' · TRIPLE!'):''}<small>${foP(0)&&foP(1)?esc(foP(0))+' 🆚 '+esc(foP(1))+'<br>':''}${esc(S.qs[S.r][0])}</small>`,3000)};
+ if(c.phase!=='done')setTimeout(()=>$('#ans').focus(),50);setTimeout(clockSync,0)}
+let swArm=0;function swapQ(){const c=S.cur;if(c.open.length&&Date.now()-swArm>3000){swArm=Date.now();toast('Answers are already up. Tap 🔄 again to throw this question out and reset the round bank');return}
+ pushUndo();clockStop();const nq=freshFrom(Q,1,S.qs.map(x=>x[0]))[0];S.qs[S.r]=nq;newRound();save();render();SFX.survey();t2(`🔄 NEW QUESTION!<small>${esc(nq[0])}</small>`,2600)}
 let armI=-1,armT=0;function confirm2(i){if(armI===i&&Date.now()-armT<2500)return true;armI=i;armT=Date.now();toast(`Tap #${i+1} again to reveal it as a correct answer`);return false}
 function reveal(i,silentPts){const c=S.cur,q=S.qs[S.r],m=mult(S.r,S.qs.length);if(c.open.includes(i))return;c.open.push(i);SFX.ding();const b0=c.bank;
  if(!silentPts&&c.phase!=='done'){c.bank+=q[1][i][1]*m}save();render();if(window.FXX&&!silentPts&&c.bank>b0){setTimeout(FXX.sfx.cash,250);FXX.rain(Math.min(30,6+Math.round(q[1][i][1]/3)));FXX.countUp($('#bankV'),c.bank,700,FXX.fmt$,b0)}
@@ -280,12 +349,29 @@ function awardRound(w,stole,kept){const c=S.cur;c.done=true;c.phase='done';c.win
  else{SFX.win();burst(innerWidth*(w?0.8:0.2),innerHeight*.2,120);t2(`${stole?'🕵️ STOLEN!':'🏆 '+esc(S.teams[w].name)+' WIN!'}<small>${stole?esc(S.teams[w].name)+' steal ':'+'}$${c.bank}</small>`,2600)}}
 function stealFail(){const c=S.cur;if(window.FXX){awardRound(c.ctrl,false,true);return}t2(`❌ STEAL FAILED!<small>${esc(S.teams[c.ctrl].name)} keep the $${c.bank}</small>`,2000);awardRound(c.ctrl)}
 let busy=false;
+const CK={until:0,len:0,key:'',left:0,paused:false,id:null};
+function clockKey(){const c=S&&S.cur;if(!c||!S.clock||busy||S.pend||!$('#setupOv').classList.contains('hidden')||!$('#howOv').classList.contains('hidden')||!$('#endOv').classList.contains('hidden'))return '';
+ if(c.phase==='play')return 'p'+S.r+':'+c.strikes+':'+c.open.length+':'+(c.nu||0);
+ if(c.phase==='steal')return 's'+S.r;
+ if(c.phase==='faceoff'&&c.bz&&!c.fo)return 'f'+S.r+':'+c.bz;
+ if(c.phase==='faceoff'&&c.fo===1&&!c.foTop)return 'f2'+S.r;
+ return ''}
+function clockSync(){const k=clockKey();if(!k){clockStop();return}if(k===CK.key)return;CK.key=k;const len=S.cur.phase==='steal'?Math.max(20,S.clock*2):S.clock;CK.len=len;CK.left=len;CK.paused=false;CK.until=Date.now()+len*1000;$('#clockL').textContent=S.cur.phase==='steal'?'HUDDLE':'TIME';$('#clock').classList.remove('hidden','paused');clearInterval(CK.id);CK.id=setInterval(clockTick,100);clockTick()}
+function clockStop(){clearInterval(CK.id);CK.id=null;CK.key='';CK.paused=false;const e=$('#clock');if(e)e.classList.add('hidden')}
+function clockTick(){if(CK.paused)return;const ms=Math.max(0,CK.until-Date.now()),l=Math.ceil(ms/1000);$('#clockN').textContent=l;$('#clockR').style.strokeDashoffset=276.5*(1-ms/(CK.len*1000));$('#clock').classList.toggle('low',l<=3);
+ if(l!==CK.left){CK.left=l;if(l<=3&&l>0)SFX.tick()}
+ if(ms<=0){clearInterval(CK.id);CK.id=null;timeUp()}}
+function timeUp(){const c=S.cur;if(!c||busy)return;SFX.buzz();clockStop();
+ if(c.phase==='faceoff'){t2(`⏰ TIME'S UP!<small>${c.fo?'Host: pick the family that plays':'The other player can answer now'}</small>`,1800);pushUndo();if(!c.fo)c.fo=1;else c.foTop=1;save();render();return}
+ if(c.phase==='steal'){t2(`⏰ TIME'S UP!<small>No steal answer in time</small>`,1600);pushUndo();setTimeout(stealFail,900);return}
+ if(c.phase==='play'){pushUndo();c.nu=(c.nu||0)+1;t2(`⏰ TIME'S UP!<small>That's a strike</small>`,1400);strike()}}
+$('#clock').onclick=()=>{if(!CK.id)return;CK.paused=!CK.paused;if(CK.paused){CK.rem=CK.until-Date.now();$('#clock').classList.add('paused');$('#clockN').textContent='❚❚'}else{CK.until=Date.now()+CK.rem;$('#clock').classList.remove('paused')}};
 function check(){const v=$('#ans').value.trim();if(!v||!S||S.cur.phase==='done'||busy||S.pend)return;$('#ans').value='';const q=S.qs[S.r],r=matchS(v,q[1]);
- judge(v,r.s>=.5?r.i:-1)}
-function judge(v,i){const q=S.qs[S.r];pushUndo();if(S.cur.phase==='faceoff')S.cur.fo=(S.cur.fo||0)+1;if(S.cur.phase==='play')S.cur.nu=(S.cur.nu||0)+1;busy=true;SFX.survey();t2(`"${esc(v)}"<small>SURVEY SAYS...</small>`,900);
- setTimeout(()=>{busy=false;if(i>=0&&!S.cur.open.includes(i)){t2(`✅ #${i+1} ${esc(q[1][i][0])}!<small>$${q[1][i][1]*mult(S.r,S.qs.length)}</small>`,1400);reveal(i)}
+ judge(v,r.s>=.3?r.i:-1)}
+function judge(v,i){const q=S.qs[S.r];pushUndo();clockStop();if(S.cur.phase==='faceoff')S.cur.fo=(S.cur.fo||0)+1;if(S.cur.phase==='play')S.cur.nu=(S.cur.nu||0)+1;busy=true;SFX.survey();t2(`"${esc(v)}"<small>SURVEY SAYS...</small>`,900);
+ setTimeout(()=>{busy=false;if(i>=0&&!S.cur.open.includes(i)){t2(i===0?`🥇 NUMBER ONE ANSWER!<small>${esc(q[1][i][0])} · $${q[1][i][1]*mult(S.r,S.qs.length)}</small>`:`✅ #${i+1} ${esc(q[1][i][0])}!<small>$${q[1][i][1]*mult(S.r,S.qs.length)}</small>`,1500);reveal(i);if(i===0&&window.FXX)FXX.rain(40)}
   else if(i>=0){t2(`Already up there!<small>${esc(q[1][i][0])}</small>`,1400)}
-  else{t2(`❌ "${esc(v)}"<small>Not on the board!</small>`,1400);strike()}},950)}
+  else{t2(`❌ "${esc(v)}"<small>Not on the board!</small>`,1400);strike()}clockSync()},950)}
 function showPend(){const p=S.pend,q=S.qs[S.r];$('#pendTxt').innerHTML=`They said <b>"${esc(p.v)}"</b><br>Close to <b style="color:var(--gold)">#${p.i+1} ${esc(q[1][p.i][0])}</b>. Count it?`;$('#pendOv').classList.remove('hidden');try{window.TGB&&hvF&&hvF()}catch(e){}}
 function pendDone(ok){const p=S.pend;if(!p)return;S.pend=null;$('#pendOv').classList.add('hidden');save();judge(p.v,ok?p.i:-1);try{window.TGB&&hvF&&hvF()}catch(e){}}
 let hvF=null;
@@ -300,14 +386,36 @@ const FMQ=[['Name a food people eat at the movies',[['Popcorn',52,'popcorn'],['C
  ['Name something you put on a hot dog',[['Ketchup',34,'ketchup'],['Mustard',30,'mustard'],['Relish',14,'relish'],['Onions',10,'onion','onions'],['Chili',8,'chili']]],
  ['Name a reason you would be late to work',[['Traffic',40,'traffic'],['Overslept',30,'overslept','slept in','alarm','sleep'],['Car trouble',12,'car','flat tire','car broke'],['Kids',8,'kids','children','school drop off'],['Weather',6,'weather','rain']]],
  ['Name something people do at the beach',[['Swim',40,'swim','swimming'],['Tan',26,'tan','sunbathe','lay out','tanning'],['Build sandcastles',12,'sandcastle','sand castle','sand'],['Surf',10,'surf','surfing'],['Play volleyball',6,'volleyball']]],
- ['Name a Thanksgiving side dish',[['Mashed potatoes',36,'mashed potatoes','potatoes','potato'],['Stuffing',26,'stuffing','dressing'],['Green bean casserole',14,'green beans','green bean casserole','casserole'],['Mac and cheese',12,'mac and cheese','mac'],['Cranberry sauce',8,'cranberry','cranberries']]],
  ['Name something you find in a purse',[['Wallet',30,'wallet','money','cash'],['Makeup / lipstick',26,'lipstick','makeup','lip gloss'],['Keys',20,'keys','key'],['Phone',14,'phone','cell phone'],['Gum',6,'gum','mints']]],
  ['Name an animal you see at the zoo',[['Lion',30,'lion'],['Elephant',26,'elephant'],['Monkey',20,'monkey','ape','gorilla'],['Giraffe',14,'giraffe'],['Zebra',6,'zebra']]],
  ['Name an Arab dessert',[['Baklava',40,'baklava'],['Kunafa',30,'kunafa','knafeh','kanafeh'],['Klecha / maamoul',12,'klecha','kleicha','maamoul'],['Basbousa',10,'basbousa','harissa'],['Halawa',6,'halawa','halva']]],
  ['Name something people are afraid of',[['Spiders',36,'spider','spiders'],['Heights',24,'heights','falling'],['Snakes',18,'snake','snakes'],['The dark',10,'dark','darkness','night'],['Clowns',8,'clown','clowns']]],
- ['Name a breakfast food',[['Eggs',38,'eggs','egg','omelet'],['Pancakes',22,'pancakes','pancake'],['Bacon',16,'bacon'],['Cereal',12,'cereal'],['Waffles',8,'waffle','waffles']]]];
+ ['Name a breakfast food',[['Eggs',38,'eggs','egg','omelet'],['Pancakes',22,'pancakes','pancake'],['Bacon',16,'bacon'],['Cereal',12,'cereal'],['Waffles',8,'waffle','waffles']]],
+ ['Name a color of a car',[['Black',34,'black'],['White',28,'white'],['Red',16,'red'],['Silver / gray',12,'silver','gray','grey'],['Blue',10,'blue']]],
+ ['Name something you drink in the morning',[['Coffee',56,'coffee','latte'],['Tea',16,'tea','chai'],['Orange juice',12,'juice','orange juice','oj'],['Water',10,'water'],['Milk',6,'milk']]],
+ ['Name a month with great weather',[['May',26,'may'],['June',24,'june'],['April',18,'april'],['October',16,'october'],['September',16,'september']]],
+ ['Name something with wheels',[['Car',50,'car','cars'],['Bike',22,'bike','bicycle'],['Skateboard',12,'skateboard'],['Bus',8,'bus','truck'],['Stroller',8,'stroller','shopping cart','wheelchair']]],
+ ['Name a body part people stretch',[['Legs',34,'legs','leg','hamstrings'],['Arms',26,'arms','arm'],['Back',20,'back'],['Neck',12,'neck'],['Shoulders',8,'shoulders','shoulder']]],
+ ['Name a pet people have',[['Dog',54,'dog','puppy'],['Cat',30,'cat','kitten'],['Fish',8,'fish','goldfish'],['Bird',4,'bird','parrot'],['Hamster',4,'hamster','bunny','rabbit']]],
+ ['Name something cold',[['Ice',44,'ice','ice cube'],['Snow',22,'snow'],['Ice cream',18,'ice cream'],['Fridge',8,'fridge','freezer','refrigerator'],['Winter',8,'winter','weather']]],
+ ['Name a superhero',[['Spider-Man',34,'spiderman','spider man','spider-man'],['Batman',28,'batman'],['Superman',22,'superman'],['Iron Man',10,'iron man','ironman'],['Wonder Woman',6,'wonder woman']]],
+ ['Name something you do at a sleepover',[['Watch movies',36,'movies','movie','watch movies'],['Stay up late',24,'stay up late','stay up'],['Eat snacks',18,'snacks','eat','pizza'],['Gossip',12,'gossip','talk'],['Play games',10,'games','truth or dare']]],
+ ['Name a sport played with a ball',[['Soccer',36,'soccer','football'],['Basketball',30,'basketball'],['Baseball',14,'baseball'],['Tennis',10,'tennis'],['Volleyball',10,'volleyball','golf']]],
+ ['Name something you plug in',[['Phone charger',40,'phone','charger','phone charger'],['TV',22,'tv','television'],['Lamp',14,'lamp','light'],['Laptop',14,'laptop','computer'],['Toaster',10,'toaster','microwave','hair dryer']]],
+ ['Name a word that rhymes with cat',[['Hat',38,'hat'],['Bat',22,'bat'],['Rat',16,'rat'],['Mat',14,'mat'],['Fat',10,'fat','sat','pat']]],
+ ['Name something people do on their birthday',[['Eat cake',38,'cake','eat cake'],['Party',26,'party','celebrate'],['Open presents',18,'presents','gifts'],['Go out to dinner',12,'dinner','eat out','restaurant'],['Make a wish',6,'wish','blow out candles','candles']]],
+ ['Name a type of shoe',[['Sneakers',40,'sneakers','sneaker','tennis shoes','nikes','jordans'],['Heels',22,'heels','high heels'],['Boots',16,'boots','boot'],['Sandals',14,'sandals','flip flops','slides'],['Loafers',8,'loafers','dress shoes']]],
+ ['Name something that is sticky',[['Glue',36,'glue'],['Honey',26,'honey'],['Tape',18,'tape'],['Gum',12,'gum','bubble gum'],['Syrup',8,'syrup','candy']]],
+ ['Name a place people go on vacation',[['Beach',36,'beach','hawaii','cancun'],['Las Vegas',20,'vegas','las vegas'],['Disneyland',18,'disney','disneyland','disney world'],['Europe',16,'europe','paris','italy','london'],['Mountains',10,'mountains','camping','ski']]],
+ ['Name a breakfast cereal',[['Cheerios',30,'cheerios'],['Frosted Flakes',22,'frosted flakes','corn flakes'],['Lucky Charms',18,'lucky charms'],['Fruit Loops',16,'fruit loops','froot loops'],['Cinnamon Toast Crunch',14,'cinnamon toast crunch','ctc']]],
+ ['Name something in the sky',[['Sun',34,'sun'],['Clouds',26,'clouds','cloud'],['Moon',16,'moon'],['Birds',12,'birds','bird'],['Planes',12,'plane','planes','stars']]],
+ ['Name a kitchen appliance',[['Microwave',34,'microwave'],['Fridge',22,'fridge','refrigerator'],['Toaster',16,'toaster'],['Blender',14,'blender'],['Air fryer',14,'air fryer','oven','stove']]],
+ ['Name an animal that can swim',[['Fish',32,'fish'],['Dolphin',22,'dolphin','dolphins'],['Duck',16,'duck','ducks'],['Shark',16,'shark','sharks','whale'],['Dog',14,'dog','frog','turtle']]],
+ ['Name something you take to the beach',[['Towel',38,'towel','beach towel'],['Sunscreen',26,'sunscreen','sunblock'],['Umbrella',14,'umbrella'],['Cooler',12,'cooler','drinks','snacks'],['Chair',10,'chair','beach chair']]],
+ ['Name something people are always late for',[['Work',40,'work','job'],['School',22,'school','class'],['Appointments',16,'appointment','doctor'],['Parties',12,'party','parties','weddings'],['Flights',10,'flight','plane','dinner']]]
+];
 let F=null,fmT=null;
-function fmStart(fam){F={fam,qs:shuffle(FMQ).slice(0,5),p:0,i:0,a:[[],[]],phase:'intro',shown:[0,0]};$('#endOv').classList.add('hidden');$('#fmOv').classList.remove('hidden');music('play');fmRender()}
+function fmStart(fam){F={fam,qs:freshFrom(FMQ,5),p:0,i:0,a:[[],[]],phase:'intro',shown:[0,0]};$('#endOv').classList.add('hidden');$('#fmOv').classList.remove('hidden');music('play');fmRender()}
 function fmTotal(){return F.a.flat().filter(Boolean).reduce((s,x)=>s+(x.revealed?x.pts:0),0)}
 function fmRender(){const W=$('#fmWrap'),fam=S.teams[F.fam],tot=fmTotal();
  const board=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2vw;margin:2vh 0">${[0,1].map(p=>`<div style="display:flex;flex-direction:column;gap:1vh">${F.qs.map((q,i)=>{const x=F.a[p][i];const show=x&&x.revealed&&!(F.phase==='play'&&F.p===1&&p===0);return`<div style="display:flex;justify-content:space-between;align-items:center;gap:1vw;border-radius:1.2vh;padding:1.2vh 1.4vw;font-family:var(--fd);font-size:2.6vh;background:${show?'linear-gradient(180deg,#fff7e6,#ffd98f)':'linear-gradient(180deg,#2a6fdb,#123a8a)'};color:${show?'var(--ink)':'#fff'}"><span>${show?esc(x.text||'—'):'&nbsp;'}</span><span style="background:#2a0d12;color:var(--gold);border-radius:1vh;padding:.3vh 1vh;min-width:6vh;text-align:center">${show?x.pts:''}</span></div>`}).join('')}</div>`).join('')}</div>`;
@@ -343,20 +451,21 @@ const tI=n=>S&&S.teams?S.teams.findIndex(t=>t.m.includes(n)):-1;
 let key='';
 function hv(){if(!window.TGB)return;if(S&&S.pend){const q=S.qs[S.r];TGB.host({title:'🤔 Your call, host!',q:`They said "${S.pend.v}"`,a:`Close to #${S.pend.i+1} ${q[1][S.pend.i][0]}`,note:'Count it?',actions:[{id:'cyes',label:'✅ Count it',k:'ok'},{id:'cno',label:'❌ Not it',k:'no'}],noBuzzBtns:true});return}if(!S||!S.cur){TGB.host({title:'🗣️ Family Feud',note:'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
  const c=S.cur,q=S.qs[S.r],m=mult(S.r,S.qs.length),a=[];
- if(c.phase==='faceoff')a.push({id:'c0',label:'🎤 '+S.teams[0].name,k:'b'},{id:'c1',label:'🎤 '+S.teams[1].name,k:'no'});
- if(c.phase==='play')a.push({id:'x',label:'❌ Strike',k:'no'},{id:'end',label:'🏁 End round'});
+ if(c.phase==='faceoff')a.push({id:'c0',label:'🎤 '+S.teams[0].name,k:'b'},{id:'c1',label:'🎤 '+S.teams[1].name,k:'no'},{id:'swap',label:'🔄 New question'});
+ if(c.phase==='play')a.push({id:'x',label:'❌ Strike',k:'no'},{id:'end',label:'🏁 End round'},{id:'swap',label:'🔄 New question'});
+ if(c.phase!=='done'&&S.clock)a.push({id:'clk',label:'⏸️ Pause / resume clock'});
  if(c.phase==='steal')a.push({id:'nosteal',label:'❌ Steal failed',k:'no'});
  if(c.phase==='done')a.push({id:'all',label:'👀 Reveal all'},{id:'next',label:S.r>=S.qs.length-1?'🏆 Final scores':'Next round ➜',k:'y'});
- const ph={faceoff:S.cur.fo?'Pick which family PLAYS (higher answer wins control)':S.cur.bz?'🔔 '+S.cur.bz+' buzzed first: type their answer':'FACE-OFF: first to buzz answers',play:S.teams[c.ctrl]?S.teams[c.ctrl].name+' playing · strikes '+c.strikes+'/3'+(S.teams[c.ctrl].m.length?' · 🎤 Next up: '+S.teams[c.ctrl].m[(c.nu||0)%S.teams[c.ctrl].m.length]:''):'',steal:'STEAL: '+(S.teams[1-c.ctrl]||{}).name+' gets one guess',done:'Round over'}[c.phase];
+ const ph={faceoff:S.cur.fo?'Pick which family PLAYS (higher answer wins control)':S.cur.bz?'🔔 '+S.cur.bz+' buzzed first: type their answer':'FACE-OFF'+(foP(0)&&foP(1)?': '+foP(0)+' vs '+foP(1):'')+' · first to buzz answers',play:S.teams[c.ctrl]?S.teams[c.ctrl].name+' playing · strikes '+c.strikes+'/3'+(S.teams[c.ctrl].m.length?' · 🎤 Next up: '+S.teams[c.ctrl].m[(c.nu||0)%S.teams[c.ctrl].m.length]:''):'',steal:'STEAL: '+(S.teams[1-c.ctrl]||{}).name+' gets one guess',done:'Round over'}[c.phase];
  TGB.host({title:`Round ${S.r+1}/${S.qs.length} · Bank $${c.bank}`,q:q[0],note:ph,list:q[1].map((x,i)=>({t:(i+1)+'. '+x[0],p:'$'+x[1]*m,on:c.open.includes(i),id:'r'+i})),input:c.phase!=='done'?{ph:'Type what they said'}:null,actions:a,noBuzzBtns:c.phase!=='faceoff'})}
 function sync(){if(!window.TGB)return;if(!S||!S.cur){hv();return}const k=S.r+':'+S.cur.phase;if(k!==key){key=k;if(S.cur.phase==='faceoff'){TGB.reset();TGB.openIn(4)}else TGB.lock()}hv()}
 const oR=render;render=function(){oR.apply(this,arguments);sync()};
 function boot(){hvF=hv;TGB.init({game:'Family Feud',names,teamOf:n=>{const i=tI(n);return i<0?null:{label:S.teams[i].name,color:i?'#ff4d6d':'#2ec4b6'}},
  onBuzz:(n,r)=>{if(r===1&&S&&S.cur&&S.cur.phase==='faceoff'&&!S.cur.bz){S.cur.bz=n;save();render()}hv()},
  onAct:(id,d)=>{if(!S||!S.cur)return;const cl=sel=>{const e=$(sel);e&&e.click()};
-  if(id==='cyes')pendDone(true);else if(id==='cno')pendDone(false);else if(id==='input'){$('#ans').value=d.v;check()}else if(id==='c0')cl('[data-ctrl="0"]');else if(id==='c1')cl('[data-ctrl="1"]');else if(id==='x')cl('#bStrike');else if(id==='end')cl('#bEndRound');else if(id==='nosteal')cl('#bNoSteal');else if(id==='all')cl('#bRevealAll');else if(id==='next')cl('#bNext');
+  if(id==='cyes')pendDone(true);else if(id==='cno')pendDone(false);else if(id==='input'){$('#ans').value=d.v;check()}else if(id==='c0')cl('[data-ctrl="0"]');else if(id==='c1')cl('[data-ctrl="1"]');else if(id==='x')cl('#bStrike');else if(id==='end')cl('#bEndRound');else if(id==='nosteal')cl('#bNoSteal');else if(id==='all')cl('#bRevealAll');else if(id==='next')cl('#bNext');else if(id==='swap')cl('#bSwap');else if(id==='clk')cl('#clock');
   else if(/^r\d+$/.test(id)){const i=+id.slice(1);if(!S.cur.open.includes(i)){pushUndo();reveal(i,S.cur.done)}}}});sync()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794689456';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGFXX*//* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
 (function(){
 if(window.FXX)return;
@@ -411,4 +520,49 @@ window.FXX={sfx:S,rain,cannons,flyAway,ring,countUp,fmt$,
  lose(amt){S.whoosh();flyAway(10)}};
 })();
 
+</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+(function(){
+if(window.TGDEPTH)return;window.TGDEPTH=1;
+let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}
+if(off||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const css=document.createElement('style');css.textContent=`
+#tgStage{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#tgStage .floor{position:absolute;left:-50%;right:-50%;bottom:-8vh;height:62vh;transform-origin:50% 100%;transform:perspective(60vh) rotateX(72deg);
+ background-image:linear-gradient(rgba(255,215,120,.22) 2px,transparent 2px),linear-gradient(90deg,rgba(255,215,120,.22) 2px,transparent 2px);background-size:9vh 9vh;
+ -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 85%);mask-image:linear-gradient(to top,#000 10%,transparent 85%);animation:tgFloor 6s linear infinite}
+@keyframes tgFloor{to{background-position:0 9vh,0 0}}
+#tgStage .spot{position:absolute;top:-20vh;width:70vh;height:150vh;transform-origin:50% 0;background:conic-gradient(from 168deg at 50% 0,transparent 0deg,rgba(255,240,200,.10) 10deg,rgba(255,240,200,.16) 12deg,rgba(255,240,200,.10) 14deg,transparent 24deg);filter:blur(6px);mix-blend-mode:screen}
+#tgStage .spot.a{left:-10vh;animation:tgSwA 9s ease-in-out infinite alternate}#tgStage .spot.b{right:-10vh;animation:tgSwB 11s ease-in-out infinite alternate}
+@keyframes tgSwA{from{transform:rotate(-28deg)}to{transform:rotate(12deg)}}@keyframes tgSwB{from{transform:rotate(26deg)}to{transform:rotate(-14deg)}}
+#tgStage .bk{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,236,180,.55),rgba(255,236,180,0) 70%);animation:tgFloat linear infinite;mix-blend-mode:screen}
+@keyframes tgFloat{from{transform:translate3d(0,10vh,0)}to{transform:translate3d(var(--dx),-110vh,0)}}
+#tgStage .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.45) 100%)}
+.tgTilt{transition:rotate .25s ease-out,scale .2s ease-out,box-shadow .25s ease-out;will-change:rotate}
+.tgPress{scale:.95!important;transition:scale .08s!important}
+.tgBurst{position:fixed;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;pointer-events:none;z-index:99999;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,220,120,.6) 40%,transparent 70%);animation:tgB .5s ease-out forwards}
+@keyframes tgB{to{transform:scale(18);opacity:0}}
+.tgGlare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),transparent 55%);mix-blend-mode:soft-light;opacity:0;transition:opacity .25s}
+.tgTilt:hover>.tgGlare{opacity:1}`;
+(document.head||document.documentElement).appendChild(css);
+function stage(){if(document.getElementById('tgStage'))return;const st=document.createElement('div');st.id='tgStage';
+ st.innerHTML='<div class="spot a"></div><div class="spot b"></div><div class="floor"></div><div class="vig"></div>';
+ for(let i=0;i<22;i++){const b=document.createElement('div'),z=Math.random(),s=(1.2+z*7)+'vh';b.className='bk';b.style.width=b.style.height=s;b.style.left=Math.random()*100+'vw';b.style.bottom='-10vh';
+  b.style.opacity=(.25+z*.55).toFixed(2);b.style.filter=`blur(${((1-z)*3).toFixed(1)}px)`;b.style.setProperty('--dx',(Math.random()*20-10)+'vw');b.style.animationDuration=(14+(1-z)*22)+'s';b.style.animationDelay=(-Math.random()*30)+'s';st.appendChild(b)}
+ const bg=document.getElementById('bg');
+ if(bg&&getComputedStyle(bg).position==='fixed'){bg.appendChild(st);st.style.position='absolute'}
+ else document.body.insertBefore(st,document.body.firstChild)}
+// interactive tilt on cards, tiles and buttons (uses the separate rotate/scale properties so game transforms keep working)
+const SEL='.tile:not(.used),.slot,.g,.case,.panel,.team,.tbtn,.card2,.board .cell,.sq,.chip,.bb,.big,.big2,.big-btn,.key,.kb button,.gotB,.skipB,button.gold';
+let cur=null;
+function tiltOn(el,e){const r=el.getBoundingClientRect();if(r.width<30||r.height<20||r.width>innerWidth*.8)return;const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5,big=r.width*r.height>60000,amt=big?4:9;
+ el.classList.add('tgTilt');el.style.rotate=`${(-py).toFixed(3)} ${px.toFixed(3)} 0 ${(Math.hypot(px,py)*amt*2).toFixed(2)}deg`;
+ el.style.setProperty('--gx',((px+.5)*100).toFixed(0)+'%');el.style.setProperty('--gy',((py+.5)*100).toFixed(0)+'%');
+ if(!el.querySelector(':scope>.tgGlare')&&getComputedStyle(el).position!=='static'){const g=document.createElement('span');g.className='tgGlare';el.appendChild(g)}}
+function tiltOff(el){if(!el)return;el.style.rotate='';}
+document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest(SEL);if(el!==cur){tiltOff(cur);cur=el}if(el)tiltOn(el,e)},{passive:true});
+document.addEventListener('pointerleave',()=>{tiltOff(cur);cur=null});
+document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('button,'+SEL);if(!el)return;el.classList.add('tgPress');setTimeout(()=>el.classList.remove('tgPress'),140);
+ const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
+if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
+})();
 </script></body></html>

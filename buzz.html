@@ -131,7 +131,7 @@ function onMsg(d){lastMsg=Date.now();
  if(d.t==='names'){names=d.names||[];$('game').textContent=d.game?'🎮 '+d.game:'';if(ROLE==='player'){if(!NAME){drawPick();show('sPick')}else show(UISPEC?'sUI':'sBuzz')}}
  else if(d.t==='st'&&d.s==='pick'&&ROLE==='player'){if(d.names)names=d.names;if(d.why==='notInGame'){$('sPick').querySelector('.sub').textContent='Pick YOUR name for this game 👇'}NAME='';ls.s('tg-bz-name','');drawPick();show('sPick')}
  else if(d.t==='st'){S=d;if(d.game)$('game').textContent='🎮 '+d.game;if(ROLE==='player'&&NAME)show(UISPEC?'sUI':'sBuzz');drawBuzz()}
- else if(d.t==='ui'){UISPEC=d.spec||null;if(d.now)DRIFT=Date.now()-d.now;if(ROLE==='player'&&NAME){show(UISPEC?'sUI':'sBuzz');drawUI()}}
+ else if(d.t==='ui'){UISPEC=d.spec||null;if(UISPEC&&UISPEC.type&&UISPEC.type!=='msg'&&UISPEC.type!=='role'){const pf=$('sProf');if(pf)pf.classList.add('hidden')}if(d.now)DRIFT=Date.now()-d.now;if(ROLE==='player'&&NAME){show(UISPEC?'sUI':'sBuzz');drawUI()}}
  else if(d.t==='denied'){HKEY='';try{localStorage.removeItem('tg-bz-hk-'+HOSTID)}catch(e){}ROLE='player';hostBtn();alert('Host access ended. To host again, scan the HOST QR on the TV.');toPlayer()}
  else if(d.t==='host'){show('host');$('net').classList.add('hidden');drawHost(d)}
  else if(d.t==='promote'){HKEY=d.key;ls.s('tg-bz-hk-'+HOSTID,HKEY);vib([60,40,200]);toHost()}
@@ -143,7 +143,7 @@ $('toHost').onclick=toHost;
 function drawPick(){$('names').innerHTML=names.map(n=>`<button data-n="${esc(n)}">${esc(n)}</button>`).join('')||'<div class="sub" style="grid-column:1/-1">Type your name below 👇</div>';
  $('names').querySelectorAll('button').forEach(b=>b.onclick=()=>join(b.dataset.n))}
 $('nmGo').onclick=()=>{const v=$('nm').value.trim();if(v)join(v)};$('nm').onkeydown=e=>{if(e.key==='Enter')$('nmGo').click()};
-function join(n){const first=!NAME||NAME!==n;NAME=n;setTimeout(()=>{if(!ls.g('tg-bz-prof')&&!sessionStorage.getItem('tg-sf-asked')){sessionStorage.setItem('tg-sf-asked','1');openProf()}else sendProf()},600);ls.s('tg-bz-name',n);conn&&conn.open&&conn.send({t:'join',name:n,pid:PID});$('me').innerHTML=esc(n);show(UISPEC?'sUI':'sBuzz');wake();drawBuzz();drawUI();sendAv()}
+function join(n){const first=!NAME||NAME!==n;NAME=n;setTimeout(()=>{if(!ls.g('tg-bz-prof')&&!sessionStorage.getItem('tg-sf-asked')&&!(UISPEC&&UISPEC.type&&UISPEC.type!=='msg')){sessionStorage.setItem('tg-sf-asked','1');openProf()}else sendProf()},600);ls.s('tg-bz-name',n);conn&&conn.open&&conn.send({t:'join',name:n,pid:PID});$('me').innerHTML=esc(n);show(UISPEC?'sUI':'sBuzz');wake();drawBuzz();drawUI();sendAv()}
 $('chg').onclick=()=>{NAME='';ls.s('tg-bz-name','');drawPick();show('sPick')};
 function drawBuzz(){const b=$('bz'),h=$('hint'),t=S.team;$('me').innerHTML=(typeof AVIMG!=='undefined'&&AVIMG?`<img id="meAv" src="${AVIMG}">`:'')+esc(NAME)+(t&&t.label&&t.label!==NAME?`<small style="color:${esc(t.color||'#fff')}">${esc(t.label)}</small>`:'');
  if(Date.now()<earlyUntil){b.className='early';b.innerHTML='⏳ TOO EARLY!<small>Wait for the green light</small>';h.textContent='';return}

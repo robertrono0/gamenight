@@ -72,10 +72,10 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .cardR{background:rgba(255,255,255,.08);border-radius:2vh;padding:1.6vh 1.4vw;border:.25vh solid rgba(255,204,61,.35)}.cardR h4{font-family:var(--fd);color:var(--gold);font-size:2.2vh;margin-bottom:.8vh}
 .row{display:flex;align-items:center;gap:.8vw;font-size:2vh;margin:.4vh 0}.row b{margin-left:auto;font-family:var(--fd)}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
 <div id="app"><div class="hdr"><div class="title">📜 GAME NIGHT RECAP</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button></div></div><div class="stage" id="stage"></div></div>
-<script src="tg-shell.js"></script><script>
+<script src="tg-shell.js?v=1115b"></script><script>
 const N=LS.get('tg-night',{log:[]}),AV=LS.get('tg-avatars',{}),PR=LS.get('tg-profiles',{});
 const av=n=>AV[n]?`<img class="av" src="${AV[n]}">`:`<span class="av avL">${esc((n[0]||'?').toUpperCase())}</span>`;
-const t={},wins={},games={};N.log.forEach(e=>{games[e.game]=games[e.game]||[];Object.entries(e.aw).forEach(([n,p])=>{t[n]=(t[n]||0)+p;if(p>=5)wins[n]=(wins[n]||0)+1;games[e.game].push([n,p])})});
+const t={},wins={},games={};N.log.forEach(e=>{games[e.game]=games[e.game]||[];Object.entries(e.aw||{}).forEach(([n,p])=>{t[n]=(t[n]||0)+p;if(p>=5)wins[n]=(wins[n]||0)+1;games[e.game].push([n,p])})});
 const ranked=Object.entries(t).sort((a,b)=>b[1]-a[1]);const date=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 const st=$('#stage');
 if(!ranked.length){st.innerHTML=`<div class="bigT">No games scored yet!</div><div class="status">Play some games and come back for the recap. 🎮</div>`}
@@ -87,4 +87,4 @@ else{const[c,cp]=ranked[0];const most=Object.entries(wins).sort((a,b)=>b[1]-a[1]
  <div class="hint" style="font-size:1.8vh">📸 Tip: take a screenshot of this page and send it to the group chat!</div>`;
  setTimeout(()=>{if(window.FXX)FXX.bigWin('👑 '+c.toUpperCase(),cp+' pts','Game Night Champion!');else burst()},600)}
 shellInit({game:'Recap',style:'pop'});
-</script><script src="tg-depth.js"></script><script src="tg-night.js"></script></body></html>
+</script><script src="tg-depth.js?v=1115b"></script><script src="tg-night.js?v=1115b"></script></body></html>

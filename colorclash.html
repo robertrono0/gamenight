@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🃏</span>Everyone gets 7 cards on their phone. Match the top card by <b>color</b> or <b>number/symbol</b>.</div><div class="hc"><span class="i">⊘ ⇄ +2</span><b>Skip</b> the next player, <b>Reverse</b> direction, <b>+2</b> makes the next player draw 2.</div><div class="hc"><span class="i">🌈</span><b>Wild</b> picks a new color. <b>Wild +4</b> also makes the next player draw 4.</div><div class="hc"><span class="i">🗣️</span>Down to 2 cards? Tap <b>LAST CARD!</b> before you play, or draw 2 as a penalty.</div><div class="hc"><span class="i">⚡</span><b>Jump-in:</b> have the exact same card as the top one? Play it any time, even out of turn!</div><div class="hc"><span class="i">🏆</span>First 3 players to empty their hand win. Each mode adds its own twist (see the mode list).</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js"></script>
+<script src="tg-shell.js?v=1115b"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js"></script>
+<script src="tg-party.js?v=1115b"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -182,6 +182,6 @@ function finish(){if(G.over)return;G.over=true;clearInterval(tTimer);const rest=
  order.forEach((n,i)=>PG.add(n,Math.max(0,(order.length-i)*10)));PG.end()}
 document.head.insertAdjacentHTML('beforeend','<style>body.night #bg{background:radial-gradient(ellipse at 50% 0,#1b2350,#0a0d22 55%,#020208)!important}</style>');
 </script>
-<script src="tg-depth.js"></script>
+<script src="tg-depth.js?v=1115b"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js"></script></body></html>
+<script src="tg-night.js?v=1115b"></script></body></html>

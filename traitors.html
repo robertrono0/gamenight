@@ -124,7 +124,7 @@ body.night #bg{background:radial-gradient(ellipse at 50% 0%,#1b2350 0%,#0a0d22 5
  <div class="hc"><span class="i">🏆</span>Banish every Traitor and the Faithful win. If Traitors make it to the end (or equal the Faithful), they steal the pot!</div>
 </div><div class="ctr"><button class="bb" id="howClose">GOT IT 🗡️</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js"></script>
+<script src="tg-shell.js?v=1115b"></script>
 <script src="buzzer.js?v=1794800000"></script>
 <script>
 const MISSIONS=[
@@ -263,6 +263,6 @@ setInterval(()=>{if(S&&S.phase==='lobby')render()},3000);
 shellInit({game:'Traitors',style:'spooky',onNew:()=>{clearInterval(tmr);S=null;save();document.body.classList.remove('night');$('#hl').classList.add('hidden');$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill');if(window.TGB)TGB.clearUI()}});
 if(S){$('#setupOv').classList.add('hidden');if(S.phase==='end')finish(S.win);else{if(S.phase==='tally'){S.phase='vote'}if(S.phase==='breakfast')S.phase='morningReveal';if(S.phase==='banish'){S.phase='banished'}if(S.phase==='night')document.body.classList.add('night');render();setTimeout(()=>{if(!S)return;if(['night','vote','endgame'].includes(S.phase))alive().forEach(p=>sendPhase(p.n));else if(S.phase!=='lobby')idleRoles()},1500)}}
 </script>
-<script src="tg-depth.js"></script>
+<script src="tg-depth.js?v=1115b"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js"></script></body></html>
+<script src="tg-night.js?v=1115b"></script></body></html>

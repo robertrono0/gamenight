@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📢</span>The TV says something like <b>"Bring back something BLUE!"</b></div><div class="hc"><span class="i">🏃</span>Everyone runs around the house to find it before the clock runs out.</div><div class="hc"><span class="i">🥇</span>Host taps who came back <b>first, second and third</b>.</div><div class="hc"><span class="i">🔢</span><b>+3 / +2 / +1</b> points.</div><div class="hc"><span class="i">🙅</span>Host decides if it counts. (A blue sock? Sure. A photo of a blue sock? Nope!)</div><div class="hc"><span class="i">⚠️</span>No running with scissors. Watch out for grandma. 😅</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js"></script>
+<script src="tg-shell.js?v=1115b"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js"></script>
+<script src="tg-party.js?v=1115b"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -99,6 +99,6 @@ $('#bStart').onclick=async()=>{const names=parseNames($('#gNames').value);if(nam
   $('#stage').innerHTML=`<div class="bigT" style="font-size:5vh">📊 SCORES</div>${answersGrid(Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(([n,p],i)=>`${['🥇','🥈','🥉'][i]||''} <b>${esc(n)}</b><span style="float:right;font-family:var(--fd)">${p}</span>`))}<button class="bb gold big" id="nx">${r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜'}</button>`;SFX.win();await new Promise(res=>$('#nx').onclick=res)}
  const r=Object.entries(sc).sort((a,b)=>b[1]-a[1]);try{tgNight('Grab It',tgPlaces(r.map(([n,p])=>({names:[n],v:p}))))}catch(e){}PG.score=sc;PG.end=PG.end.bind(PG);PG.end()};
 </script>
-<script src="tg-depth.js"></script>
+<script src="tg-depth.js?v=1115b"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js"></script></body></html>
+<script src="tg-night.js?v=1115b"></script></body></html>

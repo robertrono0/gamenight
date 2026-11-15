@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%89%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><script>
+var TCOL=['#2ec4b6','#ff4d6d','#a78bfa','#ffb703'],TNM=['Team Fire 🔥','Team Ice ❄️','Team Yalla 🚀','Team Habibi 💛'];
+/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%89%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Game Night</title>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
 <style>
@@ -94,7 +96,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
  <div class="nbox">
   <h2 style="margin-top:0">👥 Tonight's players</h2>
   <p class="hint2">Fills in by itself when guests check in. You can also type names, one per line.</p>
-  <textarea id="roster" placeholder="Fadi&#10;Rita&#10;Anita&#10;Rob&#10;..."></textarea>
+  <textarea id="roster" placeholder="✏️ Type everyone's names here, one per line&#10;(Names fill in by themselves when guests scan the QR on the home page)"></textarea>
   <div class="hint2" id="rCount"></div>
  </div>
  <div class="nbox">
@@ -187,11 +189,11 @@ R.oninput=()=>{const a=tgNamesFromText(R.value);if(a.length)tgSetRoster(a);else 
 let sel=[];
 function drawMan(){const names=[...new Set([...tgRoster(),...Object.keys(totals())])];$('manNames').innerHTML=names.map(n=>`<button class="${sel.includes(n)?'on':''}" data-n="${esc(n)}">${esc(n)}</button>`).join('')||'<span class="empty">Add players first</span>';
  $('manNames').querySelectorAll('button').forEach(b=>b.onclick=()=>{const n=b.dataset.n;sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];drawMan()})}
-function totals(){const N=g('tg-night')||{log:[]},t={};N.log.forEach(e=>Object.entries(e.aw).forEach(([n,p])=>t[n]=(t[n]||0)+p));return t}
+function totals(){const N=g('tg-night')||{log:[]},t={};N.log.forEach(e=>Object.entries(e.aw||{}).forEach(([n,p])=>t[n]=(t[n]||0)+p));return t}
 function draw(){const t=totals(),arr=Object.entries(t).sort((a,b)=>b[1]-a[1]),md=['🥇','🥈','🥉'];const N=g('tg-night')||{log:[]};
  let TT='';try{const S2=JSON.parse(localStorage.getItem('tg-settings')||'{}'),T2=JSON.parse(localStorage.getItem('tg-night-teams')||'null');if(S2.team&&T2&&T2.teams){const tt=T2.teams.map((tm,i)=>({n:tm.name,p:tm.m.reduce((s,x)=>s+(t[x]||0),0),i})).sort((a,b)=>b.p-a.p);TT=`<div style="margin-bottom:8px">${tt.map((x,k)=>`<div class="lbr${k===0?' top':''}"><div class="md">${['🥇','🥈','🥉'][k]||k+1}</div><div>${esc(x.n)}<small>team total</small></div><div class="pts">${x.p}</div></div>`).join('')}</div>`}}catch(e){}
  $('lb').innerHTML=TT+(arr.length?arr.map(([n,p],i)=>{const games=N.log.filter(e=>e.aw[n]>0).length;return`<div class="lbr${i===0?' top':''}"><div class="md">${md[i]||i+1}</div><div>${i===0?'👑 ':''}${esc(n)}<small>${games} game${games===1?'':'s'} scored</small></div><div class="pts">${p}</div></div>`}).join(''):'<div class="empty">No points yet. Play a game! 🎮</div>');
- $('hist').innerHTML=N.log.slice().reverse().map(e=>`<div class="hrow"><span><b>${esc(e.game)}</b>: ${Object.entries(e.aw).map(([n,p])=>esc(n)+' +'+p).join(', ')}</span><button data-id="${esc(e.id)}" title="Remove">✕</button></div>`).join('')||'<div class="empty">Nothing yet</div>';
+ $('hist').innerHTML=N.log.slice().reverse().map(e=>`<div class="hrow"><span><b>${esc(e.game)}</b>: ${Object.entries(e.aw||{}).map(([n,p])=>esc(n)+' +'+p).join(', ')}</span><button data-id="${esc(e.id)}" title="Remove">✕</button></div>`).join('')||'<div class="empty">Nothing yet</div>';
  $('hist').querySelectorAll('button').forEach(b=>b.onclick=()=>{const N=g('tg-night')||{log:[]};N.log=N.log.filter(e=>e.id!==b.dataset.id);s('tg-night',N);draw()});drawMan()}
 document.querySelectorAll('.mrow button').forEach(b=>b.onclick=()=>{if(!sel.length)return;const p=+b.dataset.p,N=g('tg-night')||{log:[]},aw={};sel.forEach(n=>aw[n]=p);N.log.push({id:'manual:'+Date.now(),game:'Bonus',t:Date.now(),aw});s('tg-night',N);sel=[];draw()});
 let arm=0;$('lbReset').onclick=()=>{if(Date.now()-arm>3000){arm=Date.now();$('lbReset').textContent='Tap again to reset everything';return}s('tg-night',{log:[]});$('lbReset').textContent='🗑️ Reset the leaderboard';draw()};
@@ -202,7 +204,7 @@ let ac=null;const tone=(f,d,g=.2,t='sawtooth')=>{try{ac=ac||new (window.AudioCon
 const roll=ms=>{for(let i=0;i<ms/50;i++)setTimeout(()=>tone(90+Math.random()*30,.06,.06+.18*i/(ms/50),'square'),i*50)};
 const fan=()=>[[523,659,784],[587,740,880],[659,831,988],[784,988,1175,1568]].forEach((c,i)=>setTimeout(()=>c.forEach(f=>tone(f,i==3?1.4:.25,.08)),i*170));
 let timers=[];
-$('lbReveal').onclick=()=>{const N=JSON.parse(localStorage.getItem('tg-night')||'{"log":[]}'),t={};(N.log||[]).forEach(e=>Object.entries(e.aw).forEach(([n,p])=>t[n]=(t[n]||0)+p));
+$('lbReveal').onclick=()=>{const N=JSON.parse(localStorage.getItem('tg-night')||'{"log":[]}'),t={};(N.log||[]).forEach(e=>Object.entries(e.aw||{}).forEach(([n,p])=>t[n]=(t[n]||0)+p));
  const arr=Object.entries(t).sort((a,b)=>b[1]-a[1]);if(!arr.length){alert('No points yet. Play a game first!');return}
  timers.forEach(clearTimeout);timers=[];$('revList').innerHTML='';$('revT').textContent='🥁 THE STANDINGS 🥁';$('revOv').classList.add('on');
  const md=['🥇','🥈','🥉'];const order=arr.map((x,i)=>[x,i]).reverse();let d=1200;
@@ -366,7 +368,7 @@ let SET={};try{SET=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}cat
 const saveSet=()=>{try{localStorage.setItem('tg-settings',JSON.stringify(SET))}catch(e){}};
 const esc2=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let ALL=GAMES.slice(),FILT='all';
-async function loadExtra(){for(const[f,g]of EXTRA){try{const r=await fetch(f,{method:'HEAD'});if(r.ok)ALL.push({f,...g})}catch(e){}}drawCats()}
+function loadExtra(){for(const[f,g]of EXTRA){if(!ALL.some(x=>x.f===f))ALL.push({f,...g})}drawCats()}
 const ph=g=>g.ph===2?'📱 phones':g.ph===1?'📱 optional':'📺 TV only';
 function drawCats(){document.getElementById('gcount').textContent=`🎉 ${ALL.length} games, one place 🎉`;
  document.getElementById('filters').innerHTML=[['all','All'],['kids','🧸 Kids OK'],['phones','📱 Phone games'],['tv','📺 No phones needed'],['big','👥 10+ players'],['new','✨ New']].map(([k,l])=>`<button class="tg ${FILT===k?'on':''}" data-f="${k}">${l}</button>`).join('');
@@ -395,7 +397,7 @@ if(window.TGB){TGB.init({game:'Check-in',hostOnly:false,names:()=>[...new Set([.
  addEventListener('tgavatar',drawWall);addEventListener('tgprofile',drawWall);setInterval(drawWall,3000)}
 drawWall();
 /* ===== team night ===== */
-const TCOL=['#2ec4b6','#ff4d6d','#a78bfa','#ffb703'],TNM=['Team Fire 🔥','Team Ice ❄️','Team Yalla 🚀','Team Habibi 💛'];
+
 function drawTeams(){const tb=document.getElementById('teamBtn'),tv=document.getElementById('teamsV');tb.style.display=SET.team?'':'none';if(!SET.team){tv.innerHTML='';return}
  let T=null;try{T=JSON.parse(localStorage.getItem('tg-night-teams')||'null')}catch(e){}const r=R();if(!T||!T.teams||r.some(n=>!T.teams.some(t=>t.m.includes(n))))T=shuffleTeams(r,T&&T.teams?T.teams.length:2);
  tv.innerHTML=T.teams.map((t,i)=>`<div style="--tc:${TCOL[i]}"><b>${t.name}</b><br>${t.m.map(esc2).join(', ')||'<i>empty</i>'}</div>`).join('')+`<div style="--tc:#fff;background:none;border:0">${[2,3,4].map(k=>`<button class="tg ${T.teams.length===k?'on':''}" data-tk="${k}">${k} teams</button>`).join(' ')}</div>`;
@@ -416,7 +418,7 @@ document.getElementById('recBtn').onclick=()=>{const r=R(),on=window.TGB?TGB.pla
  document.getElementById('rec').innerHTML=(n?'':'<div class="hint2">Tip: check people in first for better picks!</div>')+sc.map(({g,why})=>`<a class="recC" href="${g.f}"><span class="e">${g.e}</span><span><b>${esc2(g.n)}</b><br><span>${esc2((why.slice(0,2).join(', ')||g.d))}. ⏱️ ${g.t}</span></span></a>`).join('')};
 loadExtra();savePL();
 </script>
-<script src="tg-night.js"></script><script>
+<script src="tg-night.js?v=1115b"></script><script>
 (function(){const row=document.getElementById('thRow');let S={};try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}catch(e){}
 const draw=()=>{const T=window.TG_THEMES||{};row.innerHTML=Object.entries(T).map(([k,v])=>`<button class="tg ${(S.theme||'classic')===k?'on':''}" data-th="${k}">${v[0]}</button>`).join('')+'<div style="flex-basis:100%;text-align:center;font-size:13px;opacity:.75">Changes the colors, falling decorations and music in every game.</div>';
  row.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};S.theme=b.dataset.th;localStorage.setItem('tg-settings',JSON.stringify(S));location.reload()})};

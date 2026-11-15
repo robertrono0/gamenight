@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>Everyone gets the same prompt on their phone, like <b>"The worst thing to hear at a wedding: ___"</b>.</div><div class="hc"><span class="i">✍️</span>Write the funniest answer you can. Answers show up on the TV <b>anonymously</b>.</div><div class="hc"><span class="i">🗳️</span>Everyone votes for their favorite. You can't vote for your own!</div><div class="hc"><span class="i">💯</span><b>+100</b> for every vote you get. The crowd favorite gets a <b>+100 bonus</b>.</div><div class="hc"><span class="i">🏆</span>Most points after all rounds wins.</div><div class="hc"><span class="i">🌶️</span>Spicy mode adds cheeky adult prompts. Keep it clean with family!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js"></script>
+<script src="tg-shell.js?v=1115b"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js"></script>
+<script src="tg-party.js?v=1115b"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -106,6 +106,6 @@ $('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidd
   await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
  PG.end()};
 </script>
-<script src="tg-depth.js"></script>
+<script src="tg-depth.js?v=1115b"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js"></script></body></html>
+<script src="tg-night.js?v=1115b"></script></body></html>

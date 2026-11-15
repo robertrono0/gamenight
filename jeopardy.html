@@ -289,7 +289,7 @@ window.tgHome=pos=>{if(document.getElementById('tgHome'))return;const a=document
 <div class="ov" id="setupOv"><div class="panel">
  <h2>💰 Set Up Game Night Jeopardy</h2>
  <h3>1. Who's playing? <span class="hint">(one name per line or separated by commas)</span></h3>
- <textarea class="field" id="names" placeholder="Fadi&#10;Rita&#10;Anita&#10;..."></textarea>
+ <textarea class="field" id="names" placeholder="✏️ Type everyone's names here, one per line&#10;(Names fill in by themselves when guests scan the QR on the home page)"></textarea>
  <div class="row" style="margin-top:.8vh"><span class="hint" id="nameCount">0 players</span></div>
  <h3>2. How do you want to play?</h3>
  <div class="row"><div class="seg" id="segShuffle"><button data-v="1" class="on">🎲 Teams, mixed up every round</button><button data-v="0">👥 Same teams all game</button><button data-v="solo">🙋 Every player for themselves</button><button data-v="tourn">🏆 Tournament</button></div></div>
@@ -1362,4 +1362,4 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
-</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script><script src="tg-night.js"></script></body></html>
+</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script><script src="tg-night.js?v=1115b"></script></body></html>

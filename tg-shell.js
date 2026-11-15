@@ -1,3 +1,6 @@
+window.tgConfirm=(title,body,yes,no,onYes)=>{const old=document.getElementById('tgCf');if(old)old.remove();const d=document.createElement('div');d.id='tgCf';d.style.cssText='position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:rgba(10,4,6,.78);backdrop-filter:blur(6px)';
+ d.innerHTML=`<div style="background:linear-gradient(180deg,#fff7e6,#ffe9c4);color:#2a0d12;border-radius:22px;padding:28px 32px;max-width:min(560px,90vw);text-align:center;box-shadow:0 0 0 6px #ffcc3d,0 20px 60px rgba(0,0,0,.6);font-family:Fredoka,system-ui,sans-serif"><div style="font-size:28px;font-weight:800;margin-bottom:8px">${title}</div><div style="font-size:18px;margin-bottom:20px;opacity:.85">${body}</div><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button id="tgCfN" style="font:800 18px Fredoka,system-ui;padding:12px 22px;border-radius:999px;border:0;background:#3ddc84;color:#08311b;cursor:pointer">${no}</button><button id="tgCfY" style="font:700 16px Fredoka,system-ui;padding:12px 18px;border-radius:999px;border:2px solid #c0392b;background:#fff;color:#c0392b;cursor:pointer">${yes}</button></div></div>`;
+ document.body.appendChild(d);d.querySelector('#tgCfN').onclick=()=>d.remove();d.querySelector('#tgCfY').onclick=()=>{d.remove();onYes()};d.onclick=e=>{if(e.target===d)d.remove()}};
 
 window.tgAuto=()=>{try{return !!JSON.parse(localStorage.getItem('tg-settings')||'{}').auto}catch(e){return false}};
 window.tgSay=(txt)=>{try{if(!tgAuto()||!window.speechSynthesis||!txt)return;const u=new SpeechSynthesisUtterance(String(txt).replace(/<[^>]+>/g,'').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F]/gu,''));u.rate=1.02;u.pitch=1;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}};
@@ -100,7 +103,7 @@ function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.t
  $$('.musicBtn').forEach(b=>b.onclick=toggleMusic);$$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on));
  const fb=$('#bFull');if(fb)fb.onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
  $$('[data-how]').forEach(b=>b.onclick=()=>$('#howOv').classList.remove('hidden'));const hc=$('#howClose');if(hc)hc.onclick=()=>$('#howOv').classList.add('hidden');
- let nArm=0;const nb=$('#bNew');if(nb)nb.onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}o.onNew&&o.onNew()};
+ const nb=$('#bNew');if(nb)nb.onclick=()=>tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',()=>{o.onNew&&o.onNew()});
  document.addEventListener('pointerdown',()=>{ac();if(A.mode==='off')music('chill')},{once:true});
  if(o.rain)setInterval(()=>{if(!document.hidden)rain(o.rain,2)},9000)}
 

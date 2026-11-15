@@ -81,7 +81,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🧠</span>A dial runs between two ideas, like <b>COLD ⟷ HOT</b>. A secret target is hidden somewhere on it.</div><div class="hc"><span class="i">📱</span>One player (the <b>psychic</b>) sees the target on their phone and gives a <b>one-phrase clue</b>, like "soup".</div><div class="hc"><span class="i">🎚️</span>Their team discusses, then the host moves the needle on the TV (← → keys or drag).</div><div class="hc"><span class="i">🎯</span>Bullseye = <b>4</b>, close = <b>3</b>, near = <b>2</b>.</div><div class="hc"><span class="i">↔️</span>The other team guesses if the target is further <b>left or right</b> for <b>+1</b>.</div><div class="hc"><span class="i">🏆</span>Most points wins!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
 <script src="tg-shell.js?v=1115d"></script>
-<script src="buzzer.js?v=1794800000"></script>
+<script src="buzzer.js?v=1794900000"></script>
 <script src="tg-party.js?v=1115d"></script>
 <script>
 const KEY='tg-mm';function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}

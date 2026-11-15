@@ -10,7 +10,7 @@ h1{font-size:6vh;color:#ffcc3d}.sub{font-size:2.4vh;opacity:.9;max-width:900px;l
 <div id="who">Nobody connected yet</div>
 <div class="btns"><button id="go">▶ Test round</button><button class="g" id="rs">🔄 Reset</button></div>
 <div id="res"></div>
-<script src="buzzer.js?v=1794800000"></script>
+<script src="buzzer.js?v=1794900000"></script>
 <script>
 let t0=0,rows=[];const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function drawR(){$('res').innerHTML=rows.map((r,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(r.n)}</span><span>${r.ms} ms</span></div>`).join('')}

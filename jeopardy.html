@@ -1255,7 +1255,7 @@ const oShow=showClue;showClue=function(){if(window.TGB&&TGB.connected().length&&
 const oJudge=judge;judge=function(i,ok){oJudge.apply(this,arguments);if(!window.TGB)return;const m=mem(i);if(ok){TGB.right(m)}else{TGB.out(m);if(!C.dd&&!C.all&&C.won==null&&!C.shown&&!TGB.isOpen()){const el=$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i);if(el.length)TGB.reopen()}}hi();hv()};
 const oRev=reveal;reveal=function(){oRev.apply(this,arguments);try{if(C&&C.cl&&C.cl.link&&!document.getElementById('tgSong')){$('#answerBox').insertAdjacentHTML('beforeend',`<div><a id="tgSong" href="${C.cl.link}" target="_blank" rel="noopener" style="display:inline-block;margin-top:1.4vh;font:800 2.6vh system-ui;padding:1vh 2.4vh;border-radius:3vh;background:linear-gradient(#ff4d6d,#c1121f);color:#fff;text-decoration:none">🎵 Play the song</a></div>`)}}catch(e){}if(window.TGB){TGB.lock();hv()}};
 const oClose=closeClue;closeClue=function(){oClose.apply(this,arguments);if(window.TGB){TGB.reset();hv()}};
-const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794900000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGFXX*//* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
 (function(){
 if(window.FXX)return;

@@ -199,7 +199,7 @@ function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.t
  $$('.musicBtn').forEach(b=>b.onclick=toggleMusic);$$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on));
  const fb=$('#bFull');if(fb)fb.onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
  $$('[data-how]').forEach(b=>b.onclick=()=>$('#howOv').classList.remove('hidden'));const hc=$('#howClose');if(hc)hc.onclick=()=>$('#howOv').classList.add('hidden');
- let nArm=0;const nb=$('#bNew');if(nb)nb.onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}o.onNew&&o.onNew()};
+ const nb=$('#bNew');if(nb)nb.onclick=()=>{const go=()=>{o.onNew&&o.onNew()};if(window.tgConfirm)tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',go);else go()};
  document.addEventListener('pointerdown',()=>{ac();if(A.mode==='off')music('chill')},{once:true});
  if(o.rain)setInterval(()=>{if(!document.hidden)rain(o.rain,2)},9000)}
 
@@ -316,7 +316,7 @@ const oR=render;render=function(){oR.apply(this,arguments);hv()};
 const cl=s=>{const e=$(s);if(e)e.click()};
 function boot(){TGB.init({game:'Tic-Tac-Trivia',hostOnly:true,names:()=>[],onAct:id=>{if(!S)return;
  if(id==='show')cl('#bShow');else if(id==='right'||id==='wrong'){if(S.phase==='q')cl('#bShow');cl(id==='right'?'#bRight':'#bWrong')}else if(id==='steal')cl('#bSteal');else if(id==='nosteal')cl('#bNo');else if(id==='nb')cl('#bNB')}});hv()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794900000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){
 if(window.TGDEPTH)return;window.TGDEPTH=1;

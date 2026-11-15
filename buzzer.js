@@ -2308,7 +2308,7 @@ var qrcode = function() {
 ;/* Thanksgiving Game Night: phone buzzers + host remote (TV side) */
 (function(){
 "use strict";
-const BUILD='1794800000';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
+const BUILD='1794900000';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
 function peerOpts(){if(!PEERP)return{debug:0};const[h,p]=PEERP.split(':');return{host:h,port:+p||9000,path:'/',secure:false,debug:0}}
 const ls={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const rid=n=>{const a='abcdefghijkmnpqrstuvwxyz23456789';let s='';const r=new Uint32Array(n);crypto.getRandomValues(r);for(const x of r)s+=a[x%a.length];return s};
@@ -2334,7 +2334,7 @@ addEventListener('pagehide',()=>{try{peer&&peer.destroy()}catch(e){}});
 const send=(c,m)=>{try{c.open&&c.send(m)}catch(e){}};
 function allNames(){let n=[];try{n=O.names()||[]}catch(e){}if(!n.length&&window.tgRoster)n=tgRoster();return[...new Set(n)]}
 function onData(c,d){let p=P.get(c.peer);if(!p){p={c,name:null,role:'player'};P.set(c.peer,p)}
- if(d.t==='join'){let nm=String(d.name||'').trim().slice(0,24);const al=allNames(),hit=al.find(x=>x.toLowerCase()===nm.toLowerCase());if(hit)nm=hit;p.name=nm;p.pid=d.pid;
+ if(d.t==='join'){let nm=String(d.name||'').trim().slice(0,24);if(nm&&nm===nm.toLowerCase())nm=nm.replace(/(^|\s)(\S)/g,(m,a,c)=>a+c.toUpperCase());const al=allNames(),hit=al.find(x=>x.toLowerCase()===nm.toLowerCase());if(hit)nm=hit;p.name=nm;p.pid=d.pid;
   for(const[k,o]of P)if(k!==c.peer&&o.pid===d.pid&&o.role==='player'){try{o.c.close()}catch(e){}P.delete(k)}
   if(p.role==='host'){p.role='player';HOSTS.delete(c.peer)}push(p);sendUI(p);draw();try{O.onJoin&&O.onJoin(p.name)}catch(e){}return}
  if(d.t==='role'&&d.r==='player'){p.role='player';HOSTS.delete(c.peer);push(p);draw();return}

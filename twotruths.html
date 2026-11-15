@@ -81,7 +81,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>On your phone, write <b>2 true things</b> about yourself and <b>1 lie</b>.</div><div class="hc"><span class="i">📺</span>Each player's 3 statements show up on the TV in a random order.</div><div class="hc"><span class="i">🤥</span>Everyone else votes for the <b>lie</b>.</div><div class="hc"><span class="i">✅</span><b>+100</b> for spotting the lie.</div><div class="hc"><span class="i">🎭</span>The writer gets <b>+100</b> for every person they fooled.</div><div class="hc"><span class="i">💡</span>Tip: the best lies sound boring and the best truths sound crazy!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
 <script src="tg-shell.js?v=1115d"></script>
-<script src="buzzer.js?v=1794800000"></script>
+<script src="buzzer.js?v=1794900000"></script>
 <script src="tg-party.js?v=1115d"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}

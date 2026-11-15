@@ -215,7 +215,7 @@ function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.t
  $$('.musicBtn').forEach(b=>b.onclick=toggleMusic);$$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on));
  const fb=$('#bFull');if(fb)fb.onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
  $$('[data-how]').forEach(b=>b.onclick=()=>$('#howOv').classList.remove('hidden'));const hc=$('#howClose');if(hc)hc.onclick=()=>$('#howOv').classList.add('hidden');
- let nArm=0;const nb=$('#bNew');if(nb)nb.onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}o.onNew&&o.onNew()};
+ const nb=$('#bNew');if(nb)nb.onclick=()=>{const go=()=>{o.onNew&&o.onNew()};if(window.tgConfirm)tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',go);else go()};
  document.addEventListener('pointerdown',()=>{ac();if(A.mode==='off')music('chill')},{once:true});
  if(o.rain)setInterval(()=>{if(!document.hidden)rain(o.rain,2)},9000)}
 
@@ -334,7 +334,7 @@ if(S){if(S.phase==='play')S.phase='ready';$('#setupOv').classList.add('hidden');
 </script><script>/*TGBUZZ*/(function(){
 function boot(){TGB.init({game:'Charades',names:()=>S&&S.teams?S.teams.flatMap(t=>t.m):(window.tgRoster?tgRoster():[]),teamOf:n=>{if(!S||!S.teams)return null;const t=S.teams.find(x=>x.m.includes(n));return t?{label:t.name,color:'#ffcc3d'}:null},
  onAct:id=>{if(!S)return;if(id==='go'&&S.phase==='ready'){const b=$('#bGo');b&&b.click();return}if(id==='next'&&S.phase==='sum'){const b=$('#bNext');b&&b.click();return}if(S.phase!=='play')return;if(id==='got')got();else if(id==='skip')skip();phoneView()}});phoneView();let lastOn=null;setInterval(()=>{if(S&&S.phase==='ready'){const o=phoneOn(giverName());const w2=wordWhere();if(o+w2!==lastOn){lastOn=o+w2;render()}}},1500)}
-const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+const s=document.createElement('script');s.src='buzzer.js?v=1794900000';s.onload=boot;document.head.appendChild(s)})();</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){
 if(window.TGDEPTH)return;window.TGDEPTH=1;
 let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}

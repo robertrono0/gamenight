@@ -1042,7 +1042,7 @@ const om=milestone;milestone=function(){om.apply(this,arguments);const n=S.calle
 window.tgSurprise=()=>{last=-99;const r=Math.random;Math.random=()=>0;try{milestone()}finally{Math.random=r}};})();</script><script>/*TGBINGO*/(function(){
 const oc=crown;crown=function(){const raw=($('winName').value.trim()||'').slice(0,60);oc.apply(this,arguments);try{const names=raw.split(/\s*(?:,|&|\band\b|\+)\s*/i).map(x=>x.trim()).filter(Boolean);if(names.length&&window.tgNight)tgNight('Bingo',[[],names],'bingo-'+S.cur+'-'+Date.now())}catch(e){}};
 const w=$('winName');if(w&&window.tgRoster){const dl=document.createElement('datalist');dl.id='tgRosterDL';dl.innerHTML=tgRoster().map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');document.body.appendChild(dl);w.setAttribute('list','tgRosterDL')}
-})();</script><script src="buzzer.js?v=1794800000"></script>
+})();</script><script src="buzzer.js?v=1794900000"></script>
 <script>
 (function(){if(!window.TGB)return;TGB.init({game:'Party Bingo',names:()=>[...new Set([...tgRoster(),...TGB.players()])],onJoin:()=>{}});TGB.ask({k:'msg',key:'bingo',emoji:'🎱',title:'Bingo time!',body:'Mark your cardboard card and shout BINGO! Send reactions from here 👇'})})();</script>
 <script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */

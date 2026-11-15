@@ -442,7 +442,7 @@ function gameEnd(){music('party');const [a,b]=S.teams,w=a.score===b.score?-1:a.s
 const showHow=()=>$('#howOv').classList.remove('hidden');$('#bHow').onclick=showHow;$('#bHow2').onclick=showHow;$('#bHowClose').onclick=()=>$('#howOv').classList.add('hidden');
 $('#bMusic').onclick=()=>{A.on=!A.on;LS.set('tg-feud-music',A.on);$('#bMusic').classList.toggle('off',!A.on);music(A.mode==='off'?'play':A.mode)};$('#bMusic').classList.toggle('off',!A.on);
 $('#bFull').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
-let nArm=0;$('#bNew').onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')};
+$('#bNew').onclick=()=>tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',()=>{S=null;LS.set('tg-feud',null);$('#setupOv').classList.remove('hidden');music('off')});
 $('#names').value=tgRoster().length?tgRoster().join('\n'):LS.get('tg-feud-names','');split();
 if(S&&S.cur){$('#setupOv').classList.add('hidden');render();if(S.pend)showPend();document.addEventListener('pointerdown',()=>music('play'),{once:true})}
 </script><script>/*TGBUZZ*/(function(){
@@ -465,7 +465,7 @@ function boot(){hvF=hv;TGB.init({game:'Family Feud',names,teamOf:n=>{const i=tI(
  onAct:(id,d)=>{if(!S||!S.cur)return;const cl=sel=>{const e=$(sel);e&&e.click()};
   if(id==='cyes')pendDone(true);else if(id==='cno')pendDone(false);else if(id==='input'){$('#ans').value=d.v;check()}else if(id==='c0')cl('[data-ctrl="0"]');else if(id==='c1')cl('[data-ctrl="1"]');else if(id==='x')cl('#bStrike');else if(id==='end')cl('#bEndRound');else if(id==='nosteal')cl('#bNoSteal');else if(id==='all')cl('#bRevealAll');else if(id==='next')cl('#bNext');else if(id==='swap')cl('#bSwap');else if(id==='clk')cl('#clock');
   else if(/^r\d+$/.test(id)){const i=+id.slice(1);if(!S.cur.open.includes(i)){pushUndo();reveal(i,S.cur.done)}}}});sync()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794900000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGFXX*//* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
 (function(){
 if(window.FXX)return;

@@ -199,7 +199,7 @@ function shellInit(o){fxInit();setStyle(o.style||'funk');GAME=o.game||document.t
  $$('.musicBtn').forEach(b=>b.onclick=toggleMusic);$$('.musicBtn').forEach(b=>b.classList.toggle('off',!A.on));
  const fb=$('#bFull');if(fb)fb.onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
  $$('[data-how]').forEach(b=>b.onclick=()=>$('#howOv').classList.remove('hidden'));const hc=$('#howClose');if(hc)hc.onclick=()=>$('#howOv').classList.add('hidden');
- let nArm=0;const nb=$('#bNew');if(nb)nb.onclick=()=>{if(Date.now()-nArm>3000){nArm=Date.now();toast('Tap 🔁 again to start a new game');return}o.onNew&&o.onNew()};
+ const nb=$('#bNew');if(nb)nb.onclick=()=>{const go=()=>{o.onNew&&o.onNew()};if(window.tgConfirm)tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',go);else go()};
  document.addEventListener('pointerdown',()=>{ac();if(A.mode==='off')music('chill')},{once:true});
  if(o.rain)setInterval(()=>{if(!document.hidden)rain(o.rain,2)},9000)}
 
@@ -290,7 +290,7 @@ function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score
 (function(){const doUndo=()=>{if(!S){toast('Nothing to undo yet');return}if(S.anim||(typeof busy!=='undefined'&&busy)){toast('One sec, wait for the animation');return}const curJ=JSON.stringify(S);let prev=null;if(_uLast&&curJ!==_uLast)prev=_uLast;else if(UNDO.length)prev=UNDO.pop();if(!prev){toast('Nothing to undo yet');return}try{}catch(e){}S=JSON.parse(prev);_uLast=prev;LS.set(UNDO_KEY,S);['#endOv','#offerOv'].forEach(s=>{const e=document.querySelector(s);e&&e.classList.add('hidden')});render();try{SFX.skip()}catch(e){}toast('↩️ Undone')};const b=document.getElementById('bUndo');if(b)b.onclick=doUndo;addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!/INPUT|TEXTAREA/.test((document.activeElement||{}).tagName||'')){e.preventDefault();doUndo()}})})();
 shellInit({game:'Price Is Right',style:'swing',rain:['💵','💰','🤑','⭐'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S){S.anim=false;$('#setupOv').classList.add('hidden');if(S.i>=S.items.length)end();else render()}
-</script><script src="buzzer.js?v=1794800000"></script>
+</script><script src="buzzer.js?v=1794900000"></script>
 <script>
 (function(){if(!window.TGB)return;
 function pricePhones(){if(!S){return}if(S.phase==='guess'){const it=S.items[S.i];TGB.ask({k:'text',num:1,key:'pg'+S.i,id:'pg'+S.i,kicker:"💲 Your team's guess",title:it[4]==='showcase'?'THE SHOWCASE: '+it[2]:it[1],body:(it[4]==='showcase'?'':it[2]+'\n')+'First one on your team to send it locks it in. Agree first! 😉',ph:'$',max:10,btn:'Lock it in 💲'})}else TGB.ask({k:'msg',key:'pw'+S.i+S.phase,emoji:'💲',title:'Look at the TV!',body:'The price is being revealed... 🥁'})}

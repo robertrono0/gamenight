@@ -439,7 +439,7 @@ function newGame(){$('#endOv').classList.add('hidden');S=null;LS.set('tg-pluck',
 const showHow=()=>$('#howOv').classList.remove('hidden');$('#bHow').onclick=showHow;$('#bHow2').onclick=showHow;$('#bHowClose').onclick=()=>$('#howOv').classList.add('hidden');
 $('#bMusic').onclick=()=>{A.on=!A.on;LS.set('tg-pluck-music',A.on);$('#bMusic').classList.toggle('off',!A.on);music(A.mode==='off'?'play':A.mode)};$('#bMusic').classList.toggle('off',!A.on);
 $('#bFull').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()};
-$('#bNew').onclick=()=>{if(confirmNew())newGame()};let nArm=0;function confirmNew(){if(Date.now()-nArm<3000)return true;nArm=Date.now();toast('Tap 🔁 again to start a new game');return false}
+$('#bNew').onclick=()=>tgConfirm('🔁 Start a brand new game?','The game in progress will end and scores for it will be lost.','Yes, start over','Keep playing',newGame);let nArm=0;function confirmNew(){if(Date.now()-nArm<3000)return true;nArm=Date.now();toast('Tap 🔁 again to start a new game');return false}
 // ---------- boot ----------
 $('#names').value=LS.get('tg-pluck-names','');renderSetup();drawTurkey();
 if(S&&S.cur){$('#setupOv').classList.add('hidden');render();document.addEventListener('pointerdown',()=>music('play'),{once:true})}
@@ -457,7 +457,7 @@ function hv(){if(!window.TGB)return;if(!S||!S.cur){TGB.host({title:'🎈 Balloon
 const oR=render;render=function(){oR.apply(this,arguments);hv()};
 const cl=s=>{const e=$(s);if(e)e.click()};
 function boot(){TGB.init({game:'Balloon Pop',hostOnly:true,names:()=>[],onAct:id=>{({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]&&cl(({next:'#bNext',yes:'#sYes',no:'#sNo',solve:'#bSolve',pass:'#bPass',reveal:'#bReveal'})[id]);setTimeout(hv,50)}});hv()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794900000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGFXX*//* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
 (function(){
 if(window.FXX)return;

@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%90%AE%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Herd Mind</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#2e7d32;--bgB:#0b2a0d}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🐮 HERD MIND</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🐮 Herd Mind</h2>
+ <h3>Win at</h3><div class="seg" id="segW"><button data-v="6" class="">6 points</button><button data-v="8" class="on">8 points</button><button data-v="10" class="">10 points</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">❓</span>Everyone gets a simple question like <b>"Name a breakfast food"</b>.</div><div class="hc"><span class="i">🐑</span>Type the answer you think <b>most people</b> will type. Don't be original!</div><div class="hc"><span class="i">✅</span>Everyone in the <b>biggest group</b> gets a point.</div><div class="hc"><span class="i">🐮</span>If you're the <b>only one</b> with a unique answer, you get the <b>Pink Cow</b>. You can't win while you hold it!</div><div class="hc"><span class="i">🔀</span>Host: tap two answer groups to merge them (like "fries" and "french fries").</div><div class="hc"><span class="i">🏆</span>First to the target score without the cow wins!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const QS=["Name a breakfast food","Name a pizza topping","Name a color","Name a fruit","Name an animal at the zoo","Name a sport","Name something you find at the beach","Name a fast food chain","Name a planet","Name a famous singer","Name something in a kitchen","Name a holiday","Name a Disney movie","Name a car brand","Name a superhero","Name a dessert","Name a vegetable","Name a country in Europe","Name a social media app","Name something you do every morning","Name a flower","Name a pet","Name a board game","Name something cold","Name a type of shoe","Name an ice cream flavor","Name a body part","Name a musical instrument","Name something that flies","Name a school subject","Name a Middle Eastern food","Name something at a wedding","Name a city in California","Name a drink","Name a kitchen appliance","Name a cartoon character","Name a month","Name something yellow","Name something you take on vacation","Name a famous athlete","Name a type of weather","Name a job","Name a thing in a bathroom","Name a farm animal","Name a snack","Name something you plug in","Name a Christmas song","Name a sea creature","Name a candy","Name a coffee drink"];
+let cfg=LS.get('tg-herd-cfg',{w:8});segs(cfg,'tg-herd-cfg',[['segW','w']]);let cow=null;
+PG.init({key:'tg-herd',game:'Herd Mind',title:'🐮 Herd Mind',sub:'Scan to join! Think like the herd.',min:3,style:'swing',rain:['🐮','🐑','⭐']});
+const key=s=>{let x=String(s).toLowerCase().trim().replace(/^(a|an|the)\s+/,'').replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ');if(x.length>3&&x.endsWith('es')&&/(ches|shes|oes)$/.test(x))x=x.slice(0,-2);else if(x.length>3&&x.endsWith('s')&&!x.endsWith('ss'))x=x.slice(0,-1);return x};
+const cowHTML=()=>cow?`<div class="status">🐮 The Pink Cow is with <b>${esc(cow)}</b></div>`:'';
+$('#bStart').onclick=async()=>{ac();PG.reset();cow=null;$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const qs=shuffle(QS);let r=0;
+ while(true){const q=qs[r%qs.length];r++;
+  const subs=await PG.collect({id:'h',secs:30,title:`<div class="kicker">ROUND ${r}</div><div class="prompt popIn">${esc(q)}</div>${cowHTML()}`,sub:'Type what MOST people will say 🐑',spec:n=>({k:'text',kicker:'Think like the herd 🐑',title:q,ph:'Your answer',max:30,btn:'Moo 🐮'})});
+  let groups={};Object.entries(subs).forEach(([n,v])=>{const k=key(v);if(!k)return;(groups[k]=groups[k]||{t:String(v).trim(),ns:[]}).ns.push(n)});
+  let sel=null;const draw=()=>{const gs=Object.entries(groups).sort((a,b)=>b[1].ns.length-a[1].ns.length);PG.stage(`<div class="prompt">${esc(q)}</div>${answersGrid(gs.map(([k,g])=>`<div data-k="${esc(k)}" class="gk" style="cursor:pointer"><b style="font-size:3.4vh;text-transform:uppercase">${esc(g.t)}</b><div class="by">${g.ns.map(n=>avHTML(n)).join('')}<span class="vt">${g.ns.length}</span></div></div>`))}<div class="hint" style="font-size:1.8vh;opacity:.8">Host: tap two groups to merge them</div>`);
+   $$('.gk').forEach(e=>e.parentElement.onclick=()=>{const k=e.dataset.k;if(!sel){sel=k;e.parentElement.style.outline='.5vh solid #3a86ff';return}if(sel!==k){groups[sel].ns.push(...groups[k].ns);delete groups[k];SFX.ok()}sel=null;draw();addBtn()})};
+  const addBtn=()=>PG.next('✅ SCORE IT');draw();SFX.whoosh();music('play');await addBtn();
+  const gs=Object.values(groups).sort((a,b)=>b.ns.length-a.ns.length),gain={};
+  if(gs.length&&(gs.length===1||gs[0].ns.length>gs[1].ns.length))gs[0].ns.forEach(n=>{PG.add(n,1);gain[n]=1});
+  const singles=gs.filter(g=>g.ns.length===1);let msg='';if(singles.length===1&&gs.length>1){cow=singles[0].ns[0];msg=`🐮 <b>${esc(cow)}</b> stood out and gets the Pink Cow!`;SFX.horn()}
+  const win=PG.ranked().find(([n,p])=>p>=cfg.w&&n!==cow);
+  PG.stage(`<div class="status">${gs[0]&&gain[gs[0].ns[0]]?`🐑 The herd said <b>${esc(gs[0].t.toUpperCase())}</b>! +1 each`:'🤷 No single biggest group, no points!'}</div><div class="status">${msg}</div>${PG.board(gain)}${cowHTML()}`);SFX.win();
+  if(win){await PG.next('🏆 FINAL RESULTS');break}await PG.next('NEXT QUESTION ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

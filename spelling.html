@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script>
-<meta charset="utf-8">
+<meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%90%9D%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spelling Bee: Game Night</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Bungee&family=Nunito:wght@600;800&family=Patrick+Hand&display=swap">
@@ -1414,7 +1414,7 @@ function hv(){if(!window.TGB)return;const live=G&&G.started&&!G.over;const w=liv
  TGB.host({title:`🎤 ${sp?sp.name:''} · ${ROUNDS[G.round].name}`,a:String(w[0]).toUpperCase(),q:w[1],note:'Letter by letter: '+String(w[0]).toUpperCase().split('').join(' · '),actions:a,noBuzzBtns:true})}
 const oR=renderAll;renderAll=function(){oR.apply(this,arguments);hv()};
 function boot(){TGB.init({game:'Spelling Bee',hostOnly:true,names:()=>[],onAct:id=>{if(id==='ok')judge(true);else if(id==='no')judge(false);else if(id==='next')advance();else if(id==='say')speakWord();else if(id==='def')speakDef();else if(id==='swap')swapWord()}});hv()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){
 if(window.TGDEPTH)return;window.TGDEPTH=1;
@@ -1460,5 +1460,5 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
-</script></body>
+</script><script src="tg-night.js"></script></body>
 </html>

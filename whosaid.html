@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%95%B5%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Who Said It</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#00695c;--bgB:#012a26}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🕵️ WHO SAID IT</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🕵️ Who Said It</h2>
+ <h3>How many prompts?</h3><div class="seg" id="segR"><button data-v="2" class="">2</button><button data-v="3" class="on">3</button><button data-v="5" class="">5</button></div><h3>Spice level</h3><div class="seg" id="segS"><button data-v="clean" class="on">😇 Family-friendly</button><button data-v="spicy" class="">🌶️ Spicy (adults)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>Everyone answers a question about <b>themselves</b> on their phone.</div><div class="hc"><span class="i">📺</span>Answers appear on the TV one at a time, with no names.</div><div class="hc"><span class="i">🕵️</span>Everyone guesses <b>who said it</b>. (The writer just sits there with a poker face.)</div><div class="hc"><span class="i">✅</span><b>+100</b> for every correct guess.</div><div class="hc"><span class="i">🎭</span>The writer gets <b>+50</b> for every person they fooled.</div><div class="hc"><span class="i">🏆</span>Most points wins. You will learn things about your family. 😅</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const CLEAN=["My most useless talent is ___","The food I could eat every day forever: ___","My weirdest fear: ___","The first thing I'd buy if I won the lottery: ___","My most embarrassing childhood memory: ___","A song I secretly love: ___","My worst habit: ___","If I had a theme song, it would be ___","The celebrity I get told I look like: ___","My dream job as a kid: ___","The last thing I googled: ___","My go-to karaoke song: ___","Something I'm weirdly good at: ___","The worst gift I ever got: ___","My guilty pleasure TV show: ___","If I could live anywhere, I'd live in ___","My most used emoji: ___","The best thing my mom ever cooked: ___","A rule I always break: ___","My hidden talent: ___","The trip I'll never forget: ___","My biggest pet peeve: ___","The thing I'd save in a fire (not people): ___","What I'd name my pet goat: ___","Something nobody here knows about me: ___"];
+const SPICY=["My worst date ever in 5 words: ___","The most trouble I ever got in: ___","My celebrity crush: ___","The worst lie I told my parents: ___","My most embarrassing drunk moment: ___","The weirdest place I fell asleep: ___","My biggest red flag: ___","The worst thing I did as a teenager: ___"];
+let cfg=LS.get('tg-whosaid-cfg',{r:3,s:'clean'});segs(cfg,'tg-whosaid-cfg',[['segR','r'],['segS','s']]);
+PG.init({key:'tg-whosaid',game:'Who Said It',title:'🕵️ Who Said It?',sub:'Scan to join! Answer about yourself, then guess who wrote what.',min:3,style:'swing',rain:['🕵️','🤔','⭐']});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const pool=shuffle(cfg.s==='spicy'?SPICY.concat(CLEAN):CLEAN);
+ for(let r=0;r<cfg.r;r++){const p=pool[r];
+  const subs=await PG.collect({id:'ans',secs:70,title:`<div class="kicker">PROMPT ${r+1} OF ${cfg.r}</div><div class="prompt popIn">${esc(p)}</div>`,sub:'Answer about YOURSELF 🤫',spec:n=>({k:'text',kicker:'Answer about yourself',title:p,ph:'Be honest... 😏',max:90,btn:'Send 🤫'})});
+  const items=shuffle(Object.entries(subs).filter(([n,v])=>String(v).trim())).slice(0,8);const names=PG.players();
+  for(let i=0;i<items.length;i++){const[au,txt]=items[i];
+   PG.stage(`<div class="kicker">${esc(p)}</div><div class="ansC" style="font-size:5vh;max-width:80vw;text-align:center">"${esc(txt)}"</div><div class="status">🕵️ Who said it? Vote on your phone!</div><div id="pgVotes"></div>`);SFX.whoosh();
+   const votes=await PG.vote({id:'g',secs:25,title:'Who said it?',sub:'"'+txt+'"',who:names.filter(n=>n!==au),opts:n=>names.filter(x=>x!==n).map(x=>({t:x,v:x,img:avatarOf(x)}))});
+   const right=Object.entries(votes).filter(([n,v])=>v===au).map(([n])=>n),wrong=Object.keys(votes).length-right.length;right.forEach(n=>PG.add(n,100));PG.add(au,wrong*50);
+   SFX.roll(1200);await sleep(1300);
+   PG.stage(`<div class="kicker">${esc(p)}</div><div class="ansC" style="font-size:4.4vh;max-width:80vw;text-align:center">"${esc(txt)}"</div><div class="bigT" style="font-size:5vh;display:flex;align-items:center;gap:1vw">${avHTML(au)} ${esc(au)} SAID IT!</div><div class="status">✅ ${right.length?right.map(esc).join(', ')+' got it (+100)':'Nobody guessed it!'}${wrong?` · 🎭 ${esc(au)} fooled ${wrong} (+${wrong*50})`:''}</div>`);
+   right.length?SFX.ok():SFX.horn();await PG.next(i+1<items.length?'NEXT ANSWER ➜':'📊 SCORES')}
+  PG.stage(PG.board());await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT PROMPT ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

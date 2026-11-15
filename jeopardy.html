@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8">
+<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Game Night Jeopardy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -559,7 +559,7 @@ nfl:{name:"Football Sunday",emoji:"🏈",clues:[
  {q:"San Diego's old NFL team that moved to LA.",a:"The Chargers"}]},
 soccer:{name:"Soccer",emoji:"⚽",clues:[
  {q:"After 9 years at Liverpool, Mohamed Salah moved in 2026 to a club in this country.",a:"Turkey (Trabzonspor)"},
- {q:"The country that won the 2022 World Cup.",a:"Argentina"},
+ {q:"This country won the 2026 World Cup, beating Argentina 1-0 in the final.",a:"Spain"},
  {q:"Cristiano Ronaldo is from this country.",a:"Portugal"},
  {q:"Lionel Messi plays for this Miami team.",a:"Inter Miami"},
  {q:"The famous yearly tournament for Europe's best soccer clubs.",a:"The Champions League"}]},
@@ -1255,7 +1255,7 @@ const oShow=showClue;showClue=function(){if(window.TGB&&TGB.connected().length&&
 const oJudge=judge;judge=function(i,ok){oJudge.apply(this,arguments);if(!window.TGB)return;const m=mem(i);if(ok){TGB.right(m)}else{TGB.out(m);if(!C.dd&&!C.all&&C.won==null&&!C.shown&&!TGB.isOpen()){const el=$$('#cTeams .tbtn:not(.done)').map(e=>+e.dataset.i);if(el.length)TGB.reopen()}}hi();hv()};
 const oRev=reveal;reveal=function(){oRev.apply(this,arguments);try{if(C&&C.cl&&C.cl.link&&!document.getElementById('tgSong')){$('#answerBox').insertAdjacentHTML('beforeend',`<div><a id="tgSong" href="${C.cl.link}" target="_blank" rel="noopener" style="display:inline-block;margin-top:1.4vh;font:800 2.6vh system-ui;padding:1vh 2.4vh;border-radius:3vh;background:linear-gradient(#ff4d6d,#c1121f);color:#fff;text-decoration:none">🎵 Play the song</a></div>`)}}catch(e){}if(window.TGB){TGB.lock();hv()}};
 const oClose=closeClue;closeClue=function(){oClose.apply(this,arguments);if(window.TGB){TGB.reset();hv()}};
-const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();
+const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();
 </script><script>/*TGFXX*//* Big TV-moment effects: money rain, big win, big loss, count-up (standalone) */
 (function(){
 if(window.FXX)return;
@@ -1362,4 +1362,4 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
-</script></body></html>
+</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script><script src="tg-night.js"></script></body></html>

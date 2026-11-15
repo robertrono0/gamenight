@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%AD%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fake Out</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#283593;--bgB:#0b1040}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🎭 FAKE OUT</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🎭 Fake Out</h2>
+ <h3>How many questions?</h3><div class="seg" id="segR"><button data-v="4" class="">4</button><button data-v="6" class="on">6</button><button data-v="8" class="">8</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">❓</span>The TV shows a weird but <b>true</b> fact with a blank.</div><div class="hc"><span class="i">🎭</span>On your phone, write a <b>fake answer</b> that sounds real enough to fool everyone.</div><div class="hc"><span class="i">📺</span>All the fakes plus the real answer show up together.</div><div class="hc"><span class="i">🔎</span>Vote for the answer you think is <b>TRUE</b>.</div><div class="hc"><span class="i">✅</span><b>+200</b> for finding the truth. <b>+100</b> for every person who falls for YOUR fake.</div><div class="hc"><span class="i">🤖</span>If your fake matches the real answer, you get a bonus instead!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const FACTS=[["A group of flamingos is called a ___.","flamboyance"],["The national animal of Scotland is the ___.","unicorn"],["The dot over a lowercase i or j is called a ___.","tittle"],["A baby puffin is called a ___.","puffling"],["The plastic tip at the end of a shoelace is called an ___.","aglet"],["Wombat poop is shaped like ___.","cubes"],["In Switzerland, it's illegal to own just one ___, because they get lonely.","guinea pig"],["The first item ever sold on eBay was a broken ___.","laser pointer"],["The inventor of the Pringles can had his ashes buried in a ___.","Pringles can"],["The world's oldest known land animal, Jonathan, is a ___.","tortoise"],["The most stolen food in the world is ___.","cheese"],["Hawaiian pizza (with pineapple) was invented in ___.","Canada"],["In the 1830s, ketchup was sold as a ___.","medicine"],["Bubble wrap was originally invented to be ___.","wallpaper"],["Cotton candy was co-invented by a ___.","dentist"],["Play-Doh was first sold as a ___.","wallpaper cleaner"],["A group of owls is called a ___.","parliament"],["Before video games, Nintendo started out making ___.","playing cards"],["An ostrich's eye is bigger than its ___.","brain"],["Saudi Arabia imports ___ from Australia.","camels"],["Cleopatra lived closer in time to the ___ than to the building of the Great Pyramid.","moon landing"],["A shrimp's heart is located in its ___.","head"],["Sloths can hold their breath longer than ___ can.","dolphins"],["Octopuses have ___ hearts.","three"],["Honey bees can recognize human ___.","faces"],["Kangaroos can't walk ___.","backwards"],["A pineapple takes about ___ to grow.","two years"],["Scotland has more than 400 words for ___.","snow"],["The fingerprints of a ___ are so close to humans' they can confuse crime scenes.","koala"],["A day on Venus is longer than its ___.","year"]];
+let cfg=LS.get('tg-fake-cfg',{r:6});segs(cfg,'tg-fake-cfg',[['segR','r']]);
+PG.init({key:'tg-fake',game:'Fake Out',title:'🎭 Fake Out',sub:'Scan to join! Write fake answers that fool your friends.',min:3,style:'swing',rain:['🎭','🤥','⭐']});
+const nrm=s=>String(s).toLowerCase().replace(/^(a|an|the)\s+/,'').replace(/[^a-z0-9]/g,'');
+const fmt=p=>esc(p).replace('___','<u>&nbsp;&nbsp;&nbsp;&nbsp;</u>');
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const seen=LS.get('tg-fake-seen',[]);let pool=FACTS.filter(f=>!seen.includes(f[0]));if(pool.length<cfg.r)pool=FACTS;const qs=shuffle(pool).slice(0,cfg.r);LS.set('tg-fake-seen',seen.concat(qs.map(q=>q[0])).slice(-25));
+ for(let r=0;r<qs.length;r++){const[q,real]=qs[r];
+  const subs=await PG.collect({id:'fk',secs:60,title:`<div class="kicker">QUESTION ${r+1} OF ${qs.length}</div><div class="prompt popIn">${fmt(q)}</div>`,sub:'Write a FAKE answer that sounds real 🎭',spec:n=>({k:'text',kicker:'Write a believable FAKE',title:q,ph:'Your fake answer...',max:40,btn:'Send 🎭'})});
+  const gain={};const fakes={};Object.entries(subs).forEach(([n,v])=>{v=String(v).trim();if(!v)return;if(nrm(v)===nrm(real)){PG.add(n,150);gain[n]=(gain[n]||0)+150;toast('🤯 '+n+' wrote the real answer! +150');return}const k=nrm(v);if(!fakes[k])fakes[k]={t:v,by:[]};fakes[k].by.push(n)});
+  const opts=shuffle([{t:real,real:1,by:[]}].concat(Object.values(fakes)));
+  PG.stage(`<div class="prompt">${fmt(q)}</div>${answersGrid(opts.map((o,i)=>`<span class="num">${i+1}</span>${esc(o.t.toUpperCase())}`))}<div id="pgVotes"></div>`);SFX.whoosh();music('play');
+  const votes=await PG.vote({id:'tv',secs:30,title:'Which answer is TRUE?',sub:q,opts:()=>opts.map((o,i)=>({t:`${i+1}. ${o.t}`,v:i})),exclude:(n,x)=>opts[x.v].by.includes(n)});
+  const cnt=opts.map(()=>[]);Object.entries(votes).forEach(([n,v])=>cnt[+v].push(n));
+  opts.forEach((o,i)=>{if(o.real)cnt[i].forEach(n=>{PG.add(n,200);gain[n]=(gain[n]||0)+200});else o.by.forEach(a=>{const g=cnt[i].length*100;if(g){PG.add(a,g);gain[a]=(gain[a]||0)+g}})});
+  SFX.roll(1400);await sleep(1500);
+  PG.stage(`<div class="prompt">${fmt(q).replace('<u>&nbsp;&nbsp;&nbsp;&nbsp;</u>','<u>'+esc(real)+'</u>')}</div>${answersGrid(opts.map((o,i)=>`<span class="num">${i+1}</span>${esc(o.t.toUpperCase())}<div class="by">${o.real?'<b style="color:#16a35a">✅ THE TRUTH</b>':'🎭 Fake by '+o.by.map(esc).join(' & ')}<span class="vt">${cnt[i].length?cnt[i].length+' 🗳️':''}</span></div>${cnt[i].length?`<div class="by" style="font-size:1.7vh">${cnt[i].map(n=>avHTML(n)).join('')}</div>`:''}`))}`);
+  $$('.ansC').forEach((e,i)=>{if(opts[i].real)e.classList.add('win')});SFX.win();
+  await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=qs.length?'🏆 FINAL RESULTS':'NEXT QUESTION ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

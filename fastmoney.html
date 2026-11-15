@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%B8%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fast Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>
+:root{--bgA:#0d47a1;--bgB:#071a3d}
+.fm{display:grid;grid-template-columns:1fr 1fr;gap:1vh 1.4vw;width:min(1500px,94vw);padding:2vh 1.6vw;border-radius:3vh;background:linear-gradient(180deg,#0b2a6b,#061535);box-shadow:0 0 0 .6vh #ffcc3d,0 0 0 1.2vh #8a3a07,0 2vh 5vh rgba(0,0,0,.5)}
+.cell{display:grid;grid-template-columns:1fr 9vh;gap:.6vw;align-items:center;height:7.4vh;border-radius:1.2vh;background:linear-gradient(180deg,#1e5bd8,#0f3a9a);box-shadow:inset 0 0 0 .3vh rgba(255,255,255,.25);padding:0 1.2vw;font-family:var(--fd);font-size:3vh;color:#fff;text-transform:uppercase;cursor:pointer;overflow:hidden}
+.cell .a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cell .p{text-align:center;background:#0a2466;border-radius:1vh;height:5.4vh;display:grid;place-items:center;color:#ffcc3d}
+.cell.hid .a,.cell.hid .p{color:transparent}.cell.hid{background:linear-gradient(180deg,#123c8f,#0a275f)}
+.cell.rev{animation:cflip .5s}@keyframes cflip{from{transform:rotateX(90deg)}}
+.cell.zero .p{color:#ff6b6b}
+.tot{grid-column:1/-1;display:flex;justify-content:flex-end;align-items:center;gap:1.4vw;font-family:var(--fd);font-size:4vh}.tot b{background:#0a2466;border-radius:1.4vh;padding:.6vh 2vw;color:#ffcc3d;min-width:14vh;text-align:center}
+.who{display:flex;gap:2vw;justify-content:center;font-family:var(--fd);font-size:2.6vh}.who span{padding:.6vh 1.6vw;border-radius:2vh;background:rgba(255,255,255,.1)}.who span.on{background:var(--gold);color:var(--ink)}
+.qbig{font-family:var(--fd);font-size:4.6vh;text-align:center;max-width:90vw;line-height:1.15}
+.inRow{display:flex;gap:.8vw;align-items:center}.inRow input{font-family:var(--fd);font-size:3vh;padding:1.2vh 1.6vw;border-radius:1.6vh;border:.3vh solid var(--gold);background:#fff8e8;color:var(--ink);width:min(50vw,700px)}
+.goal{font-family:var(--fd);font-size:2.4vh;color:var(--gold)}
+.pickL{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.7)}.pickL .card{max-width:700px}
+.pickL button{display:flex;justify-content:space-between;width:100%;margin:.6vh 0;padding:1.2vh 1.4vw;border-radius:1.2vh;background:#fff;font-weight:700;font-size:2.2vh;color:var(--ink);border:.2vh solid #e8b77a}
+</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">💸 FAST MONEY</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>💸 Set up Fast Money</h2>
+ <p class="hint" style="text-align:center">Two players answer 5 survey questions against the clock. Together they need <b>200 points</b> to win!</p>
+ <h3>Player 1</h3><input class="field" id="p1" placeholder="Name" list="rost"><h3>Player 2 <span class="hint">(send them out of the room while Player 1 plays!)</span></h3><input class="field" id="p2" placeholder="Name" list="rost"><datalist id="rost"></datalist>
+ <div class="chips" id="quick" style="margin-top:1vh"></div>
+ <h3>Seconds</h3><div class="seg" id="segT"><button data-v="20" class="on">20 + 25 (classic)</button><button data-v="30">30 + 35 (relaxed)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">💸 PLAY FAST MONEY</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
+ <div class="hc"><span class="i">🚪</span>Player 2 leaves the room (or wears headphones!).</div>
+ <div class="hc"><span class="i">⏱️</span>Player 1 gets <b>20 seconds</b> for 5 survey questions. The host types each answer and hits Enter. "Pass" to come back later.</div>
+ <div class="hc"><span class="i">📋</span>Answers are revealed one by one with their points. The host can tap any answer to fix the match.</div>
+ <div class="hc"><span class="i">🙈</span>Player 1's answers are covered. Player 2 comes back and gets <b>25 seconds</b>.</div>
+ <div class="hc"><span class="i">🔁</span>Same answer as Player 1? <b>BZZT!</b> "Try again!"</div>
+ <div class="hc"><span class="i">🏆</span>Reach <b>200 points</b> together and you WIN! Host tip: type answers on the 🎤 host phone.</div>
+</div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="tg-feud-data.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script>
+let S=LS.get('tg-fm',null);const save=()=>LS.set('tg-fm',S);let cfgT=LS.get('tg-fm-t',20),tmr=null,busy=false;
+$$('#segT button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===cfgT);b.onclick=()=>{$$('#segT button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfgT=+b.dataset.v;LS.set('tg-fm-t',cfgT)}});
+const R=tgRoster();$('#rost').innerHTML=R.map(n=>`<option value="${esc(n)}">`).join('');$('#quick').innerHTML=R.length?`<button class="chip" id="rnd2">🎲 Pick 2 random players</button>`:'';
+if($('#rnd2'))$('#rnd2').onclick=()=>{const s=shuffle(R);$('#p1').value=s[0]||'';$('#p2').value=s[1]||''};
+$('#bStart').onclick=()=>{const a=$('#p1').value.trim()||'Player 1',b=$('#p2').value.trim()||'Player 2';ac();
+ const used=LS.get('tg-fm-used',[]);let pool=FEUD.Q.filter(q=>!used.includes(q[0]));if(pool.length<5)pool=FEUD.Q;const qs=shuffle(pool).slice(0,5);LS.set('tg-fm-used',used.concat(qs.map(q=>q[0])).slice(-60));
+ S={names:[a,b],qs:qs.map(q=>({q:q[0],ans:q[1]})),p:0,i:0,a:[Array(5).fill(null),Array(5).fill(null)],phase:'ready',secs:[cfgT,cfgT+5],shown:[[],[]]};save();$('#setupOv').classList.add('hidden');render();music('chill')};
+const tot=()=>S.a.flat().reduce((s,x)=>s+(x&&x.pts||0),0);
+function scoreOf(txt,qi,p){const q=S.qs[qi],r=FEUD.matchS(txt,q.ans);return r.s>=.5?{t:txt,i:r.i,pts:q.ans[r.i][1]}:{t:txt,i:-1,pts:0}}
+function start(){S.phase='play';S.i=S.a[S.p].findIndex(x=>x===null);if(S.i<0)S.i=0;S.until=Date.now()+S.secs[S.p]*1000;save();render();music('tense');SFX.horn();clearInterval(tmr);
+ tmr=setInterval(()=>{const l=Math.max(0,(S.until-Date.now())/1000),r=$('#ring');if(r){r.style.setProperty('--p',l/S.secs[S.p]);r.querySelector('span').textContent=Math.ceil(l);r.classList.toggle('low',l<=5)}if(l<=5&&l>0&&Math.abs(l-Math.round(l))<.05)SFX.tick(l<=3);if(l<=0){clearInterval(tmr);SFX.buzz();endTurn()}},100)}
+function answer(txt){if(S.phase!=='play')return;txt=String(txt||'').trim();if(!txt)return;const r=scoreOf(txt,S.i,S.p);
+ if(S.p===1&&r.i>=0&&S.a[0][S.i]&&S.a[0][S.i].i===r.i){SFX.buzz();t2('🔁 BZZT!<small>Already said. Try again!</small>',1200);const f=$('#ain');if(f)f.value='';return}
+ S.a[S.p][S.i]=r;SFX.click();nextQ()}
+function pass(){if(S.phase!=='play')return;SFX.skip();nextQ(true)}
+function nextQ(passed){const row=S.a[S.p];let n=-1;for(let k=1;k<=5;k++){const j=(S.i+k)%5;if(row[j]===null){n=j;break}}if(n<0||(n===S.i&&!passed&&row[n]!==null)){clearInterval(tmr);endTurn();return}S.i=n;save();render()}
+async function endTurn(){if(S.phase!=='play')return;clearInterval(tmr);S.a[S.p]=S.a[S.p].map(x=>x===null?{t:'—',i:-1,pts:0}:x);S.phase='reveal';save();render();music('off');busy=true;
+ for(let i=0;i<5;i++){const c=$(`.cell[data-p="${S.p}"][data-i="${i}"]`);if(!c)continue;S.shown[S.p].push(i);c.classList.remove('hid');c.classList.add('rev');const x=S.a[S.p][i];if(x.pts){SFX.ding();await sleep(500)}else{SFX.buzz();await sleep(400)}$('#tot').textContent=shownTot();await sleep(700)}
+ busy=false;if(S.p===1)S.shown[0]=[0,1,2,3,4];save();render();if(S.p===1){music(tot()>=200?'party':'chill');if(tot()>=200){if(window.FXX)FXX.bigWin('💸 FAST MONEY!',tot()+' pts',S.names.join(' & ')+' WIN!');try{tgNight('Fast Money',[S.names])}catch(e){}}else{if(window.FXX)FXX.loss('So close!',tot()+' pts','Needed 200');else SFX.sad()}}}
+function shownTot(){let s=0;[0,1].forEach(p=>S.shown[p].forEach(i=>{const x=S.a[p][i];s+=x&&x.pts||0}));return s}
+function toP2(){S.p=1;S.phase='ready';S.shown[0]=[];save();render();SFX.whoosh();t2(`🚪 Bring back ${esc(S.names[1])}!<small>Player 1's answers are covered</small>`,2400)}
+function fixCell(p,i){if(busy||S.phase==='play')return;const q=S.qs[i],cur=S.a[p][i];if(!cur)return;const d=document.createElement('div');d.className='pickL';
+ d.innerHTML=`<div class="card"><h2>Fix: "${esc(cur.t)}"</h2><p class="hint" style="text-align:center">${esc(q.q)}</p>${q.ans.map((a,k)=>`<button data-k="${k}"><span>${esc(a[0])}</span><b>${a[1]}</b></button>`).join('')}<button data-k="-1"><span>❌ Not on the board</span><b>0</b></button><div class="ctr"><button class="bb ghost" style="color:var(--ink)" id="pkC">Cancel</button></div></div>`;
+ document.body.appendChild(d);d.querySelector('#pkC').onclick=()=>d.remove();d.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;S.a[p][i]={t:cur.t,i:k,pts:k>=0?q.ans[k][1]:0};save();d.remove();render();SFX.ok()})}
+function render(){if(!S)return;const st=$('#stage'),P=S.p,q=S.qs[S.i];
+ const cell=(p,i)=>{const x=S.a[p][i],show=x&&(S.shown[p].includes(i));return`<div class="cell ${show?'':'hid'} ${show&&x&&!x.pts?'zero':''}" data-p="${p}" data-i="${i}"><span class="a">${x?esc(x.t):''}</span><span class="p">${x?x.pts:''}</span></div>`};
+ const board=`<div class="fm">${[0,1,2,3,4].map(i=>cell(0,i)+cell(1,i)).join('')}<div class="tot">TOTAL <b id="tot">${shownTot()}</b></div></div>`;
+ const who=`<div class="who"><span class="${P===0?'on':''}">1️⃣ ${esc(S.names[0])}</span><span class="${P===1?'on':''}">2️⃣ ${esc(S.names[1])}</span><span class="goal">🎯 GOAL: 200</span></div>`;
+ let h=who;
+ if(S.phase==='ready')h+=board+`<div class="status">${P===0?`🚪 Send <b>${esc(S.names[1])}</b> out of the room!`:`<b>${esc(S.names[1])}</b>: don't repeat ${esc(S.names[0])}'s answers!`}</div><button class="bb gold big" id="bGo">⏱️ START ${S.secs[P]} SECONDS</button>`;
+ else if(S.phase==='play')h+=`<div class="kicker">QUESTION ${S.i+1} OF 5</div><div class="qbig popIn">${esc(q.q)}</div><div class="inRow"><div class="ring" id="ring"><span>${S.secs[P]}</span></div><input id="ain" placeholder="Type their answer + Enter" autocomplete="off"><button class="bb" id="bPass">⏭ PASS</button></div>`+board;
+ else if(S.phase==='reveal')h+=board+(busy?'':`<div class="status">Host: tap any answer to fix the match.</div>`+(P===0?`<button class="bb gold big" id="bP2">2️⃣ ${esc(S.names[1]).toUpperCase()}'S TURN ➜</button>`:`<div class="bigT" style="font-size:5vh">${tot()>=200?'🎉 YOU WIN FAST MONEY!':'😬 '+tot()+' points... so close!'}</div><div class="btns"><button class="bb gold big" id="bAgain">🔁 PLAY AGAIN</button></div>`));
+ st.innerHTML=h;const on=(id,f)=>{const e=$('#'+id);if(e)e.onclick=f};on('bGo',start);on('bPass',pass);on('bP2',toP2);on('bAgain',()=>{S=null;save();$('#setupOv').classList.remove('hidden');music('chill')});
+ const a=$('#ain');if(a){a.focus();a.onkeydown=e=>{if(e.key==='Enter'){answer(a.value);a.value=''}else if(e.key==='Tab'){e.preventDefault();pass()}}}
+ if(S.phase==='reveal'&&!busy)$$('.cell').forEach(c=>{if(!c.classList.contains('hid'))c.onclick=()=>fixCell(+c.dataset.p,+c.dataset.i)});hostView()}
+function hostView(){if(!window.TGB||!S)return;const q=S.qs[S.i];TGB.host({title:`💸 Fast Money · ${S.names[S.p]}`,q:S.phase==='play'?`Q${S.i+1}: ${q.q}`:'Total: '+tot(),a:'',list:S.phase==='play'?q.ans.map(a=>({t:a[0],p:a[1]})):[],input:S.phase==='play'?{ph:'Type their answer'}:null,actions:S.phase==='play'?[{id:'pass',label:'⏭ Pass',k:'b'}]:S.phase==='ready'?[{id:'go',label:'⏱️ Start',k:'y'}]:S.p===0&&!busy?[{id:'p2',label:'2️⃣ Player 2',k:'y'}]:[],noBuzzBtns:true})}
+if(window.TGB)TGB.init({game:'Fast Money',hostOnly:true,onAct:(id,d)=>{if(!S)return;if(id==='input')answer(d&&d.v);else if(id==='pass')pass();else if(id==='go'&&S.phase==='ready')start();else if(id==='p2'&&S.phase==='reveal'&&S.p===0)toP2()}});
+shellInit({game:'Fast Money',style:'funk',rain:['💸','💵','⭐'],onNew:()=>{clearInterval(tmr);S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}});
+if(S){$('#setupOv').classList.add('hidden');if(S.phase==='play'){S.phase='ready'}render()}
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

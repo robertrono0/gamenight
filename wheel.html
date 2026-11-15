@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%A1%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wheel of Fortune</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>
+:root{--bgA:#1b3fa0;--bgB:#0d1f5c}
+.stage{justify-content:flex-start;gap:1.6vh}
+/* ---------- puzzle board ---------- */
+.boardWrap{position:relative;padding:1.4vh 1.4vw;border-radius:2.4vh;background:linear-gradient(180deg,#0b3d2e,#06281e);box-shadow:0 0 0 .6vh #ffcc3d,0 0 0 1.2vh #8a3a07,0 2vh 5vh rgba(0,0,0,.5),inset 0 0 4vh rgba(0,0,0,.5)}
+.boardWrap::before,.boardWrap::after{content:"";position:absolute;top:50%;width:1.6vh;height:1.6vh;border-radius:50%;background:#fff6c9;box-shadow:0 0 1.6vh #ffcc3d;transform:translateY(-50%);animation:bulb 1s infinite alternate}
+.boardWrap::before{left:.4vw}.boardWrap::after{right:.4vw;animation-delay:.5s}@keyframes bulb{to{opacity:.3}}
+.prow{display:flex;justify-content:center;gap:.45vw;margin:.45vh 0}
+.tile{width:min(5vh,5vw);height:min(6.4vh,6.4vw);border-radius:.8vh;display:grid;place-items:center;font-family:var(--fd);font-size:min(5vh,4.6vw);color:#111;perspective:400px}
+.tile.e{background:linear-gradient(180deg,#19a36b,#0f7a4f);box-shadow:inset 0 0 0 .25vh rgba(255,255,255,.15)}
+.tile.l{background:#fdfdf6;box-shadow:inset 0 -.5vh 0 #d8d8c8,0 .3vh 0 rgba(0,0,0,.35)}
+.tile.l span{opacity:0}.tile.l.show span{opacity:1}
+.tile.lit{background:#4fb3ff!important;box-shadow:0 0 2.4vh #8fd0ff,inset 0 0 0 .3vh #fff;animation:lit .35s ease-out}
+@keyframes lit{from{transform:scale(1.15)}}
+.tile.flip{animation:flip .5s ease-out}@keyframes flip{0%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
+.tile.p span{opacity:1}
+.catBar{text-align:center;font-family:var(--fd);font-size:3vh;letter-spacing:.08em;color:#fff;background:linear-gradient(90deg,transparent,rgba(0,0,0,.45) 20%,rgba(0,0,0,.45) 80%,transparent);padding:.6vh 4vw;border-radius:2vh}
+.catBar small{font-family:var(--fb);font-size:1.8vh;letter-spacing:0;opacity:.75;margin-left:1vw}
+/* ---------- lower area ---------- */
+.lower{flex:1;min-height:0;width:100%;display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:center;padding:0 1vw}
+.wheelBox{position:relative;width:min(40vh,34vw);height:min(40vh,34vw);margin-top:2.4vh}
+#wheel{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 .8vh #ffcc3d,0 0 0 1.4vh #8a3a07,0 2vh 5vh rgba(0,0,0,.55)}
+.ptr{position:absolute;left:50%;top:-2.6vh;width:0;height:0;border-left:2.2vh solid transparent;border-right:2.2vh solid transparent;border-top:4.4vh solid #fff;transform:translateX(-50%);filter:drop-shadow(0 .5vh .4vh rgba(0,0,0,.6));transform-origin:50% 0;z-index:2}
+.ptr.wob{animation:wob .12s}@keyframes wob{50%{transform:translateX(-50%) rotate(-14deg)}}
+.hub{position:absolute;left:50%;top:50%;width:22%;height:22%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6c9,#ffcc3d 45%,#c2410c);box-shadow:0 .6vh 1.4vh rgba(0,0,0,.5);display:grid;place-items:center;font-family:var(--fd);font-size:2vh;color:#2a0d12;cursor:pointer;z-index:2;text-align:center;line-height:1}
+.hub:hover{filter:brightness(1.08)}
+.side{display:flex;flex-direction:column;gap:1.4vh;align-items:stretch;min-width:0}
+.turnL{display:flex;align-items:center;justify-content:space-between;gap:1vw;padding:1.2vh 1.6vw;border-radius:2vh;background:rgba(0,0,0,.35);border:.35vh solid var(--tc,#ffcc3d)}
+.turnL .w{font-family:var(--fd);font-size:2.8vh;color:var(--tc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.turnL .rm{font-family:var(--fd);font-size:4.4vh;color:#fff}
+.turnL .rm small{display:block;font-family:var(--fb);font-size:1.5vh;opacity:.7;text-align:right}
+.msg{font-size:2.6vh;font-weight:700;text-align:center;min-height:3.4vh}.msg b{color:var(--gold)}
+.acts{display:flex;gap:.8vw;justify-content:center;flex-wrap:wrap}
+.kb{display:flex;flex-wrap:wrap;gap:.5vh .4vw;justify-content:center}
+.kb button{width:min(5.4vh,4.2vw);height:min(5.8vh,4.6vw);border-radius:1vh;font-family:var(--fd);font-size:2.6vh;background:#fff3dc;color:var(--ink);box-shadow:0 .4vh 0 #b08a5a}
+.kb button.vw{background:#cfe8ff;box-shadow:0 .4vh 0 #5a86b0}
+.kb button.used{opacity:.18;pointer-events:none;box-shadow:none}
+.kb button.off{opacity:.45;pointer-events:none}
+.kb button.go{animation:kbg .9s infinite alternate}@keyframes kbg{to{box-shadow:0 0 1.6vh var(--gold),0 .4vh 0 #b08a5a}}
+.landed{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(0);z-index:55;font-family:var(--fd);font-size:9vh;padding:2vh 5vw;border-radius:4vh;background:rgba(10,20,60,.94);border:.6vh solid #ffcc3d;color:#ffcc3d;text-shadow:0 .8vh 0 rgba(0,0,0,.4);pointer-events:none;transition:transform .4s cubic-bezier(.3,1.6,.5,1);text-align:center}
+.landed.on{transform:translate(-50%,-50%) scale(1)}.landed.bk{background:#111;color:#fff;border-color:#fff}.landed.lt{background:#fff;color:#111}
+.landed small{display:block;font-family:var(--fb);font-size:3vh;color:#fff3dc;margin-top:.6vh}.landed.lt small{color:#333}
+.bonusPick{display:flex;gap:1vw;justify-content:center;font-family:var(--fd);font-size:3vh}
+.bonusPick span{min-width:6vh;height:7vh;border-radius:1.2vh;background:rgba(255,255,255,.1);border:.3vh dashed rgba(255,255,255,.4);display:grid;place-items:center}
+.bonusPick span.f{background:#fdfdf6;color:#111;border:0}
+.env{font-size:12vh;cursor:pointer;display:inline-block;animation:envB 1s infinite alternate}@keyframes envB{to{transform:translateY(-1vh) rotate(3deg)}}
+.solveIn{display:flex;gap:.6vw;justify-content:center}.solveIn input{font-family:var(--fd);font-size:2.6vh;padding:1vh 1.4vw;border-radius:1.4vh;border:.3vh solid var(--gold);background:#fff8e8;color:var(--ink);width:min(46vw,640px);text-transform:uppercase}
+</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div><div class="landed" id="landed"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🎡 WHEEL OF FORTUNE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bUndo" title="Undo (Ctrl+Z)">↩️</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage">
+  <div class="boardWrap"><div id="board"></div></div>
+  <div class="catBar" id="cat"></div>
+  <div class="lower">
+   <div class="wheelBox"><div class="ptr" id="ptr"></div><canvas id="wheel"></canvas><div class="hub" id="hub">SPIN</div></div>
+   <div class="side" id="side"></div>
+  </div>
+ </div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🎡 Set up Wheel of Fortune</h2>
+ <div id="teamSetup"></div>
+ <h3>How many rounds?</h3><div class="seg" id="segN"><button data-v="3">3</button><button data-v="4" class="on">4</button><button data-v="5">5</button><button data-v="6">6</button></div>
+ <h3>Puzzles</h3><div class="seg" id="segK"><button data-v="all" class="on">Everyone</button><button data-v="kids">Kid-friendly (shorter)</button></div>
+ <h3>Bonus round at the end?</h3><div class="seg" id="segB"><button data-v="1" class="on">Yes 🎁</button><button data-v="0">No</button></div>
+ <h3>Add your own puzzles <span class="hint">(optional: Category | Puzzle, e.g. "Person | Aunt Rita's famous dolma")</span></h3>
+ <textarea class="field" id="custom" placeholder="Phrase | Happy birthday Fadi&#10;Place | Our backyard in El Cajon"></textarea>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">SPIN THE WHEEL! 🎡</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
+ <div class="hc"><span class="i">🎡</span><b>Spin</b> the wheel, then call a <b>consonant</b>. Every time it's in the puzzle, you earn that amount.</div>
+ <div class="hc"><span class="i">🅰️</span><b>Buy a vowel</b> for $250 (A E I O U). Vowels don't earn money.</div>
+ <div class="hc"><span class="i">💡</span><b>Solve</b> any time it's your turn. Right answer = you <b>bank</b> your money for the round (at least $1,000).</div>
+ <div class="hc"><span class="i">💀</span><b>BANKRUPT</b> wipes your round money. <b>LOSE A TURN</b> passes to the next team.</div>
+ <div class="hc"><span class="i">❌</span>Miss a letter, call a used letter, or solve wrong and the turn passes.</div>
+ <div class="hc"><span class="i">🎁</span>The leading team plays the <b>BONUS ROUND</b>: R S T L N E are free, pick 3 more consonants + 1 vowel, then 10 seconds to solve!</div>
+</div><p class="hint" style="text-align:center;margin-top:1.4vh">Host tip: type letters on the laptop keyboard, or tap 🎤 Host remote (bottom right) to see the answer and run the game from your phone.</p><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script>
+/* ================= PUZZLES ================= */
+const PZ=[
+['Phrase','Better late than never'],['Phrase','Home sweet home'],['Phrase','The more the merrier'],['Phrase','Time flies when you are having fun'],['Phrase','Actions speak louder than words'],['Phrase','Practice makes perfect'],['Phrase','Easy come easy go'],['Phrase','Rome was not built in a day'],['Phrase','Two heads are better than one'],['Phrase','Do not judge a book by its cover'],['Phrase','The early bird catches the worm'],['Phrase','Piece of cake'],['Phrase','Break a leg'],['Phrase','Once in a blue moon'],['Phrase','It is raining cats and dogs'],['Phrase','Under the weather'],['Phrase','When pigs fly'],['Phrase','Hit the nail on the head'],['Phrase','No pain no gain'],['Phrase','Let the good times roll'],
+['Food & Drink','Chocolate chip cookies'],['Food & Drink','Spaghetti and meatballs'],['Food & Drink','Grilled cheese sandwich'],['Food & Drink','Hummus and pita bread'],['Food & Drink','Pumpkin pie with whipped cream'],['Food & Drink','Strawberry milkshake'],['Food & Drink','Chicken shawarma wrap'],['Food & Drink','Pepperoni pizza'],['Food & Drink','Freshly squeezed lemonade'],['Food & Drink','Baklava with pistachios'],['Food & Drink','Breakfast burrito'],['Food & Drink','Fish tacos'],['Food & Drink','Hot chocolate with marshmallows'],['Food & Drink','Mashed potatoes and gravy'],
+['Place','The Grand Canyon'],['Place','Times Square'],['Place','The Eiffel Tower'],['Place','Disneyland'],['Place','The Golden Gate Bridge'],['Place','The Great Wall of China'],['Place','Balboa Park'],['Place','The Statue of Liberty'],['Place','Hollywood Boulevard'],['Place','The Pyramids of Giza'],['Place','Niagara Falls'],['Place','Las Vegas Strip'],['Place','Mount Everest'],['Place','The Burj Khalifa'],
+['Thing','Remote control'],['Thing','Birthday candles'],['Thing','Roller coaster'],['Thing','Fortune cookie'],['Thing','Smoke detector'],['Thing','Electric toothbrush'],['Thing','Paper airplane'],['Thing','Rubber duck'],['Thing','Wireless headphones'],['Thing','Hot air balloon'],['Thing','Phone charger'],['Thing','Snow globe'],
+['Around the House','Kitchen sink'],['Around the House','Laundry basket'],['Around the House','Coffee table'],['Around the House','Garage door opener'],['Around the House','Throw pillows'],['Around the House','Dishwasher'],['Around the House','Ceiling fan'],['Around the House','Welcome mat'],
+['What Are You Doing?','Taking a selfie'],['What Are You Doing?','Dancing at a wedding'],['What Are You Doing?','Binge watching a series'],['What Are You Doing?','Ordering takeout'],['What Are You Doing?','Opening presents'],['What Are You Doing?','Doing the dishes'],['What Are You Doing?','Scrolling on my phone'],['What Are You Doing?','Taking a nap'],['What Are You Doing?','Playing video games'],['What Are You Doing?','Shopping for groceries'],
+['Movie Title','The Lion King'],['Movie Title','Finding Nemo'],['Movie Title','Home Alone'],['Movie Title','Toy Story'],['Movie Title','Back to the Future'],['Movie Title','The Wizard of Oz'],['Movie Title','Jurassic Park'],['Movie Title','Frozen'],['Movie Title','Spider Man'],['Movie Title','Despicable Me'],
+['Fun & Games','Hide and seek'],['Fun & Games','Musical chairs'],['Fun & Games','Rock paper scissors'],['Fun & Games','Tic tac toe'],['Fun & Games','Board game night'],['Fun & Games','Card tricks'],['Fun & Games','Jump rope'],
+['Event','Surprise birthday party'],['Event','New Year\'s Eve countdown'],['Event','Family reunion'],['Event','Thanksgiving dinner'],['Event','Wedding reception'],['Event','Graduation ceremony'],['Event','Super Bowl Sunday'],['Event','Baby shower'],
+['Before & After','Peanut butter cup of coffee'],['Before & After','Pizza delivery boy band'],['Before & After','Ice cream cone head'],['Before & After','Birthday cake walk'],['Before & After','Hot dog house'],['Before & After','Movie star fish'],
+['Rhyme Time','Fat cat'],['Rhyme Time','Wheel deal'],['Rhyme Time','Snail mail'],['Rhyme Time','Night light'],['Rhyme Time','Brain drain'],['Rhyme Time','Fake snake'],
+['Living Thing','Golden retriever'],['Living Thing','Bald eagle'],['Living Thing','Sunflower'],['Living Thing','Great white shark'],['Living Thing','Hummingbird'],['Living Thing','Palm tree'],
+['Show Biz','Red carpet'],['Show Biz','Standing ovation'],['Show Biz','Behind the scenes'],['Show Biz','Award show'],
+['Sports','Slam dunk'],['Sports','Home run'],['Sports','Touchdown dance'],['Sports','Hat trick'],['Sports','World Cup final'],['Sports','Penalty kick']];
+const VOW='AEIOU',CONS='BCDFGHJKLMNPQRSTVWXYZ';
+const WEDGES=[2500,600,700,600,650,500,700,'BANKRUPT',600,550,500,600,900,'LOSE A TURN',700,800,500,650,500,900,'BANKRUPT',1000,300,800];
+const WCOL=['#e63946','#f4a261','#2a9d8f','#e9c46a','#8338ec','#3a86ff','#ff006e','#06d6a0','#fb5607','#4cc9f0'];
+const ENVS=[5000,10000,10000,15000,25000];
+/* ================= STATE / UNDO ================= */
+let S=LS.get('tg-wheel',null);
+const UNDO_KEY='tg-wheel',UNDO=[];let _uLast=S?JSON.stringify(S):'',_uT=0;
+const save=()=>{if(!S){UNDO.length=0;_uLast='';LS.set(UNDO_KEY,S);return}const c=JSON.stringify(S);if(_uLast&&c!==_uLast){const n=Date.now();if(n-_uT>900)UNDO.push(_uLast);_uT=n;if(UNDO.length>60)UNDO.shift()}_uLast=c;LS.set(UNDO_KEY,S)};
+const TS=teamSetup($('#teamSetup'),'tg-wheel');
+const cfg=LS.get('tg-wheel-cfg',{n:4,k:'all',b:'1'});
+[['segN','n'],['segK','k'],['segB','b']].forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)||k==='b'?b.dataset.v:+b.dataset.v;b.classList.toggle('on',String(val)===String(cfg[k]));b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set('tg-wheel-cfg',cfg);SFX.click()}}));
+let busy=false,wAng=LS.get('tg-wheel-ang',0);
+const norm=s=>String(s).toUpperCase().replace(/[^A-Z]/g,'');
+const lettersIn=p=>new Set(norm(p).split(''));
+/* ================= START ================= */
+$('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('Add at least 2 players 🙂');return}ac();
+ const cu=$('#custom').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length===2&&norm(p[1]).length>1).map(p=>[p[0],p[1]]);
+ let pool=PZ.filter(p=>cfg.k!=='kids'||p[1].length<=16);const used=LS.get('tg-wheel-used',[]);let fresh=pool.filter(p=>!used.includes(p[1]));if(fresh.length<10)fresh=pool;
+ const n=+cfg.n,pz=shuffle(cu).concat(shuffle(fresh)).slice(0,n+1);LS.set('tg-wheel-used',used.concat(pz.map(p=>p[1])).slice(-150));
+ S={teams:teams.map(t=>({...t,score:0})),pz:pz.map(p=>({c:p[0],p:p[1].toUpperCase()})),r:0,n,bonus:cfg.b==='1',turn:rnd(teams.length),rm:teams.map(()=>0),used:[],phase:'spin',wv:null,msg:''};
+ S.msg=`<b>${esc(S.teams[S.turn].name)}</b> spins first! 🎲`;save();$('#setupOv').classList.add('hidden');render();music('play');t2(`🎡 ROUND 1<small>${esc(S.pz[0].c)}</small>`,2000)};
+/* ================= BOARD ================= */
+function layout(p){const words=p.split(' '),rows=[];let cur='';for(const w of words){if(!cur)cur=w;else if((cur+' '+w).length<=14)cur+=' '+w;else{rows.push(cur);cur=w}}if(cur)rows.push(cur);return rows}
+function shown(ch){return !/[A-Z]/.test(ch)||S.used.includes(ch)||S.phase==='roundEnd'||S.phase==='bonusEnd'&&S.bsolved!==null}
+function drawBoard(){const p=S.phase.startsWith('bonus')?S.bp.p:S.pz[S.r].p,rows=layout(p),W=14,NR=4;
+ const pad=Math.max(0,Math.floor((NR-rows.length)/2));let html='';
+ for(let r=0;r<NR;r++){const t=rows[r-pad];let cells='';const w=r===0||r===NR-1?12:W;
+  if(t==null){for(let i=0;i<w;i++)cells+='<div class="tile e"></div>'}
+  else{const off=Math.floor((w-t.length)/2);for(let i=0;i<w;i++){const ch=t[i-off];if(i<off||ch==null||ch===' ')cells+='<div class="tile e"></div>';else if(/[A-Z]/.test(ch))cells+=`<div class="tile l${shown(ch)?' show':''}" data-l="${ch}"><span>${ch}</span></div>`;else cells+=`<div class="tile l p"><span>${esc(ch)}</span></div>`}}
+  html+=`<div class="prow">${cells}</div>`}
+ $('#board').innerHTML=html;
+ const c=S.phase.startsWith('bonus')?S.bp.c:S.pz[S.r].c;$('#cat').innerHTML=esc(c.toUpperCase())+`<small>${S.phase.startsWith('bonus')?'🎁 BONUS ROUND':'Round '+(S.r+1)+' of '+S.n}</small>`}
+async function lightUp(L){const els=$$(`.tile[data-l="${L}"]`).filter(e=>!e.classList.contains('show'));for(const e of els){e.classList.add('lit');SFX.ding();await sleep(380)}await sleep(250);for(const e of els){e.classList.remove('lit');e.classList.add('show','flip');await sleep(90)}return els.length}
+/* ================= WHEEL ================= */
+const cv=$('#wheel');let cx=null;
+function sizeWheel(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=Math.max(10,r.width*d);cv.height=Math.max(10,r.height*d);cx=cv.getContext('2d');drawWheel(wAng)}
+addEventListener('resize',sizeWheel);
+function drawWheel(a){if(!cx)return;const W=cv.width,R=W/2,n=WEDGES.length,step=Math.PI*2/n;cx.clearRect(0,0,W,W);cx.save();cx.translate(R,R);
+ for(let i=0;i<n;i++){const s=a+i*step,w=WEDGES[i];cx.beginPath();cx.moveTo(0,0);cx.arc(0,0,R*.98,s,s+step);cx.closePath();
+  let fill=WCOL[i%WCOL.length];if(w==='BANKRUPT')fill='#111';else if(w==='LOSE A TURN')fill='#f5f5f5';else if(w===2500){const g=cx.createRadialGradient(0,0,R*.2,0,0,R);g.addColorStop(0,'#eee');g.addColorStop(1,'#9aa4ad');fill=g}else if(w===1000){const g=cx.createRadialGradient(0,0,R*.2,0,0,R);g.addColorStop(0,'#fff3b0');g.addColorStop(1,'#d4a017');fill=g}
+  cx.fillStyle=fill;cx.fill();cx.strokeStyle='rgba(255,255,255,.85)';cx.lineWidth=W*.004;cx.stroke();
+  cx.save();cx.rotate(s+step/2);cx.textAlign='right';cx.textBaseline='middle';const txt=typeof w==='number'?'$'+w:w;
+  cx.fillStyle=w==='LOSE A TURN'?'#111':'#fff';cx.font=`900 ${typeof w==='number'?W*.05:W*.032}px Bungee, Impact, sans-serif`;cx.shadowColor='rgba(0,0,0,.45)';cx.shadowBlur=W*.006;
+  cx.fillText(txt,R*.92,0);cx.restore()}
+ for(let i=0;i<n;i++){const s=a+i*step;cx.beginPath();cx.arc(Math.cos(s)*R*.93,Math.sin(s)*R*.93,W*.008,0,Math.PI*2);cx.fillStyle='#fff6c9';cx.fill()}
+ cx.restore()}
+function idxAt(a){const n=WEDGES.length,step=Math.PI*2/n;let t=(-Math.PI/2-a)%(Math.PI*2);if(t<0)t+=Math.PI*2;return Math.floor(t/step)%n}
+function spinWheel(){return new Promise(res=>{const start=wAng,extra=Math.PI*2*(4+Math.random()*2)+Math.random()*Math.PI*2,dur=4800+Math.random()*1400,t0=performance.now();let last=idxAt(start);
+ (function f(now){const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,4);wAng=start+extra*e;drawWheel(wAng);const i=idxAt(wAng);if(i!==last){last=i;SFX.tick(false);const p=$('#ptr');p.classList.remove('wob');void p.offsetWidth;p.classList.add('wob')}
+  if(k<1)requestAnimationFrame(f);else{wAng%=Math.PI*2;LS.set('tg-wheel-ang',wAng);res(WEDGES[idxAt(wAng)])}})(t0)})}
+function landed(html,cls,ms=1600){const e=$('#landed');e.className='landed '+(cls||'');e.innerHTML=html;void e.offsetWidth;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),ms)}
+/* ================= GAME LOGIC ================= */
+const T=()=>S.teams[S.turn];
+const consLeft=()=>[...lettersIn(S.pz[S.r].p)].filter(l=>CONS.includes(l)&&!S.used.includes(l)).length;
+const vowLeft=()=>[...lettersIn(S.pz[S.r].p)].filter(l=>VOW.includes(l)&&!S.used.includes(l)).length;
+const solvedAll=()=>[...lettersIn(S.pz[S.r].p)].every(l=>S.used.includes(l));
+function nextTurn(why){S.turn=(S.turn+1)%S.teams.length;S.phase='spin';S.wv=null;S.msg=`${why} Now it's <b>${esc(T().name)}</b>'s turn.`;save();render()}
+async function doSpin(){if(busy||S.phase!=='spin')return;if(!consLeft()){toast('No consonants left: buy a vowel or solve!');return}busy=true;S.msg='🎡 Spinning...';renderSide();SFX.whoosh();
+ const w=await spinWheel();busy=false;
+ if(w==='BANKRUPT'){landed('💀 BANKRUPT','bk',2000);const lost=S.rm[S.turn];S.rm[S.turn]=0;if(window.FXX)FXX.loss('BANKRUPT!',lost||null,T().name+' loses their round money');else SFX.sad();nextTurn(`💀 <b>BANKRUPT!</b> ${esc(T().name)} loses ${money(lost)}.`);return}
+ if(w==='LOSE A TURN'){landed('😬 LOSE A TURN','lt',1800);SFX.buzz();nextTurn('😬 <b>Lose a turn!</b>');return}
+ S.wv=w;S.phase='cons';S.msg=`💰 <b>${money(w)}</b>! Call a consonant.`;landed(money(w)+'<small>Call a consonant!</small>','',1500);SFX.ding();save();render()}
+async function pickLetter(L){if(busy)return;L=L.toUpperCase();if(!/^[A-Z]$/.test(L))return;
+ if(S.phase==='bonusPick'){bonusPick(L);return}
+ const isV=VOW.includes(L);
+ if(S.phase==='cons'&&isV){toast('Spin money is for consonants. Buy a vowel instead!');return}
+ if(S.phase==='vowel'&&!isV){toast('Pick a vowel: A E I O U');return}
+ if(S.phase!=='cons'&&S.phase!=='vowel')return;
+ if(S.used.includes(L)){SFX.buzz();S.used.includes(L);nextTurn(`🚫 <b>${L}</b> was already called!`);return}
+ busy=true;S.used.push(L);save();renderKb();const n=await lightUp(L);busy=false;
+ if(!n){SFX.buzz();landed(`❌ No ${L}`,'',1300);nextTurn(`❌ There's no <b>${L}</b>.`);return}
+ if(S.phase==='cons'){const earn=S.wv*n;S.rm[S.turn]+=earn;bumpRM();if(window.FXX&&earn>=1500)FXX.gain(earn);else SFX.ok();S.msg=`✅ ${n} ${L}${n>1?"'s":''}! <b>+${money(earn)}</b>. Spin, buy a vowel or solve.`}
+ else{SFX.ok();S.msg=`✅ ${n} ${L}${n>1?"'s":''}! Spin again, buy another vowel or solve.`}
+ S.phase='spin';S.wv=null;save();
+ if(solvedAll()){roundWon();return}render()}
+function buyVowel(){if(busy||S.phase!=='spin')return;if(S.rm[S.turn]<250){toast('You need $250 of round money to buy a vowel');return}if(!vowLeft()){toast('No vowels left in this puzzle!');return}
+ S.rm[S.turn]-=250;S.phase='vowel';S.msg='🅰️ Bought a vowel for $250. Pick A, E, I, O or U.';SFX.click();save();render()}
+function trySolve(){if(busy||S.phase!=='spin')return;S.phase='solve';S.msg=`💡 <b>${esc(T().name)}</b> is solving! Host: were they right?`;SFX.horn();save();render();setTimeout(()=>{const i=$('#solveIn');i&&i.focus()},60)}
+function judge(ok){if(S.phase==='solve'){if(ok)roundWon();else{SFX.buzz();nextTurn('❌ Not quite!')}return}if(S.phase==='bonusSolve')bonusResult(ok)}
+function roundWon(){const i=S.turn,won=Math.max(1000,S.rm[i]);S.teams[i].score+=won;S.last={i,won};S.used=[...new Set([...S.used,...lettersIn(S.pz[S.r].p)])];S.phase='roundEnd';S.rm=S.teams.map(()=>0);S.msg=`🎉 <b>${esc(S.teams[i].name)}</b> solved it and banks <b>${money(won)}</b>!`;save();render();bumpScore(i);music('party');
+ if(window.FXX)FXX.win('🎉 SOLVED!',won,S.teams[i].name+' banks it!');else{SFX.win();burst()}setTimeout(()=>music('play'),4000)}
+function nextRound(){if(S.r+1>=S.n){if(S.bonus)startBonus();else end();return}S.r++;S.used=[];S.phase='spin';S.wv=null;S.turn=(S.r)%S.teams.length;S.msg=`<b>${esc(T().name)}</b> starts this round!`;save();render();SFX.whoosh();t2(`🎡 ROUND ${S.r+1}<small>${esc(S.pz[S.r].c)}</small>`,2000)}
+/* ---------- bonus ---------- */
+function startBonus(){const order=S.teams.map((t,i)=>({i,s:t.score})).sort((a,b)=>b.s-a.s);S.bt=order[0].i;S.turn=S.bt;const bp=S.pz[S.n]||pick(PZ).map(x=>x);S.bp={c:bp.c||bp[0],p:(bp.p||bp[1]).toUpperCase()};
+ S.used=['R','S','T','L','N','E'];S.bpick=[];S.phase='bonusPick';S.bsolved=null;S.env=null;S.msg=`🎁 <b>${esc(T().name)}</b> plays for the BONUS! R S T L N E are free. Pick 3 consonants + 1 vowel.`;save();render();music('tense');SFX.horn();t2(`🎁 BONUS ROUND<small>${esc(T().name)} plays for the big prize!</small>`,2600);setTimeout(()=>lightAll(['R','S','T','L','N','E']),900)}
+async function lightAll(Ls){busy=true;const els=$$('.tile[data-l]').filter(e=>Ls.includes(e.dataset.l)&&!e.classList.contains('show'));for(const e of els){e.classList.add('lit');SFX.tick(true);await sleep(140)}await sleep(300);els.forEach(e=>{e.classList.remove('lit');e.classList.add('show','flip')});busy=false}
+function bonusPick(L){if(S.used.includes(L)||S.bpick.includes(L))return;const c=S.bpick.filter(x=>CONS.includes(x)).length,v=S.bpick.filter(x=>VOW.includes(x)).length;
+ if(CONS.includes(L)&&c>=3){toast('3 consonants already. Now a vowel!');return}if(VOW.includes(L)&&v>=1){toast('Only 1 vowel. Pick consonants!');return}
+ S.bpick.push(L);SFX.click();save();renderSide();renderKb();if(S.bpick.length===4)setTimeout(bonusGo,500)}
+async function bonusGo(){S.used=S.used.concat(S.bpick);S.phase='bonusReveal';save();renderSide();renderKb();await lightAll(S.bpick);S.phase='bonusSolve';S.msg=`⏱️ 10 SECONDS! <b>${esc(T().name)}</b>, solve it!`;save();render();
+ const ring=$('#bRing');if(ring){bonusTimer=Timer(ring,10,()=>{if(S.phase==='bonusSolve')bonusResult(false)});bonusTimer.start()}}
+let bonusTimer=null;
+function bonusResult(ok){bonusTimer&&bonusTimer.stop();S.bsolved=ok;S.phase='bonusEnd';S.used=[...new Set([...S.used,...lettersIn(S.bp.p)])];S.msg=ok?`🎉 SOLVED! Open the envelope!`:`😬 So close! Let's see what was in the envelope...`;save();render();if(ok){SFX.win();burst()}else SFX.sad()}
+function openEnv(){if(S.env!=null)return;S.env=pick(ENVS);if(S.bsolved)S.teams[S.bt].score+=S.env;save();render();
+ if(S.bsolved){bumpScore(S.bt);if(window.FXX)FXX.bigWin('🎁 BONUS PRIZE!',S.env,S.teams[S.bt].name+' wins it!')}else if(window.FXX)FXX.loss('It was...',S.env,'Better luck next time!')}
+function end(){music('party');SFX.win();const w=[...S.teams].sort((a,b)=>b.score-a.score),tie=w[1]&&w[0].score===w[1].score;
+ $('#endWrap').innerHTML=`<div class="bigT">🏆 ${tie?"IT'S A TIE!":esc(w[0].name)+' WIN!'}</div>${podium(S.teams.map(t=>({...t})))}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['💵','🎡','🏆']);
+ $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
+/* ================= RENDER ================= */
+function bumpRM(){const e=$('#rmv');if(e){e.animate([{transform:'scale(1.4)',color:'#ffcc3d'},{transform:'scale(1)'}],{duration:600})}}
+function renderKb(){const k=$('#kb');if(!k)return;const ph=S.phase;
+ k.querySelectorAll('button').forEach(b=>{const L=b.dataset.k,isV=VOW.includes(L);b.classList.toggle('used',S.used.includes(L)||(S.bpick||[]).includes(L));
+  const active=(ph==='cons'&&!isV)||(ph==='vowel'&&isV)||ph==='bonusPick';b.classList.toggle('off',!active);b.classList.toggle('go',active)})}
+function renderSide(){const t=T(),ph=S.phase,sd=$('#side');let h='';
+ if(ph.startsWith('bonus')){h+=`<div class="turnL" style="--tc:${t.c}"><div class="w">🎁 ${esc(t.name)}</div><div class="rm" id="rmv">${money(t.score)}<small>total</small></div></div>`;
+  h+=`<div class="msg">${S.msg||''}</div>`;
+  if(ph==='bonusPick'||ph==='bonusReveal')h+=`<div class="bonusPick">${[0,1,2,3].map(i=>`<span class="${S.bpick[i]?'f':''}">${S.bpick[i]||(i<3?'C':'V')}</span>`).join('')}</div>`;
+  if(ph==='bonusSolve')h+=`<div style="display:flex;justify-content:center;align-items:center;gap:2vw"><div class="ring" id="bRing"><span>10</span></div><div class="acts"><button class="bb ok big" id="bOk">✅ SOLVED</button><button class="bb bad big" id="bNo">❌ NO</button></div></div>`;
+  if(ph==='bonusEnd')h+=S.env==null?`<div style="text-align:center"><div class="env" id="env">✉️</div><div class="status">Tap the envelope to reveal the prize</div></div>`:`<div style="text-align:center"><div class="huge" style="color:var(--gold)">${money(S.env)}</div><div class="status">${S.bsolved?'💰 Added to '+esc(t.name)+'!':'That was the prize... 😅'}</div><button class="bb gold big" id="bEnd">🏆 FINAL RESULTS</button></div>`}
+ else{h+=`<div class="turnL" style="--tc:${t.c}"><div class="w">👉 ${esc(t.name)}</div><div class="rm" id="rmv">${money(S.rm[S.turn])}<small>this round</small></div></div><div class="msg">${S.msg||''}</div>`;
+  if(ph==='spin')h+=`<div class="acts"><button class="bb gold big" id="bSpin" ${consLeft()?'':'disabled'}>🎡 SPIN</button><button class="bb big" id="bVow" style="background:linear-gradient(#5aa0ff,#123a8a)" ${S.rm[S.turn]>=250&&vowLeft()?'':'disabled'}>🅰️ BUY A VOWEL $250</button><button class="bb big" id="bSolve" style="background:linear-gradient(#a78bfa,#6d28d9)">💡 SOLVE</button></div>`;
+  if(ph==='solve')h+=`<div class="solveIn"><input id="solveIn" placeholder="(optional) type their answer + Enter" autocomplete="off"></div><div class="acts"><button class="bb ok big" id="bOk">✅ CORRECT</button><button class="bb bad big" id="bNo">❌ WRONG</button></div>`;
+  if(ph==='roundEnd')h+=`<div class="acts"><button class="bb gold big" id="bNext">${S.r+1>=S.n?(S.bonus?'🎁 BONUS ROUND':'🏆 FINAL RESULTS'):'NEXT ROUND ➜'}</button></div>`}
+ if(['spin','cons','vowel','bonusPick','bonusReveal'].includes(ph))h+=`<div class="kb" id="kb">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(L=>`<button data-k="${L}" class="${VOW.includes(L)?'vw':''}">${L}</button>`).join('')}</div>`;
+ sd.innerHTML=h;renderKb();
+ const b=id=>$('#'+id);b('bSpin')&&(b('bSpin').onclick=doSpin);b('bVow')&&(b('bVow').onclick=buyVowel);b('bSolve')&&(b('bSolve').onclick=trySolve);b('bOk')&&(b('bOk').onclick=()=>judge(true));b('bNo')&&(b('bNo').onclick=()=>judge(false));b('bNext')&&(b('bNext').onclick=nextRound);b('env')&&(b('env').onclick=openEnv);b('bEnd')&&(b('bEnd').onclick=end);
+ const si=b('solveIn');if(si)si.onkeydown=e=>{if(e.key==='Enter'){const g=norm(si.value);if(!g)return;judge(g===norm(S.pz[S.r].p))}};
+ $$('#kb button').forEach(x=>x.onclick=()=>pickLetter(x.dataset.k));
+ $('#hub').textContent=ph==='spin'?'SPIN':'';$('#hub').style.opacity=ph==='spin'?1:.6;hostView()}
+function render(){if(!S)return;$('#scores').innerHTML=scoreBar(S.teams,S.phase==='roundEnd'?-1:S.turn);drawBoard();renderSide();if(!cx)sizeWheel()}
+function hostView(){if(!window.TGB||!S)return;const ph=S.phase,bonus=ph.startsWith('bonus'),p=bonus?S.bp:S.pz[S.r];const acts=[];
+ if(ph==='spin')acts.push({id:'spin',label:'🎡 Spin',k:'y'},{id:'solve',label:'💡 Solve',k:'b'});
+ if(ph==='solve'||ph==='bonusSolve')acts.push({id:'ok',label:'✅ Correct',k:'ok'},{id:'no',label:'❌ Wrong',k:'no'});
+ if(ph==='roundEnd')acts.push({id:'next',label:'➜ Next',k:'y'});
+ TGB.host({title:`🎡 ${T().name} · ${bonus?'BONUS':'Round '+(S.r+1)}`,q:'Category: '+p.c,a:p.p,note:{spin:'Spin, buy a vowel or solve',cons:'Waiting for a consonant ('+money(S.wv||0)+')',vowel:'Waiting for a vowel',solve:'They are solving: judge it',bonusPick:'Bonus: pick 3 consonants + 1 vowel',bonusSolve:'10 seconds to solve!'}[ph]||'',input:['cons','vowel','bonusPick','solve','bonusSolve'].includes(ph)?{ph:ph.includes('olve')?'Type their answer':'Type a letter'}:null,actions:acts,noBuzzBtns:true})}
+if(window.TGB)TGB.init({game:'Wheel of Fortune',hostOnly:true,names:()=>[],onAct:(id,d)=>{if(!S)return;if(id==='spin')doSpin();else if(id==='solve')trySolve();else if(id==='ok')judge(true);else if(id==='no')judge(false);else if(id==='next'&&S.phase==='roundEnd')nextRound();
+ else if(id==='input'&&d&&d.v){const v=String(d.v).trim();if(v.length===1)pickLetter(v);else if(S.phase==='solve')judge(norm(v)===norm(S.pz[S.r].p));else if(S.phase==='bonusSolve')judge(norm(v)===norm(S.bp.p))}}});
+/* keyboard */
+addEventListener('keydown',e=>{if(!S||/INPUT|TEXTAREA/.test((document.activeElement||{}).tagName||''))return;if(!$('#setupOv').classList.contains('hidden'))return;
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();doUndo();return}if(e.ctrlKey||e.metaKey||e.altKey)return;
+ if(e.key===' '&&S.phase==='spin'){e.preventDefault();doSpin();return}if(/^[a-zA-Z]$/.test(e.key))pickLetter(e.key)});
+$('#hub').onclick=()=>{if(S&&S.phase==='spin')doSpin()};
+function doUndo(){if(!S){toast('Nothing to undo yet');return}if(busy){toast('One sec, wait for the animation');return}const curJ=JSON.stringify(S);let prev=null;if(_uLast&&curJ!==_uLast)prev=_uLast;else if(UNDO.length)prev=UNDO.pop();if(!prev){toast('Nothing to undo yet');return}
+ bonusTimer&&bonusTimer.stop();S=JSON.parse(prev);_uLast=prev;LS.set(UNDO_KEY,S);$('#endOv').classList.add('hidden');render();SFX.skip();toast('↩️ Undone')}
+$('#bUndo').onclick=doUndo;
+shellInit({game:'Wheel of Fortune',style:'pop',rain:['💵','🎡','⭐','✨'],onNew:()=>{bonusTimer&&bonusTimer.stop();S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
+setTimeout(sizeWheel,50);
+if(S){$('#setupOv').classList.add('hidden');if(S.phase==='bonusSolve'){S.phase='bonusEnd';S.bsolved=false}render()}
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

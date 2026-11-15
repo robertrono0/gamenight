@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%9A%A6%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Red Light Green Light</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#1b5e20;--bgB:#061a08}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🚦 RED LIGHT GREEN LIGHT</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🚦 Red Light Green Light</h2>
+ <h3>Rounds</h3><div class="seg" id="segR"><button data-v="1" class="">1</button><button data-v="3" class="on">3</button><button data-v="5" class="">5</button></div><h3>Race length</h3><div class="seg" id="segL"><button data-v="60" class="">Short</button><button data-v="90" class="on">Medium</button><button data-v="130" class="">Long</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🏃</span>Tap the big button on your phone <b>as fast as you can</b> to run toward the finish line.</div><div class="hc"><span class="i">🟢</span>Only move on a <b>GREEN LIGHT</b>.</div><div class="hc"><span class="i">🔴</span>If you tap during a <b>RED LIGHT</b>, you're <b>OUT</b>! 💥</div><div class="hc"><span class="i">⚠️</span>The light can change at any moment. Listen for the sound!</div><div class="hc"><span class="i">🏁</span>First 3 across the line score <b>300 / 200 / 100</b>. Everyone else who finishes gets <b>50</b>.</div><div class="hc"><span class="i">👥</span>Works with 30+ players. Great for kids and grandparents too!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+let cfg=LS.get('tg-rlgl-cfg',{r:3,l:90});segs(cfg,'tg-rlgl-cfg',[['segR','r'],['segL','l']]);
+PG.init({key:'tg-rlgl',game:'Red Light Green Light',title:'🚦 Red Light, Green Light',sub:'Scan to join! Tap to run, freeze on red.',min:2,style:'pop',rain:['🚦','🏃','💥']});
+let R=null;PG._handlers.run=(n,v)=>{if(!R||!R.pos.hasOwnProperty(n)||R.out[n]||R.fin.includes(n)||!R.live)return;
+ if(R.light==='red'&&Date.now()-R.changed>450){R.out[n]=true;SFX.buzz();boom(n);if(window.TGB)TGB.ask({k:'msg',key:'out'+n+Date.now(),emoji:'💥',title:"You moved! You're OUT!",body:'Watch the rest of the race 👀',color:'#c1121f'},[n]);return}
+ if(R.light==='red')return;R.pos[n]=Math.min(R.len,R.pos[n]+1);if(R.pos[n]>=R.len){R.fin.push(n);SFX.ok();if(window.TGB)TGB.ask({k:'msg',key:'fin'+n+Date.now(),emoji:'🏁',title:`You finished #${R.fin.length}!`,body:'Nice run! 🏃'},[n])}};
+function boom(n){const e=document.querySelector(`[data-ln="${CSS.escape(n)}"] .rn`);if(e){e.textContent='💥';e.style.transform='scale(1.6)'}}
+function lanes(){const ps=Object.keys(R.pos);return`<div style="width:min(1600px,96vw);display:flex;flex-direction:column;gap:${ps.length>16?'.3vh':'.7vh'};max-height:60vh;overflow:hidden">${ps.map(n=>`<div data-ln="${esc(n)}" style="position:relative;height:${Math.max(2.4,Math.min(5.6,52/ps.length))}vh;border-radius:2vh;background:rgba(255,255,255,.06)"><div style="position:absolute;right:0;top:0;bottom:0;width:.6vh;background:repeating-linear-gradient(#fff 0 .6vh,#111 .6vh 1.2vh)"></div><div class="rn" style="position:absolute;top:50%;left:calc(${R.pos[n]/R.len*94}%);transform:translateY(-50%);display:flex;align-items:center;gap:.4vw;font-weight:800;font-size:1.8vh;transition:left .15s;white-space:nowrap">${R.out[n]?'💥':avHTML(n).replace('class="av','style="width:'+Math.max(2.2,Math.min(5,48/ps.length))+'vh;height:'+Math.max(2.2,Math.min(5,48/ps.length))+'vh" class="av')} ${esc(n)}${R.fin.includes(n)?' 🏁#'+(R.fin.indexOf(n)+1):''}</div></div>`).join('')}</div>`}
+function lightHTML(){const g=R.light==='green';return`<div style="display:flex;align-items:center;gap:2vw"><div style="width:14vh;height:14vh;border-radius:50%;background:${g?'#2ecc71':'#e63946'};box-shadow:0 0 6vh ${g?'#2ecc71':'#e63946'}"></div><div style="font-family:var(--fd);font-size:9vh;color:${g?'#5cf09a':'#ff6b6b'}">${g?'GREEN LIGHT':'RED LIGHT'}</div></div>`}
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ for(let r=0;r<cfg.r;r++){const ps=PG.players();R={pos:Object.fromEntries(ps.map(n=>[n,0])),out:{},fin:[],len:cfg.l,light:'red',changed:Date.now(),live:false};
+  if(window.TGB)TGB.ask({k:'msg',key:'rd'+r,emoji:'🚦',title:'Get ready to run!',body:'Tap only on GREEN. Freeze on RED!'});
+  for(let c=3;c>0;c--){PG.stage(`<div class="kicker">ROUND ${r+1} OF ${cfg.r}</div><div style="font-family:var(--fd);font-size:26vh;color:var(--gold)">${c}</div>${lanes()}`);SFX.tick(c===1);await sleep(900)}
+  R.live=true;const t0=Date.now();
+  const setLight=l=>{R.light=l;R.changed=Date.now();if(l==='green'){SFX.ok()}else{SFX.horn()}
+   if(window.TGB){const alive=ps.filter(n=>!R.out[n]&&!R.fin.includes(n));TGB.askEach(Object.fromEntries(alive.map(n=>[n,{k:'tap',key:'run'+r,id:'run',title:l==='green'?'🟢 RUN!':'🔴 FREEZE!',btn:l==='green'?'🏃 RUN!':'🛑 STOP',color:l==='green'?'#2ecc71':'#e63946'}])))}};
+  setLight('green');music('tense');let next=Date.now()+1500+Math.random()*3000;
+  while(true){await sleep(120);if(Date.now()>next){setLight(R.light==='green'?'red':'green');next=Date.now()+(R.light==='green'?1200+Math.random()*3500:1500+Math.random()*2500)}
+   PG.stage(`${lightHTML()}${lanes()}<div class="status">⏱️ ${Math.max(0,60-Math.floor((Date.now()-t0)/1000))}s</div>`);
+   const done=ps.every(n=>R.out[n]||R.fin.includes(n));if(done||Date.now()-t0>60000)break}
+  R.live=false;music('play');const pts=[300,200,100],gain={};R.fin.forEach((n,i)=>{const g=pts[i]||50;PG.add(n,g);gain[n]=g});ps.forEach(n=>PG.add(n,0));
+  if(R.fin[0]&&window.FXX)FXX.win('🏁 '+R.fin[0].toUpperCase(),null,'wins the race!');else SFX.win();
+  PG.stage(PG.board(gain));await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT RACE ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

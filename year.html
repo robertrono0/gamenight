@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%85%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guess the Year</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#4e342e;--bgB:#1a0f0c}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">📅 GUESS THE YEAR</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>📅 Guess the Year</h2>
+ <h3>Mode</h3><div class="seg" id="segM"><button data-v="year" class="">📅 Guess the Year</button><button data-v="line" class="">🧵 Timeline</button><button data-v="mix" class="on">🔀 Mix both</button></div><h3>Rounds</h3><div class="seg" id="segR"><button data-v="6" class="">6</button><button data-v="10" class="on">10</button><button data-v="15" class="">15</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📅</span><b>Guess the Year:</b> an event appears. Type the year you think it happened on your phone.</div><div class="hc"><span class="i">🎯</span>Closest guess gets <b>+300</b>, then <b>+200</b>, <b>+100</b>. Exact year = <b>+200 bonus</b>!</div><div class="hc"><span class="i">🧵</span><b>Timeline:</b> 4 events appear. Pick which happened <b>FIRST</b> and which happened <b>LAST</b>.</div><div class="hc"><span class="i">✅</span>Timeline: <b>+150</b> for each one you get right.</div><div class="hc"><span class="i">📱</span>Everyone plays at the same time on their phone.</div><div class="hc"><span class="i">🏆</span>Most points wins.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const EV=[['📱','The first iPhone is revealed',2007],['🌕','Humans first walk on the Moon',1969],['🚢','The Titanic sinks',1912],['🧱','The Berlin Wall falls',1989],['▶️','YouTube is founded',2005],['📘','Facebook launches',2004],['🔍','Google is founded',1998],['🕊️','World War II ends',1945],['🤠','Toy Story hits theaters',1995],['🏰','Disneyland opens',1955],['🐭','Mickey Mouse first appears',1928],['🧙','The first Harry Potter book comes out',1997],['🏙️','The Burj Khalifa opens',2010],['📸','Instagram launches',2010],['⛏️','Minecraft is fully released',2011],['❄️','Frozen hits theaters',2013],['💗','The Barbie movie hits theaters',2023],['🏈','The first Super Bowl is played',1967],['🕺','Michael Jackson releases "Thriller"',1982],['🎮','The Nintendo Switch comes out',2017],['⭐','Star Wars hits theaters',1977],['🏅','The first modern Olympics are held',1896],['✈️','The Wright brothers\' first flight',1903],['🗼','The Eiffel Tower is completed',1889],['🗽','The Statue of Liberty is dedicated',1886],['🌉','The Golden Gate Bridge opens',1937],['🪐','Pluto is reclassified as a dwarf planet',2006],['🦅','The US Declaration of Independence',1776],['⚽','Qatar hosts the World Cup',2022],['🤖','ChatGPT is released',2022],['🛒','Amazon is founded',1994],['🏝️','Fortnite comes out',2017],['⚡','Pokémon Red & Green come out in Japan',1996],['🟢','Shrek hits theaters',2001],['🌌','Avatar hits theaters',2009],['🦑','Squid Game premieres',2021],['☕','Friends premieres on TV',1994],['🍩','The Simpsons premieres as a series',1989],['🦖','Jurassic Park hits theaters',1993],['🍔','The first McDonald\'s opens',1940],['🎬','Netflix starts streaming',2007],['🦠','COVID-19 lockdowns begin',2020],['🏆','Spain wins the World Cup in New Jersey',2026],['🐉','Game of Thrones premieres',2011],['🎧','Spotify launches',2008],['👟','The first Air Jordan shoe comes out',1985]];
+let cfg=LS.get('tg-year-cfg',{m:'mix',r:10});segs(cfg,'tg-year-cfg',[['segM','m'],['segR','r']]);
+PG.init({key:'tg-year',game:'Guess the Year',title:'📅 Guess the Year',sub:'Scan to join! When did it happen?',min:1,style:'swing',rain:['📅','⏳','⭐']});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();const ev=shuffle(EV);let k=0;
+ for(let r=0;r<cfg.r;r++){const mode=cfg.m==='mix'?(r%2?'line':'year'):cfg.m;const gain={};
+  if(mode==='year'){const e=ev[k++%ev.length];
+   const subs=await PG.collect({id:'y',secs:30,title:`<div class="kicker">ROUND ${r+1} · GUESS THE YEAR</div><div style="font-size:14vh">${e[0]}</div><div class="prompt popIn">${esc(e[1])}</div>`,sub:'Type the year on your phone 📅',spec:n=>({k:'text',num:1,kicker:'What year?',title:e[1],ph:'e.g. 1999',max:4,btn:'Lock it in 📅'})});
+   const g=Object.entries(subs).map(([n,v])=>[n,parseInt(v)]).filter(x=>!isNaN(x[1])).map(([n,v])=>[n,v,Math.abs(v-e[2])]).sort((a,b)=>a[2]-b[2]);
+   const pts=[300,200,100];let place=0,last=-1;g.forEach(([n,v,d],i)=>{if(d!==last){place=i;last=d}let p=pts[place]||0;if(d===0)p+=200;if(p){PG.add(n,p);gain[n]=p}});PG.players().forEach(n=>PG.add(n,0));
+   SFX.roll(1000);await sleep(1100);PG.stage(`<div style="font-size:10vh">${e[0]}</div><div class="prompt">${esc(e[1])}</div><div style="font-family:var(--fd);font-size:14vh;color:var(--gold)" class="popIn">${e[2]}</div>${answersGrid(g.slice(0,8).map(([n,v,d])=>`<div style="display:flex;align-items:center;gap:1vw">${avHTML(n)}<b>${esc(n)}</b><span style="margin-left:auto;font-family:var(--fd)">${v}</span><span class="vt">${d===0?'🎯 EXACT':'off by '+d}</span></div>`))}`);SFX.win()}
+  else{const evs=[ev[k++%ev.length],ev[k++%ev.length],ev[k++%ev.length],ev[k++%ev.length]];const sorted=evs.slice().sort((a,b)=>a[2]-b[2]),first=sorted[0][1],lastE=sorted[3][1];
+   PG.stage(`<div class="kicker">ROUND ${r+1} · TIMELINE 🧵</div>${answersGrid(evs.map(e=>`<span style="font-size:5vh">${e[0]}</span> ${esc(e[1])}`))}<div class="prompt" style="font-size:3.4vh">Which happened <b style="color:#5cf09a">FIRST</b>?</div><div id="pgVotes"></div>`);
+   const v1=await PG.vote({id:'f',secs:25,title:'Which happened FIRST? ⏮️',opts:()=>evs.map(e=>({t:e[0]+' '+e[1],v:e[1]}))});
+   PG.stage(`<div class="kicker">ROUND ${r+1} · TIMELINE 🧵</div>${answersGrid(evs.map(e=>`<span style="font-size:5vh">${e[0]}</span> ${esc(e[1])}`))}<div class="prompt" style="font-size:3.4vh">Which happened <b style="color:#ff6b6b">LAST</b>?</div><div id="pgVotes"></div>`);
+   const v2=await PG.vote({id:'l',secs:25,title:'Which happened LAST? ⏭️',opts:()=>evs.map(e=>({t:e[0]+' '+e[1],v:e[1]}))});
+   PG.players().forEach(n=>{let p=0;if(v1[n]===first)p+=150;if(v2[n]===lastE)p+=150;PG.add(n,p);if(p)gain[n]=p});
+   SFX.roll(1000);await sleep(1100);PG.stage(`<div class="kicker">THE REAL ORDER</div><div style="display:flex;gap:1vw;align-items:stretch;width:min(1500px,95vw)">${sorted.map((e,i)=>`<div class="ansC" style="flex:1;text-align:center;animation-delay:${i*.3}s"><div style="font-size:7vh">${e[0]}</div>${esc(e[1])}<div style="font-family:var(--fd);font-size:4vh;color:#c2410c">${e[2]}</div></div>${i<3?'<div style="align-self:center;font-size:4vh">➜</div>':''}`).join('')}</div>`);SFX.win()}
+  await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

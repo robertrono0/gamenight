@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%A4%A5%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Two Truths and a Lie</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#e65100;--bgB:#3e1500}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🤥 TWO TRUTHS AND A LIE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🤥 Two Truths and a Lie</h2>
+ <h3>Max players shown</h3><div class="seg" id="segN"><button data-v="6" class="">6</button><button data-v="10" class="on">10</button><button data-v="99" class="">Everyone</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>On your phone, write <b>2 true things</b> about yourself and <b>1 lie</b>.</div><div class="hc"><span class="i">📺</span>Each player's 3 statements show up on the TV in a random order.</div><div class="hc"><span class="i">🤥</span>Everyone else votes for the <b>lie</b>.</div><div class="hc"><span class="i">✅</span><b>+100</b> for spotting the lie.</div><div class="hc"><span class="i">🎭</span>The writer gets <b>+100</b> for every person they fooled.</div><div class="hc"><span class="i">💡</span>Tip: the best lies sound boring and the best truths sound crazy!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+let cfg=LS.get('tg-tt-cfg',{n:10});segs(cfg,'tg-tt-cfg',[['segN','n']]);
+PG.init({key:'tg-tt',game:'Two Truths and a Lie',title:'🤥 Two Truths and a Lie',sub:'Scan to join! Write 2 truths and 1 lie about yourself.',min:3,style:'funk',rain:['🤥','🤔','✅']});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const subs=await PG.collect({id:'tt',secs:150,title:`<div class="prompt popIn">Write <b style="color:#5cf09a">2 truths</b> and <b style="color:#ff6b6b">1 lie</b> about yourself</div>`,sub:'The 3rd box is your LIE 🤥',spec:n=>({k:'text',title:'2 truths + 1 lie',body:'Make the lie believable!',fields:[{ph:'✅ A true thing about me'},{ph:'✅ Another true thing'},{ph:'🤥 My LIE'}],max:90,btn:'Send 🤫'})});
+ const items=shuffle(Object.entries(subs).filter(([n,v])=>Array.isArray(v)&&v.length===3)).slice(0,cfg.n);const names=PG.players();
+ for(let i=0;i<items.length;i++){const[au,st]=items[i];const order=shuffle([0,1,2]);const lieIdx=order.indexOf(2);
+  PG.stage(`<div class="bigT" style="font-size:4.4vh;display:flex;align-items:center;gap:1vw">${avHTML(au)} ${esc(au)}</div>${answersGrid(order.map((k,j)=>`<span class="num">${j+1}</span>${esc(st[k])}`))}<div class="status">🤥 Which one is the LIE? ${esc(au)}: poker face!</div><div id="pgVotes"></div>`);SFX.whoosh();
+  const votes=await PG.vote({id:'l',secs:30,title:`Which is ${au}'s lie?`,who:names.filter(n=>n!==au),opts:()=>order.map((k,j)=>({t:`${j+1}. ${st[k]}`,v:j}))});
+  const right=Object.entries(votes).filter(([n,v])=>+v===lieIdx).map(([n])=>n),fooled=Object.keys(votes).length-right.length;right.forEach(n=>PG.add(n,100));PG.add(au,fooled*100);
+  SFX.roll(1200);await sleep(1300);const cards=$$('.ansC');cards.forEach((c,j)=>{if(j===lieIdx){c.classList.add('win');c.insertAdjacentHTML('beforeend','<div class="by" style="color:#c1121f;font-family:var(--fd)">🤥 THE LIE!</div>')}else{c.classList.add('bad');c.insertAdjacentHTML('beforeend','<div class="by" style="color:#16a35a">✅ True!</div>')}});
+  $('#pgVotes').innerHTML=`<div class="status">${right.length?'✅ '+right.map(esc).join(', ')+' spotted it! (+100)':'😱 Nobody spotted it!'}${fooled?` · 🎭 ${esc(au)} fooled ${fooled} (+${fooled*100})`:''}</div>`;right.length?SFX.ok():SFX.win();
+  await PG.next(i+1<items.length?'NEXT PLAYER ➜':'📊 SCORES')}
+ PG.stage(PG.board());await PG.next('🏆 FINAL RESULTS');PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

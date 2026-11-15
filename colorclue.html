@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8C%88%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Color Clue</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#37474f;--bgB:#0f1518}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🌈 COLOR CLUE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🌈 Color Clue</h2>
+ <h3>Rounds</h3><div class="seg" id="segR"><button data-v="4" class="">4</button><button data-v="6" class="on">6</button><button data-v="10" class="">10</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🌈</span>A giant grid of colors fills the TV. Each square has a code, like <b>F7</b>.</div><div class="hc"><span class="i">🎨</span>One player (the <b>cue giver</b>) secretly gets a color on their phone.</div><div class="hc"><span class="i">🗣️</span>They say ONE word to describe it (like "banana"). No color names or objects in the room!</div><div class="hc"><span class="i">📱</span>Everyone else types the square code they think it is, like <b>F7</b>.</div><div class="hc"><span class="i">🎯</span>Exact = <b>3</b>, one square away = <b>2</b>, two away = <b>1</b>.</div><div class="hc"><span class="i">🎨</span>The cue giver gets <b>+1</b> for every guess within one square.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+let cfg=LS.get('tg-cc-cfg',{r:6});segs(cfg,'tg-cc-cfg',[['segR','r']]);
+PG.init({key:'tg-cc',game:'Color Clue',title:'🌈 Color Clue',sub:'Scan to join! One word, one color.',min:3,style:'chill',rain:['🌈','🎨','⭐']});
+const COLS=18,ROWS=10,L='ABCDEFGHIJKLMNOPQR';
+const col=(c,r)=>`hsl(${Math.round(c/COLS*340)},${r<5?55+r*9:95}%,${r<5?22+r*11:72-(r-5)*9}%)`;
+const grid=(mark)=>`<div style="display:grid;grid-template-columns:3vh repeat(${COLS},1fr);gap:.25vh;width:min(1600px,96vw)"><span></span>${L.slice(0,COLS).split('').map(x=>`<b style="text-align:center;font-size:1.6vh">${x}</b>`).join('')}${Array.from({length:ROWS},(_,r)=>`<b style="font-size:1.6vh;align-self:center">${r+1}</b>`+Array.from({length:COLS},(_,c)=>`<div style="height:5.4vh;background:${col(c,r)};border-radius:.5vh;position:relative;${mark&&mark[c+','+r]?'box-shadow:inset 0 0 0 .4vh #fff':''}">${mark&&mark[c+','+r]?`<span style="position:absolute;inset:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;font-size:1.4vh">${mark[c+','+r]}</span>`:''}</div>`).join('')).join('')}</div>`;
+const parse=s=>{const m=String(s).toUpperCase().replace(/\s/g,'').match(/^([A-R])(\d{1,2})$/)||String(s).toUpperCase().replace(/\s/g,'').match(/^(\d{1,2})([A-R])$/);if(!m)return null;let a=m[1],b=m[2];if(/\d/.test(a))[a,b]=[b,a];const c=L.indexOf(a),r=+b-1;return c>=0&&c<COLS&&r>=0&&r<ROWS?[c,r]:null};
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());
+ for(let k=0;k<cfg.r;k++){const giver=ps[k%ps.length],tc=rnd(COLS),tr=rnd(ROWS),code=L[tc]+(tr+1);const others=PG.players().filter(n=>n!==giver);
+  if(window.TGB)TGB.ask({k:'msg',key:'cg'+k,emoji:'🎨',kicker:'You are the cue giver',title:'Your secret color: '+code,body:'Say ONE word that makes people think of this color. No color names!',swatch:col(tc,tr)},[giver]);
+  const subs=await PG.collect({id:'c',secs:60,who:others,title:`<div class="kicker">ROUND ${k+1} · CUE GIVER: ${esc(giver)} ${avHTML(giver)}</div>${grid()}`,sub:`${esc(giver)}: say ONE word! Everyone: type a code like F7`,spec:n=>({k:'text',kicker:'Listen to '+giver,title:'Which square? (like F7)',ph:'e.g. F7',max:4,btn:'Lock it in 🎯'})});
+  const mark={},gain={};mark[tc+','+tr]='⭐';let giverPts=0;
+  Object.entries(subs).forEach(([n,v])=>{const p=parse(v);if(!p)return;const d=Math.max(Math.abs(p[0]-tc),Math.abs(p[1]-tr)),pts=d===0?3:d===1?2:d===2?1:0;if(pts){PG.add(n,pts);gain[n]=pts}if(d<=1)giverPts++;const key=p[0]+','+p[1];mark[key]=(mark[key]&&mark[key]!=='⭐'?mark[key]:key===tc+','+tr?'⭐':'')+avHTML(n).replace('class="av','style="width:2.2vh;height:2.2vh;font-size:1vh;border-width:.15vh" class="av')});
+  if(giverPts){PG.add(giver,giverPts);gain[giver]=giverPts}PG.players().forEach(n=>PG.add(n,0));
+  SFX.roll(900);await sleep(1000);PG.stage(`<div class="kicker">THE COLOR WAS ${code} ⭐</div>${grid(mark)}`);SFX.win();
+  await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(k+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

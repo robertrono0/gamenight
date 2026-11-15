@@ -1,0 +1,261 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9A%A1%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiz Race</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>
+:root{--bgA:#6a1b9a;--bgB:#2b0a4a}
+.qnum{font-family:var(--fd);font-size:2.2vh;color:var(--gold);letter-spacing:.1em}
+.qtext{font-family:var(--fd);font-size:5.4vh;line-height:1.15;text-align:center;max-width:90vw;text-shadow:0 .5vh 0 rgba(0,0,0,.35)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:1.6vh 1.4vw;width:min(1500px,94vw)}
+.ans{display:flex;align-items:center;gap:1.4vw;padding:2.2vh 2vw;border-radius:2vh;font-size:3.4vh;font-weight:700;color:#fff;box-shadow:0 .7vh 0 rgba(0,0,0,.35);transition:.4s;position:relative;overflow:hidden}
+.ans .sh{font-size:4vh;width:5vh;text-align:center}.ans .ct{margin-left:auto;font-family:var(--fd);font-size:3vh;opacity:0}
+.ans.k0{background:#e63946}.ans.k1{background:#3a86ff}.ans.k2{background:#e9a800;color:#2a0d12}.ans.k3{background:#06a77d}
+.ans.no{opacity:.25;transform:scale(.96)}.ans.yes{box-shadow:0 0 0 .6vh #fff,0 0 5vh rgba(255,255,255,.6);transform:scale(1.03)}
+.ans.yes .ct,.ans.no .ct{opacity:1}
+.ans .bar{position:absolute;left:0;bottom:0;height:.8vh;background:rgba(255,255,255,.7);transition:width .8s}
+.row{display:flex;align-items:center;gap:2vw;justify-content:center}
+.board{width:min(1000px,92vw);display:flex;flex-direction:column;gap:1vh}
+.lbr{display:grid;grid-template-columns:5vh 5.4vh 1fr auto auto;align-items:center;gap:1vw;padding:1vh 1.4vw;border-radius:1.6vh;background:rgba(255,255,255,.08);font-size:2.8vh;font-weight:700;animation:popIn .5s backwards}
+.lbr .rk{font-family:var(--fd);color:var(--gold);text-align:center}.lbr .pt{font-family:var(--fd);font-size:3vh}.lbr .gn{font-size:2vh;color:#5cf09a;min-width:8vw;text-align:right}.lbr .stk{font-size:2vh}
+.lbr.top{background:linear-gradient(90deg,rgba(255,204,61,.4),rgba(255,204,61,.08));box-shadow:0 0 0 .3vh var(--gold)}
+.ctl{display:flex;gap:1vw;justify-content:center;flex-wrap:wrap}
+</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">⚡ QUIZ RACE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>⚡ Set up Quiz Race</h2>
+ <p class="hint" style="text-align:center">Everyone plays on their own phone. Answer fast: quicker correct answers score more!</p>
+ <h3>Topics</h3><div class="chips" id="topics"></div>
+ <h3>How many questions?</h3><div class="seg" id="segN"><button data-v="10">10</button><button data-v="15" class="on">15</button><button data-v="20">20</button><button data-v="30">30</button></div>
+ <h3>Seconds per question</h3><div class="seg" id="segT"><button data-v="12">12</button><button data-v="20" class="on">20</button><button data-v="30">30 (relaxed)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
+ <div class="hc"><span class="i">📱</span>Scan the QR on the TV and tap your name. Your phone shows 4 colored buttons.</div>
+ <div class="hc"><span class="i">⚡</span>Pick the right answer <b>fast</b>. Correct = up to <b>1,000</b> points, more the quicker you are.</div>
+ <div class="hc"><span class="i">🔥</span>Get answers right in a row for a <b>streak bonus</b> (+100 each, up to +500).</div>
+ <div class="hc"><span class="i">📊</span>After each question the TV shows how everyone voted and the leaderboard.</div>
+ <div class="hc"><span class="i">⏱️</span>The question ends when the clock runs out or everyone has answered.</div>
+ <div class="hc"><span class="i">🏆</span>Highest score at the end wins. Points go to the Game Night leaderboard!</div>
+</div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script>
+/* Question bank: [question, correct, wrong, wrong, wrong, topic, kid?] */
+const QB=[
+['How many days are in a leap year?','366','365','364','360','gen',1],
+['What color do you get mixing red and white?','Pink','Purple','Orange','Peach','gen',1],
+['How many legs does an insect have?','6','8','4','10','sci',1],
+['Which planet is known as the Red Planet?','Mars','Venus','Jupiter','Mercury','sci',1],
+['What is the largest ocean on Earth?','Pacific','Atlantic','Indian','Arctic','geo',1],
+['What gas do plants take in from the air?','Carbon dioxide','Oxygen','Helium','Nitrogen','sci',0],
+['What is the hardest natural substance?','Diamond','Gold','Iron','Quartz','sci',0],
+['How many continents are there?','7','5','6','8','geo',1],
+['What is the capital of Japan?','Tokyo','Kyoto','Osaka','Seoul','geo',1],
+['Which country is home to the kangaroo?','Australia','South Africa','Brazil','India','geo',1],
+['What is the longest river in Africa?','The Nile','The Congo','The Niger','The Zambezi','geo',0],
+['What is the capital of Canada?','Ottawa','Toronto','Vancouver','Montreal','geo',0],
+['What is the tallest building in the world?','Burj Khalifa','Empire State Building','Shanghai Tower','Eiffel Tower','geo',0],
+['Which US state is called the Golden State?','California','Texas','Florida','Nevada','geo',1],
+['What is the smallest country in the world?','Vatican City','Monaco','Malta','San Marino','geo',0],
+['Which country has the most people?','India','China','USA','Indonesia','geo',0],
+['What language is spoken in Brazil?','Portuguese','Spanish','Brazilian','French','geo',0],
+['Mount Everest is on the border of Nepal and which country?','China','India','Bhutan','Pakistan','geo',0],
+['What is the capital of Egypt?','Cairo','Alexandria','Giza','Luxor','arab',0],
+['Which two rivers run through Iraq?','Tigris & Euphrates','Nile & Jordan','Tigris & Nile','Euphrates & Indus','arab',0],
+['What is the main ingredient in hummus?','Chickpeas','Lentils','Fava beans','Peas','food',1],
+['Falafel is usually made from chickpeas or what?','Fava beans','Rice','Potatoes','Corn','food',0],
+['Which country is pasta most famous from?','Italy','France','Greece','Spain','food',1],
+['Sushi comes from which country?','Japan','China','Korea','Thailand','food',1],
+['What fruit is used to make guacamole?','Avocado','Lime','Kiwi','Green apple','food',1],
+['Which nut is used to make marzipan?','Almond','Peanut','Cashew','Walnut','food',0],
+['What is the main ingredient in tabbouleh?','Parsley','Lettuce','Spinach','Mint','food',0],
+['Kunafa is famously topped with what?','Syrup','Chocolate','Honey mustard','Caramel corn','food',0],
+['What does a baker use to make bread rise?','Yeast','Salt','Sugar','Vinegar','food',1],
+['Which vegetable makes you cry when you cut it?','Onion','Carrot','Garlic','Pepper','food',1],
+['What is the main ingredient in a traditional omelette?','Eggs','Milk','Cheese','Flour','food',1],
+['Which fruit has its seeds on the outside?','Strawberry','Blueberry','Raspberry','Cherry','food',1],
+['What is the most popular pizza topping in the US?','Pepperoni','Mushrooms','Pineapple','Sausage','food',0],
+['Dates grow on what kind of tree?','Palm tree','Oak tree','Olive tree','Fig tree','arab',1],
+['What do you call a baby cat?','Kitten','Cub','Pup','Kit','gen',1],
+['How many sides does a hexagon have?','6','5','7','8','gen',1],
+['How many minutes are in an hour?','60','100','30','90','gen',1],
+['How many hours are in a day?','24','12','48','20','gen',1],
+['What is the largest mammal?','Blue whale','Elephant','Giraffe','Great white shark','sci',1],
+['What is the fastest land animal?','Cheetah','Lion','Horse','Gazelle','sci',1],
+['Which animal is known as the King of the Jungle?','Lion','Tiger','Gorilla','Elephant','sci',1],
+['How many hearts does an octopus have?','3','1','2','8','sci',0],
+['What do bees make?','Honey','Milk','Silk','Wax paper','sci',1],
+['What is the closest star to Earth?','The Sun','Polaris','Sirius','Alpha Centauri','sci',0],
+['How many planets are in our solar system?','8','9','7','10','sci',1],
+['What is H2O better known as?','Water','Salt','Hydrogen','Ice cream','sci',1],
+['What part of the plant makes food from sunlight?','Leaves','Roots','Stem','Flowers','sci',1],
+['What is the biggest planet in our solar system?','Jupiter','Saturn','Neptune','Earth','sci',1],
+['Who was the first person to walk on the Moon?','Neil Armstrong','Buzz Aldrin','Yuri Gagarin','John Glenn','sci',0],
+['What is the boiling point of water in Celsius?','100°','90°','120°','212°','sci',0],
+['How many bones does an adult human have?','206','150','300','186','sci',0],
+['What organ pumps blood around the body?','Heart','Lungs','Liver','Brain','sci',1],
+['Which blood type is the universal donor?','O negative','A positive','AB positive','B negative','sci',0],
+['What does a thermometer measure?','Temperature','Weight','Speed','Time','sci',1],
+['Who painted the Mona Lisa?','Leonardo da Vinci','Picasso','Van Gogh','Michelangelo','gen',0],
+['Who invented the light bulb (as most people learn it)?','Thomas Edison','Albert Einstein','Isaac Newton','Nikola Tesla','gen',0],
+['What is the opposite of "ancient"?','Modern','Old','Antique','Historic','gen',1],
+['How many players are on a soccer team on the field?','11','10','9','12','sport',1],
+['How many points is a touchdown worth?','6','7','3','5','sport',0],
+['In basketball, how many points is a shot from behind the arc?','3','2','4','1','sport',1],
+['Which country won the 2026 World Cup?','Spain','Argentina','France','England','sport',0],
+['Which country won the 2022 World Cup?','Argentina','France','Brazil','Croatia','sport',0],
+['Which sport uses a shuttlecock?','Badminton','Tennis','Squash','Volleyball','sport',1],
+['How many rings are on the Olympic flag?','5','4','6','7','sport',1],
+['Lionel Messi plays club soccer for which MLS team?','Inter Miami','LA Galaxy','LAFC','NYC FC','sport',0],
+['Which sport is played at Wimbledon?','Tennis','Golf','Cricket','Polo','sport',0],
+['What is the San Diego MLB team called?','Padres','Dodgers','Giants','Angels','sport',0],
+['How long is a marathon (about)?','26.2 miles','10 miles','13.1 miles','50 miles','sport',0],
+['Which sport has a "hole in one"?','Golf','Bowling','Baseball','Hockey','sport',1],
+['In bowling, what is it called when you knock down all pins on the first throw?','Strike','Spare','Split','Gutter','sport',1],
+['Michael Phelps is famous for which sport?','Swimming','Running','Gymnastics','Cycling','sport',1],
+['Who sings "Shake It Off"?','Taylor Swift','Katy Perry','Ariana Grande','Selena Gomez','pop',0],
+['Which movie features the song "Let It Go"?','Frozen','Moana','Tangled','Encanto','pop',1],
+['What is the name of the snowman in Frozen?','Olaf','Sven','Kristoff','Hans','pop',1],
+['In "Toy Story," what is the cowboy\'s name?','Woody','Buzz','Jessie','Andy','pop',1],
+['Which superhero is known as the "Man of Steel"?','Superman','Batman','Iron Man','Captain America','pop',1],
+['What is the name of Harry Potter\'s school?','Hogwarts','Narnia','Durmstrang','Westeros','pop',0],
+['Which streaming show features the Upside Down?','Stranger Things','Wednesday','Squid Game','The Witcher','pop',0],
+['Which Korean show has deadly playground games?','Squid Game','Kingdom','Crash Landing on You','Alice in Borderland','pop',0],
+['Who is the "King of Pop"?','Michael Jackson','Elvis Presley','Prince','Justin Bieber','pop',0],
+['Which singer is known as "Queen B"?','Beyoncé','Rihanna','Britney Spears','Billie Eilish','pop',0],
+['Which Pixar movie has a rat who cooks?','Ratatouille','Cars','Up','Coco','pop',1],
+['SpongeBob lives in a what under the sea?','Pineapple','Coconut','Shell','Rock','pop',1],
+['Which video game features Creepers?','Minecraft','Fortnite','Roblox','Among Us','pop',1],
+['Which company makes the iPhone?','Apple','Samsung','Google','Microsoft','gen',1],
+['What does "www" stand for?','World Wide Web','World Web Wide','Wide World Web','Web World Wide','gen',0],
+['Which app is famous for short videos and dances?','TikTok','LinkedIn','Zoom','Pinterest','pop',0],
+['What does "LOL" stand for?','Laugh out loud','Lots of love','Living on line','Look out loud','gen',0],
+['Elon Musk\'s rocket company is called what?','SpaceX','Blue Origin','NASA','Rocket Lab','gen',0],
+['Which toy from Pop Mart went viral in 2025?','Labubu','Furby','Squishmallow','Beanie Baby','pop',0],
+['Who sings "Espresso"?','Sabrina Carpenter','Olivia Rodrigo','Dua Lipa','Doja Cat','pop',0],
+['Which Lebanese singer is famous for her morning songs across the Arab world?','Fairuz','Nancy Ajram','Elissa','Haifa Wehbe','arab',0],
+['Which Egyptian soccer star played 9 years at Liverpool?','Mohamed Salah','Riyad Mahrez','Achraf Hakimi','Hakim Ziyech','arab',0],
+['What does "Habibi" mean?','My love / my dear','Hello','Thank you','Let\'s go','arab',0],
+['What does "Yalla" mean?','Let\'s go / hurry up','Goodbye','Delicious','Be careful','arab',0],
+['What is the line dance at Arab weddings called?','Dabke','Salsa','Hora','Tango','arab',0],
+['Petra, the city carved in pink rock, is in which country?','Jordan','Egypt','Lebanon','Saudi Arabia','arab',0],
+['Which Arab country hosted the 2022 World Cup?','Qatar','UAE','Saudi Arabia','Morocco','arab',0],
+['Baghdad is the capital of which country?','Iraq','Syria','Iran','Kuwait','arab',0],
+['What is the Arabic word for "peace"?','Salam','Shukran','Habibi','Yalla','arab',0],
+['What do people say before eating, meaning "to your health"?','Sahtein','Mabrook','Khalas','Inshallah','arab',0],
+['Who is said to bring presents on Christmas Eve?','Santa Claus','The Easter Bunny','The Tooth Fairy','Cupid','hol',1],
+['What color is Rudolph\'s nose?','Red','Blue','Gold','Pink','hol',1],
+['What month is Thanksgiving in the US?','November','October','December','September','hol',1],
+['What do people usually do at midnight on New Year\'s Eve?','Count down','Eat cake','Go to sleep','Open presents','hol',1],
+['In the song, how many days of Christmas are there?','12','10','7','25','hol',1],
+['What is the main bird served at Thanksgiving?','Turkey','Chicken','Duck','Goose','hol',1],
+['What do you hang on the door at Christmas?','A wreath','A pumpkin','A flag','A kite','hol',1],
+['Which holiday is famous for pumpkins and costumes?','Halloween','Easter','Valentine\'s Day','Thanksgiving','hol',1],
+['Ramadan ends with which celebration?','Eid al-Fitr','Eid al-Adha','Nowruz','Hanukkah','hol',0],
+['Hanukkah lasts how many nights?','8','7','12','3','hol',0],
+['What do you call a group of lions?','A pride','A pack','A herd','A school','sci',0],
+['What do caterpillars turn into?','Butterflies','Bees','Beetles','Dragonflies','sci',1],
+['Which animal is famous for changing colors?','Chameleon','Frog','Parrot','Gecko','sci',1],
+['Which bird is a symbol of the USA?','Bald eagle','Turkey','Hawk','Owl','gen',1],
+['What is a baby kangaroo called?','Joey','Kit','Calf','Pup','sci',0],
+['Penguins live mostly in which half of the world?','Southern','Northern','Eastern','Western','sci',0],
+['How many teeth does an adult human usually have?','32','28','36','24','sci',0],
+['What shape has 3 sides?','Triangle','Square','Circle','Pentagon','gen',1],
+['What is 7 × 8?','56','54','48','64','gen',1],
+['What is half of 100?','50','25','10','75','gen',1],
+['What is 12 × 12?','144','124','132','156','gen',0],
+['How many cents are in a quarter?','25','20','50','10','gen',1],
+['Which month has the fewest days?','February','April','June','November','gen',1],
+['What color is a school bus in the US?','Yellow','Orange','Red','White','gen',1],
+['What instrument has 88 keys?','Piano','Guitar','Violin','Drums','gen',0],
+['Which is the largest desert in the world (by area)?','Antarctica','Sahara','Gobi','Arabian','geo',0],
+['Which ocean lies between the US and Europe?','Atlantic','Pacific','Indian','Arctic','geo',1],
+['The Eiffel Tower is in which city?','Paris','London','Rome','Berlin','geo',1],
+['Big Ben is in which city?','London','Paris','Dublin','New York','geo',1],
+['The Statue of Liberty was a gift from which country?','France','England','Spain','Italy','geo',0],
+['What is the capital of Italy?','Rome','Milan','Venice','Naples','geo',1],
+['What is the capital of Australia?','Canberra','Sydney','Melbourne','Perth','geo',0],
+['What is the capital of Turkey?','Ankara','Istanbul','Izmir','Antalya','geo',0],
+['Which US city is famous for the Golden Gate Bridge?','San Francisco','Los Angeles','Seattle','San Diego','geo',1],
+['Which country is shaped like a boot?','Italy','Spain','Greece','Portugal','geo',1],
+['What is the currency of Japan?','Yen','Won','Yuan','Rupee','geo',0],
+['What is the currency of the UK?','Pound','Euro','Dollar','Franc','geo',0],
+['Which city is home to the Burj Khalifa?','Dubai','Abu Dhabi','Doha','Riyadh','arab',0],
+['What does GPS stand for?','Global Positioning System','Global Phone Signal','General Position Sensor','Geo Path Service','gen',0],
+['Which is NOT a primary color (paint)?','Green','Red','Blue','Yellow','gen',1],
+['What is frozen water called?','Ice','Steam','Fog','Dew','sci',1],
+['Which planet has the biggest rings?','Saturn','Jupiter','Uranus','Mars','sci',1],
+['What is the name of our galaxy?','Milky Way','Andromeda','Orion','Solar Way','sci',0],
+['Which metal is liquid at room temperature?','Mercury','Iron','Lead','Silver','sci',0],
+['What is the chemical symbol for gold?','Au','Ag','Go','Gd','sci',0],
+['Which coffee drink is espresso with lots of steamed milk?','Latte','Americano','Espresso shot','Cold brew','food',0],
+['Which country is famous for tacos?','Mexico','Spain','Peru','Argentina','food',1],
+['Which country did croissants become famous in?','France','Italy','Germany','Belgium','food',0],
+['What is the yellow part of an egg called?','Yolk','White','Shell','Albumen','food',1],
+['Which fruit is dried to make raisins?','Grapes','Plums','Figs','Dates','food',1],
+['Popcorn is made from what?','Corn kernels','Rice','Wheat','Beans','food',1],
+['Which Disney princess has a pet tiger named Rajah?','Jasmine','Mulan','Ariel','Belle','pop',0],
+['What is Mickey Mouse\'s girlfriend\'s name?','Minnie','Daisy','Clarabelle','Molly','pop',1],
+['Which famous plumber saves Princess Peach?','Mario','Luigi','Sonic','Link','pop',1],
+['What color is Sonic the Hedgehog?','Blue','Red','Green','Yellow','pop',1],
+['How many Harry Potter books are in the main series?','7','5','8','6','pop',0],
+['Which band sang "Hey Jude"?','The Beatles','Queen','The Rolling Stones','ABBA','pop',0],
+['Which movie has the line "To infinity and beyond"?','Toy Story','Cars','Up','WALL-E','pop',1]
+];
+const TOPICS=[['gen','🧠 General'],['geo','🌍 Geography'],['sci','🔬 Science & animals'],['food','🍕 Food'],['pop','🎬 Pop culture'],['sport','⚽ Sports'],['arab','🌙 Arab world'],['hol','🎄 Holidays']];
+const SH=['▲','◆','●','■'];
+let cfg=LS.get('tg-quiz-cfg',{t:TOPICS.map(t=>t[0]),n:15,s:20});
+$('#topics').innerHTML=TOPICS.map(([k,l])=>`<button class="chip ${cfg.t.includes(k)?'on':''}" data-k="${k}">${l}</button>`).join('')+`<button class="chip ${cfg.kids?'on':''}" id="kidC">🧸 Kid-friendly only</button>`;
+$$('#topics [data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;cfg.t=cfg.t.includes(k)?cfg.t.filter(x=>x!==k):[...cfg.t,k];b.classList.toggle('on');LS.set('tg-quiz-cfg',cfg)});
+$('#kidC').onclick=()=>{cfg.kids=!cfg.kids;$('#kidC').classList.toggle('on',cfg.kids);LS.set('tg-quiz-cfg',cfg)};if(SET_KID&&cfg.kids===undefined){cfg.kids=true;$('#kidC').classList.add('on')}
+[['segN','n'],['segT','s']].forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=+b.dataset.v;LS.set('tg-quiz-cfg',cfg)}}));
+let S=LS.get('tg-quiz',null);const save=()=>LS.set('tg-quiz',S);
+let tick=null;
+$('#bStart').onclick=()=>{if(!cfg.t.length){toast('Pick at least one topic');return}ac();
+ let pool=QB.filter(q=>cfg.t.includes(q[5])&&(!cfg.kids||q[6]));if(pool.length<cfg.n)pool=QB.filter(q=>!cfg.kids||q[6]);
+ const seen=LS.get('tg-quiz-seen',[]);let fresh=pool.filter(q=>!seen.includes(q[0]));if(fresh.length<cfg.n)fresh=pool;
+ const qs=shuffle(fresh).slice(0,cfg.n).map(q=>{const o=shuffle([0,1,2,3]);return{q:q[0],opts:o.map(i=>q[1+i]),c:o.indexOf(0)}});LS.set('tg-quiz-seen',seen.concat(qs.map(q=>q.q)).slice(-120));
+ S={qs,i:-1,phase:'lobby',score:{},streak:{},ans:{},secs:cfg.s,gain:{}};save();$('#setupOv').classList.add('hidden');render();music('chill');waitSpec('Get ready! 🎉','The quiz starts soon. Keep this screen open.')};
+function waitSpec(t,b){if(window.TGB)TGB.ask({k:'msg',key:'wait'+Date.now(),emoji:'⚡',title:t,body:b,title_ar:'استعد! 🎉',body_ar:'ستبدأ المسابقة قريباً'})}
+function players(){return window.TGB?TGB.players():[]}
+async function startQ(){S.i++;if(S.i>=S.qs.length){end();return}S.phase='ready';S.ans={};save();render();SFX.whoosh();music('tense');
+ await sleep(2600);if(S.phase!=='ready')return;S.phase='q';S.t0=Date.now();S.until=S.t0+S.secs*1000;save();render();
+ const q=S.qs[S.i];if(window.TGB)TGB.ask({k:'choice',key:'q'+S.i+'-'+S.t0,id:'q'+S.i,kicker:`Question ${S.i+1} of ${S.qs.length}`,title:q.q,opts:q.opts.map((t,i)=>({t:SH[i]+'  '+t})),colors:1,secs:S.secs,until:S.until});
+ clearInterval(tick);tick=setInterval(()=>{const l=Math.max(0,(S.until-Date.now())/1000),r=$('#qRing');if(r){r.style.setProperty('--p',l/S.secs);r.querySelector('span').textContent=Math.ceil(l);r.classList.toggle('low',l<=5)}if(l<=5&&l>0&&Math.abs(l-Math.round(l))<.06)SFX.tick(l<=3);if(l<=0)reveal()},100)}
+function onIn(name,id,v){if(!S||S.phase!=='q'||id!=='q'+S.i||S.ans[name])return;S.ans[name]={v:+v,t:Date.now()};save();SFX.click();const c=$('#inC');if(c)c.innerHTML=subsHTML(players(),Object.keys(S.ans));
+ const ps=players();if(ps.length&&ps.every(p=>S.ans[p]))setTimeout(reveal,600)}
+function reveal(){if(!S||S.phase!=='q')return;clearInterval(tick);const q=S.qs[S.i];S.gain={};
+ for(const[n,a]of Object.entries(S.ans)){if(a.v===q.c){const left=Math.max(0,S.until-a.t)/(S.secs*1000),st=(S.streak[n]||0)+1;S.streak[n]=st;const g=Math.round(500+500*left)+Math.min(500,(st-1)*100);S.gain[n]=g;S.score[n]=(S.score[n]||0)+g}else S.streak[n]=0}
+ players().forEach(n=>{if(!S.ans[n])S.streak[n]=0;if(S.score[n]==null)S.score[n]=0});
+ S.phase='rev';save();render();music('play');const any=Object.keys(S.gain).length;any?SFX.ok():SFX.sad();
+ if(window.TGB)TGB.askEach(Object.fromEntries(players().map(n=>{const a=S.ans[n],ok=a&&a.v===q.c;return[n,{k:'msg',key:'r'+S.i+n,emoji:ok?'✅':a?'❌':'⏰',title:ok?`+${S.gain[n]} points!`:a?'Not this time':'Too slow!',body:`Answer: ${q.opts[q.c]}${ok&&S.streak[n]>1?`\n🔥 ${S.streak[n]} in a row!`:''}`,color:ok?'#3ddc84':'#ff4d4d'}]})))}
+function showBoard(){S.phase='board';save();render();SFX.whoosh()}
+function ranked(){return Object.entries(S.score).sort((a,b)=>b[1]-a[1])}
+function render(){if(!S)return;const st=$('#stage'),q=S.qs[S.i];
+ if(S.phase==='lobby'){st.innerHTML=lobbyHTML('⚡ Join Quiz Race!',`${S.qs.length} questions · ${S.secs} seconds each`)+`<div class="ctl"><button class="bb gold big" id="bGo" ${players().length?'':'disabled'}>▶ START (${players().length} player${players().length===1?'':'s'})</button></div>`;$('#bGo').onclick=startQ;return}
+ if(S.phase==='ready'){st.innerHTML=`<div class="qnum">QUESTION ${S.i+1} OF ${S.qs.length}</div><div class="qtext popIn">${esc(q.q)}</div><div class="status">Get ready... 👀</div>`;return}
+ if(S.phase==='q'||S.phase==='rev'){const tot=Object.keys(S.ans).length||1,cnt=[0,1,2,3].map(i=>Object.values(S.ans).filter(a=>a.v===i).length);
+  st.innerHTML=`<div class="qnum">QUESTION ${S.i+1} OF ${S.qs.length}</div><div class="qtext">${esc(q.q)}</div>
+  <div class="answers">${q.opts.map((t,i)=>`<div class="ans k${i} ${S.phase==='rev'?(i===q.c?'yes':'no'):''}"><span class="sh">${SH[i]}</span>${esc(t)}<span class="ct">${S.phase==='rev'?cnt[i]+' 👤':''}</span>${S.phase==='rev'?`<div class="bar" style="width:${cnt[i]/tot*100}%"></div>`:''}</div>`).join('')}</div>
+  ${S.phase==='q'?`<div class="row"><div class="ring" id="qRing"><span>${S.secs}</span></div><div id="inC">${subsHTML(players(),Object.keys(S.ans))}</div></div><div class="ctl"><button class="bb ghost" id="bStop">⏭ Stop the clock</button></div>`:
+  `<div class="status">${Object.keys(S.gain).length?`✅ ${Object.keys(S.gain).length} got it right! Fastest: <b>${esc(Object.entries(S.ans).filter(([n,a])=>a.v===q.c).sort((a,b)=>a[1].t-b[1].t)[0][0])}</b> ⚡`:'😬 Nobody got it!'}</div><div class="ctl"><button class="bb gold big" id="bB">📊 LEADERBOARD</button></div>`}`;
+  const b=$('#bStop');if(b)b.onclick=reveal;const bb=$('#bB');if(bb)bb.onclick=showBoard;hostView();return}
+ if(S.phase==='board'){const r=ranked().slice(0,8);st.innerHTML=`<div class="bigT" style="font-size:5vh">📊 LEADERBOARD</div><div class="board">${r.map(([n,p],i)=>`<div class="lbr ${i===0?'top':''}" style="animation-delay:${i*.08}s"><div class="rk">${['🥇','🥈','🥉'][i]||i+1}</div>${avHTML(n)}<div>${esc(n)}</div><div class="stk">${(S.streak[n]||0)>1?'🔥'+S.streak[n]:''}</div><div><span class="gn">${S.gain[n]?'+'+S.gain[n]:''}</span> <span class="pt">${p.toLocaleString()}</span></div></div>`).join('')}</div><div class="ctl"><button class="bb gold big" id="bN">${S.i+1>=S.qs.length?'🏆 FINAL RESULTS':'NEXT QUESTION ➜'}</button></div>`;$('#bN').onclick=startQ;hostView()}}
+function hostView(){if(!window.TGB||!S)return;const q=S.qs[Math.max(0,S.i)];TGB.host({title:'⚡ Quiz Race',q:S.phase==='lobby'?'Lobby: '+players().length+' players':q.q,a:S.phase==='lobby'?'':q.opts[q.c],note:'Phones answer by themselves. Use the buttons to move on.',actions:S.phase==='lobby'?[{id:'go',label:'▶ Start',k:'y'}]:S.phase==='q'?[{id:'stop',label:'⏭ Stop clock',k:'no'}]:[{id:'next',label:'➜ Next',k:'y'}],noBuzzBtns:true})}
+function end(){S.phase='end';save();clearInterval(tick);music('party');const r=ranked();try{tgNight('Quiz Race',tgPlaces(r.map(([n,p])=>({names:[n],v:p}))))}catch(e){}
+ const top=r.slice(0,3),md=['🥇','🥈','🥉'],h=[46,36,28],vis=[top[1],top[0],top[2]].filter(Boolean);
+ $('#endWrap').innerHTML=`<div class="bigT">🏆 ${r[0]?esc(r[0][0])+' WINS!':'GAME OVER'}</div><div class="podium">${vis.map(t=>{const k=top.indexOf(t);return`<div class="pod" style="--tc:${['#ffcc3d','#c0c0c0','#cd7f32'][k]};height:${h[k]}vh;animation-delay:${(2-k)*.3}s"><div class="md">${md[k]}</div><div style="margin:0 auto">${avHTML(t[0],'av')}</div><h4>${esc(t[0])}</h4><div class="s">${t[1].toLocaleString()}</div></div>`}).join('')}</div><div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');
+ if(window.FXX&&r[0])FXX.bigWin('🏆 '+r[0][0].toUpperCase(),r[0][1].toLocaleString()+' pts','Quiz Race champion!');else SFX.win();
+ if(window.TGB)TGB.askEach(Object.fromEntries(players().map(n=>{const k=r.findIndex(x=>x[0]===n);return[n,{k:'msg',key:'end'+n,emoji:['🥇','🥈','🥉'][k]||'🎉',title:`You finished #${k+1}!`,body:`${(S.score[n]||0).toLocaleString()} points`}]})));
+ $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill');if(window.TGB)TGB.clearUI()}}
+if(window.TGB)TGB.init({game:'Quiz Race',names:phoneNames,onInput:onIn,onJoin:()=>{if(S&&S.phase==='lobby'){render();waitSpec('Get ready! 🎉','The quiz starts soon. Keep this screen open.')}},onAct:id=>{if(!S)return;if(id==='go'&&S.phase==='lobby'&&players().length)startQ();else if(id==='stop')reveal();else if(id==='next'){if(S.phase==='rev')showBoard();else if(S.phase==='board')startQ()}}});
+setInterval(()=>{if(S&&S.phase==='lobby')render()},3000);
+shellInit({game:'Quiz Race',style:'pop',rain:['⚡','⭐','🧠','✨'],onNew:()=>{clearInterval(tick);S=null;save();$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill');if(window.TGB)TGB.clearUI()}});
+if(S){$('#setupOv').classList.add('hidden');if(S.phase==='end')end();else{if(S.phase==='q'||S.phase==='ready'){S.i--;S.phase='board';if(S.i<0){S.i=-1;S.phase='lobby'}}render()}}
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%97%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Traitors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Cinzel:wght@600;900&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>
+:root{--bgA:#3a0d1a;--bgB:#14060c;--blood:#b3123a;--fc:'Cinzel',Georgia,serif}
+#bg{background:radial-gradient(ellipse at 50% 120%,#5a1222 0%,#22070f 45%,#07020a 85%)!important}
+body.night #bg{background:radial-gradient(ellipse at 50% 0%,#1b2350 0%,#0a0d22 50%,#020208 90%)!important}
+.title{font-family:var(--fc)!important;letter-spacing:.12em;background:linear-gradient(180deg,#fff,#e8c37a 50%,#a8741d)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.dr{font-family:var(--fc);font-weight:900;letter-spacing:.06em}
+.big1{font-family:var(--fc);font-weight:900;font-size:8vh;text-align:center;line-height:1.05;color:#f3d38a;text-shadow:0 0 4vh rgba(232,195,122,.45),0 .6vh 0 rgba(0,0,0,.6)}
+.sub1{font-size:2.8vh;text-align:center;opacity:.9;max-width:80vw;line-height:1.4}
+.hostLine{position:fixed;left:50%;bottom:2vh;transform:translateX(-50%);max-width:80vw;padding:1vh 2vw;border-radius:2vh;background:rgba(0,0,0,.6);border:.2vh solid rgba(232,195,122,.4);font-size:1.9vh;text-align:center;z-index:5}
+.hostLine b{color:#e8c37a;letter-spacing:.15em;font-size:1.5vh;display:block}
+.circle{display:flex;flex-wrap:wrap;gap:1.6vh 1.6vw;justify-content:center;max-width:92vw}
+.pc{width:13vh;display:flex;flex-direction:column;align-items:center;gap:.6vh;font-weight:700;font-size:2vh;text-align:center;transition:.5s}
+.pc .av{width:10vh;height:10vh;font-size:4.4vh;border:.4vh solid #e8c37a;box-shadow:0 0 2vh rgba(232,195,122,.35)}
+.pc.dead{opacity:.35;filter:grayscale(1)}.pc.dead .av{border-color:#555}
+.pc .tag{font-size:1.5vh;padding:.2vh .8vh;border-radius:1vh;background:rgba(0,0,0,.5)}
+.pc.T .tag{background:var(--blood)}.pc.F .tag{background:#1f6b3a}
+.pc.hide{opacity:0;transform:scale(.6)}
+.pc.v{animation:popIn .5s cubic-bezier(.3,1.6,.5,1)}
+.pot{font-family:var(--fc);font-weight:900;font-size:3vh;color:#f3d38a;display:flex;align-items:center;gap:.8vw;padding:.8vh 1.6vw;border-radius:3vh;background:rgba(0,0,0,.45);border:.25vh solid rgba(232,195,122,.5)}
+.bar{display:flex;gap:1.4vw;justify-content:center;align-items:center;flex-wrap:wrap}
+.votes{display:flex;flex-direction:column;gap:1vh;width:min(900px,90vw)}
+.vr{display:flex;align-items:center;gap:1.4vw;font-size:3vh;font-weight:700;padding:1vh 1.6vw;border-radius:1.6vh;background:rgba(255,255,255,.06);animation:popIn .5s}
+.vr .ar{color:#e8c37a;font-size:3.4vh}
+.tally{display:flex;gap:2vw;justify-content:center;flex-wrap:wrap}.tally div{font-family:var(--fc);font-weight:900;font-size:3vh;padding:1vh 2vw;border-radius:2vh;background:rgba(179,18,58,.35);border:.25vh solid var(--blood)}
+.role{font-family:var(--fc);font-weight:900;font-size:13vh;text-align:center;animation:roleIn 1s cubic-bezier(.3,1.5,.5,1)}
+.role.T{color:#ff3b5c;text-shadow:0 0 6vh rgba(255,40,80,.7)}.role.F{color:#5cf09a;text-shadow:0 0 6vh rgba(60,220,130,.6)}
+@keyframes roleIn{from{transform:scale(3);opacity:0;filter:blur(2vh)}}
+.mission{max-width:min(1100px,90vw);text-align:center;padding:4vh 4vw;border-radius:3vh;background:linear-gradient(180deg,rgba(232,195,122,.15),rgba(0,0,0,.3));border:.4vh solid #e8c37a}
+.mission .mt{font-family:var(--fc);font-weight:900;font-size:5.4vh;color:#f3d38a}.mission .md{font-size:3.2vh;margin-top:1.4vh;line-height:1.4}
+.pickRow{display:flex;flex-wrap:wrap;gap:.8vh .6vw;justify-content:center}.pickRow button{font:700 2vh var(--fb);padding:.8vh 1.4vw;border-radius:2vh;background:rgba(255,255,255,.12);color:#fff}
+.bb.blood{background:linear-gradient(#e0334f,#7d0a1e);box-shadow:0 .6vh 0 #3d0410}
+.candle{position:fixed;bottom:0;width:22vw;height:40vh;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,rgba(255,170,60,.25),transparent 70%);animation:flick 2.6s infinite alternate;z-index:0}
+.candle.l{left:0}.candle.r{right:0;animation-delay:1.3s}@keyframes flick{50%{opacity:.6}100%{opacity:1}}
+</style></head><body><div id="bg"></div><div class="candle l"></div><div class="candle r"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🗡️ THE TRAITORS</div><div class="bar"><div class="pot" id="pot"></div></div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="hostLine hidden" id="hl"></div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🗡️ Set up The Traitors</h2>
+ <p class="hint" style="text-align:center">Everyone needs their phone. Best with 6 to 20 players. The host's phone (🎤) secretly sees every role.</p>
+ <h3>How many Traitors?</h3><div class="seg" id="segT"><button data-v="0" class="on">Auto</button><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></div>
+ <h3>Round table discussion time</h3><div class="seg" id="segD"><button data-v="120">2 min</button><button data-v="180" class="on">3 min</button><button data-v="300">5 min</button></div>
+ <h3>Special roles (Mafia style)</h3><div class="seg" id="segM"><button data-v="1" class="on">On: 🩺 Doctor + 🔎 Detective</button><button data-v="0">Off</button></div>
+ <h3>Recruiting</h3><div class="seg" id="segR"><button data-v="1" class="on">On: a banished Traitor can be replaced</button><button data-v="0">Off</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big blood" id="bStart">ENTER THE CASTLE 🏰</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg">
+ <div class="hc"><span class="i">🎭</span>Phones secretly make a few players <b>Traitors</b>. Everyone else is <b>Faithful</b>. Traitors know each other.</div>
+ <div class="hc"><span class="i">🌙</span><b>Night:</b> Traitors secretly <b>murder</b> one Faithful on their phones. Everyone taps something at night so nobody gets caught by their phone.</div>
+ <div class="hc"><span class="i">☀️</span><b>Breakfast:</b> players "arrive" one by one on the TV. Who didn't make it?</div>
+ <div class="hc"><span class="i">💰</span><b>Mission:</b> the group does a challenge together to add money to the prize pot. Winners may earn a <b>shield</b>.</div>
+ <div class="hc"><span class="i">🔥</span><b>Round table:</b> argue, accuse, then everyone votes on their phone to <b>banish</b> someone. Their role is revealed!</div>
+ <div class="hc"><span class="i">🏆</span>Banish every Traitor and the Faithful win. If Traitors make it to the end (or equal the Faithful), they steal the pot!</div>
+</div><div class="ctr"><button class="bb" id="howClose">GOT IT 🗡️</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script>
+const MISSIONS=[
+['🌍 Around the World','As a group, name <b>15 countries in Africa</b> before time runs out.',60,2000],
+['🎂 Silent Birthdays','Line up in order of birthday (January to December) <b>without talking</b>.',75,2000],
+['🗺️ Capital Crew','Name <b>10 US state capitals</b> together. One mistake and you start the count over.',60,2500],
+['🍕 Topping Frenzy','Name <b>12 pizza toppings</b>. No repeats!',40,1500],
+['🔢 Count to 20','Count from 1 to 20, one person at a time, in no set order. If two people speak at once, start over!',90,2500],
+['🌊 Oceans & Continents','Name all <b>7 continents and 5 oceans</b>.',45,1500],
+['🎵 Hum Along','One player hums 3 famous songs. The group must name <b>all 3</b>.',90,2000],
+['🎬 Movie Marathon','Name <b>10 Disney or Pixar movies</b>. No repeats!',40,1500],
+['🙈 Eyes Closed','With eyes closed, line up by <b>height</b> using only touch. Host checks!',90,2500],
+['🧠 Memory Lane','Host reads 8 random objects once. The group must repeat <b>all 8</b> back.',60,2000],
+['🔤 ABC Animals','Name an animal for every letter from <b>A to M</b>, in order.',75,2000],
+['🤸 Statue Squad','Everyone freezes like a statue for <b>45 seconds</b>. Anyone who moves or laughs fails it!',45,1500],
+['⚽ Sports Shout','Name <b>12 different sports</b>.',35,1500],
+['🌶️ Food Around the World','Name a dish from <b>10 different countries</b>.',60,2000],
+['📱 App Attack','Name <b>15 apps</b> on your phones without looking.',45,1500],
+['🎨 Rainbow Run','Bring back something of <b>every rainbow color</b> from around the room.',90,2500]];
+const LINES={
+ roles:['The castle doors close behind you... 🏰','Check your phone. Keep your face still. Trust no one.'],
+ night:['Night falls on the castle. 🌙','Everyone, look at your phone and make your choice. Faithful, play along so the Traitors stay hidden.'],
+ breakfast:['Good morning, players. ☀️','Let\'s see who joins us for breakfast...'],
+ mission:['Today\'s mission is about to begin.','Work together. Every dollar goes into the prize pot... for now. 💰'],
+ table:['Welcome to the round table. 🔥','Someone at this table is lying to you. Speak up. Accuse. Defend.'],
+ vote:['The time for talking is over.','Vote on your phone. Who do you banish?'],
+ end:['The game is over.','Let\'s reveal the truth...']};
+let cfg=LS.get('tg-trait-cfg',{t:0,d:180,r:1,m:1});if(cfg.m==null)cfg.m=1;
+[['segT','t'],['segD','d'],['segR','r'],['segM','m']].forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=+b.dataset.v;LS.set('tg-trait-cfg',cfg)}}));
+let S=LS.get('tg-traitors',null);const save=()=>LS.set('tg-traitors',S);
+let tmr=null;
+const players=()=>window.TGB?TGB.players():[];
+const P=n=>S.ps.find(p=>p.n===n);
+const alive=()=>S.ps.filter(p=>p.alive);
+const aliveT=()=>alive().filter(p=>p.role==='T'),aliveF=()=>alive().filter(p=>p.role==='F');
+function line(k,custom){const l=custom||LINES[k];const e=$('#hl');if(!l){e.classList.add('hidden');return}e.innerHTML=`<b>🎙️ HOST READS</b>${esc(l[0])} ${esc(l[1]||'')}`;e.classList.remove('hidden')}
+$('#bStart').onclick=()=>{ac();S={phase:'lobby',ps:[],pot:0,round:0,nv:{},sus:{},votes:{},rec:false,log:[],mi:shuffle(MISSIONS.map((_,i)=>i)),mc:0,recruit:null};save();$('#setupOv').classList.add('hidden');render();music('chill');idleAll('🏰 Waiting in the castle...','The game begins soon.')};
+function idleAll(t,b){if(!window.TGB)return;TGB.ask({k:'msg',key:'idle'+Date.now(),emoji:'🏰',title:t,body:b})}
+/* ---- peek spec so roles are never left on screen ---- */
+function peekSpec(p,extraTitle,extraBody){const dead=!p.alive;return{k:'choice',key:'peek'+S.round+S.phase+(dead?'d':''),id:'peek',kicker:dead?'👻 You are out':'🏰 The Castle',title:extraTitle||(dead?'You\'re out of the game':'Keep your role secret 🤫'),body:extraBody||(dead?'Stay and watch the drama. You can still send reactions!':'Tap below to peek at your role, then put your phone down.'),opts:[{t:'👁 Peek at my role'}],change:1}}
+function idleRoles(title,body){if(!window.TGB)return;TGB.askEach(Object.fromEntries(S.ps.map(p=>[p.n,peekSpec(p,title,body)])))}
+function roleSpec(p){const tr=S.ps.filter(x=>x.role==='T'&&x.n!==p.n).map(x=>x.n+(x.alive?'':' (out)'));
+ return p.role==='T'?{k:'role',key:'role'+Date.now(),emoji:'🗡️',kicker:'Your secret role',title:'You are a TRAITOR',body:tr.length?'Your fellow Traitors:\n'+tr.join(', '):'You are the only Traitor. Good luck...',extra:'Murder the Faithful at night. Don\'t get banished.',color:'#b3123a'}
+ :{k:'role',key:'role'+Date.now(),emoji:p.sp==='doc'?'🩺':p.sp==='det'?'🔎':'🛡️',kicker:'Your secret role',title:p.sp==='doc'?'You are the DOCTOR':p.sp==='det'?'You are the DETECTIVE':'You are FAITHFUL',body:p.sp==='doc'?'You are Faithful. Each night, secretly protect one player from being murdered.':p.sp==='det'?'You are Faithful. Each night, secretly check one player to learn if they are a Traitor.':'Find the Traitors and banish them at the round table.',extra:p.shield?'🛡️ You hold a shield tonight: you can\'t be murdered.':'',color:'#2e7d32'}}
+function peek(n){const p=P(n);if(!p||!window.TGB)return;TGB.ask(roleSpec(p),[n]);setTimeout(()=>{if(!S)return;const p2=P(n);if(S.phase==='night'||S.phase==='vote'||S.phase==='endgame'||S.phase==='recruitAsk')sendPhase(n);else TGB.ask(peekSpec(p2),[n])},5000)}
+function nT(){const n=S.ps.length;return cfg.t||(n<=5?1:n<=9?2:n<=15?3:4)}
+function assign(){const names=players();if(names.length<4){toast('Need at least 4 players with phones');return}const k=Math.min(nT(),Math.floor((names.length-1)/2));const sh=shuffle(names);
+ S.ps=sh.map((n,i)=>({n,role:i<k?'T':'F',alive:true,shield:false,how:null}));S.ps=shuffle(S.ps);S.startT=k;if(cfg.m){const fs=shuffle(S.ps.filter(p=>p.role==='F'));if(fs.length>=4){fs[0].sp='doc';fs[1].sp='det'}}S.phase='roles';save();render();music('tense');SFX.horn();line('roles');
+ if(window.TGB)TGB.askEach(Object.fromEntries(S.ps.map(p=>[p.n,roleSpec(p)])));setTimeout(()=>{if(S&&S.phase==='roles')idleRoles()},9000)}
+/* ---- NIGHT ---- */
+function startNight(){S.round++;S.phase='night';S.nv={};S.sus={};S.victim=null;S.save=null;S.inv=null;document.body.classList.add('night');save();render();music('tense');SFX.whoosh();line('night');
+ const tr=aliveT(),canRec=cfg.r&&!S.rec&&tr.length<S.startT&&tr.length>0&&aliveF().length>=3;S.recNight=canRec;save();
+ alive().forEach(p=>sendPhase(p.n));S.ps.filter(p=>!p.alive).forEach(p=>TGB&&TGB.ask(peekSpec(p),[p.n]))}
+function sendPhase(n){if(!window.TGB||!S)return;const p=P(n);if(!p||!p.alive){TGB.ask(peekSpec(p||{alive:false}),[n]);return}
+ if(S.phase==='night'){const others=alive().filter(x=>x.n!==n);
+  if(p.role==='T'){const tg=aliveF();TGB.ask({k:'choice',key:'n'+S.round+(S.recNight?'r':''),id:'murder',kicker:'🌙 Night '+S.round,title:S.recNight?'🤝 Choose a Faithful to RECRUIT':'🗡️ Choose your victim',body:S.recNight?'A Traitor was banished. Offer someone a seat with the Traitors. If they refuse, they die.':(aliveT().length>1?'Agree with your fellow Traitors: '+aliveT().filter(x=>x.n!==n).map(x=>x.n).join(', '):'You act alone tonight.'),opts:tg.map(x=>({t:x.n,v:x.n,img:avatarOf(x.n)})),cols:2,change:1},[n])}
+  else if(p.sp==='doc')TGB.ask({k:'choice',key:'n'+S.round,id:'save',kicker:'🌙 Night '+S.round,title:'🩺 Who do you protect tonight?',body:'If the Traitors pick them, they survive. (Not yourself.)',opts:others.map(x=>({t:x.n,v:x.n,img:avatarOf(x.n)})),cols:2,change:1},[n])
+  else if(p.sp==='det')TGB.ask({k:'choice',key:'n'+S.round,id:'inv',kicker:'🌙 Night '+S.round,title:'🔎 Who do you investigate?',body:'You will secretly learn if they are a Traitor.',opts:others.map(x=>({t:x.n,v:x.n,img:avatarOf(x.n)})),cols:2},[n])
+  else TGB.ask({k:'choice',key:'n'+S.round,id:'suspect',kicker:'🌙 Night '+S.round,title:'🕵️ Who do you suspect?',body:'Everyone taps at night so the Traitors stay hidden. Your pick is secret.',opts:others.map(x=>({t:x.n,v:x.n,img:avatarOf(x.n)})),cols:2,change:1},[n])}
+ else if(S.phase==='vote'){const opts=alive().filter(x=>x.n!==n);TGB.ask({k:'choice',key:'v'+S.round+'-'+(S.revote||0),id:'vote',kicker:'🔥 Round table',title:'Who do you banish?',body:S.revote?'Revote! Only the tied players.':'Your vote is revealed on the TV.',opts:(S.revote?opts.filter(x=>S.revote.includes(x.n)):opts).map(x=>({t:x.n,v:x.n,img:avatarOf(x.n)})),cols:2},[n])}
+ else if(S.phase==='endgame')TGB.ask({k:'choice',key:'eg'+S.round,id:'endg',kicker:'⚖️ Endgame',title:'End the game, or banish again?',body:'If ANY Traitor is left when the game ends, the Traitors steal the whole pot!',opts:[{t:'🏁 End the game',v:'end'},{t:'🔥 Banish again',v:'again'}]},[n])
+ else if(S.phase==='recruitAsk'&&n===S.recruit)TGB.ask({k:'choice',key:'ra'+S.round,id:'recruit',emoji:'🤝',kicker:'A secret offer...',title:'The Traitors want YOU',body:'Join them and become a Traitor. Refuse, and you will be murdered tonight.',opts:[{t:'🗡️ Join the Traitors',v:'yes'},{t:'🛡️ Refuse',v:'no'}]},[n])}
+function nightDone(){const tv=aliveT().map(p=>S.nv[p.n]).filter(Boolean),fs=aliveF().filter(p=>!S.sus[p.n]).length;return tv.length===aliveT().length&&fs===0}
+function tally(obj){const c={};Object.values(obj).forEach(v=>c[v]=(c[v]||0)+1);return c}
+function topOf(c){const m=Math.max(...Object.values(c));return Object.keys(c).filter(k=>c[k]===m)}
+function resolveNight(){if(S.phase!=='night')return;const tv={};aliveT().forEach(p=>{if(S.nv[p.n])tv[p.n]=S.nv[p.n]});let tg=Object.keys(tv).length?pick(topOf(tally(tv))):pick(aliveF()).n;
+ if(S.recNight){S.recruit=tg;S.phase='recruitAsk';save();render();sendPhase(tg);return}
+ S.victim=tg;doMorning()}
+function doMorning(){const v=S.victim?P(S.victim):null;S.saved=false;S.docSaved=false;if(v&&(v.shield||S.save===v.n)){S.saved=true;S.docSaved=S.save===v.n&&!v.shield;S.victim=null}else if(v){v.alive=false;v.how='murdered';S.log.push(v.n+' was murdered')}
+ S.ps.forEach(p=>p.shield=false);document.body.classList.remove('night');S.phase='breakfast';save();render();line('breakfast');music('chill');idleRoles();breakfastAnim()}
+async function breakfastAnim(){await sleep(900);const ids=shuffle(alive().map(p=>p.n));for(const n of ids){const e=$(`.pc[data-n="${CSS.escape(n)}"]`);if(e){e.classList.remove('hide');e.classList.add('v');SFX.tick(true)}await sleep(Math.max(500,2600/ids.length))}await sleep(1500);SFX.roll(1800);await sleep(1900);
+ S.phase='morningReveal';save();render();if(S.victim){SFX.sad();if(window.FXX)FXX.loss('🗡️ MURDERED',S.victim,'did not make it to breakfast');checkWin()}else{SFX.win();burst(innerWidth/2,innerHeight/3,120,['🛡️','✨'])}}
+/* ---- MISSION ---- */
+function startMission(){const m=MISSIONS[S.mi[S.mc%S.mi.length]];S.mc++;S.mission=m;S.phase='mission';S.mok=null;save();render();line('mission');music('play');SFX.horn()}
+function missionTimer(){const m=S.mission,r=$('#mRing');if(!r)return;clearInterval(tmr);let left=m[2];const draw=()=>{r.style.setProperty('--p',left/m[2]);r.querySelector('span').textContent=Math.ceil(left);r.classList.toggle('low',left<=5)};draw();
+ tmr=setInterval(()=>{left-=.1;draw();if(left<=5&&left>0&&Math.abs(left-Math.round(left))<.05)SFX.tick(left<=3);if(left<=0){clearInterval(tmr);SFX.buzz();toast('⏰ Time! Did they do it?')}},100)}
+function missionResult(ok){clearInterval(tmr);S.mok=ok;if(ok){S.pot+=S.mission[3];if(window.FXX)FXX.gain(S.mission[3],'💰 ADDED TO THE POT');else SFX.win()}else{SFX.sad()}S.phase='shield';save();render()}
+function giveShield(n){if(n){P(n).shield=true;toast('🛡️ Shield given secretly. (Their phone shows it when they peek.)');SFX.ok()}startTable()}
+/* ---- ROUND TABLE ---- */
+function startTable(){S.phase='table';S.votes={};S.revote=null;save();render();line('table');music('tense');let left=cfg.d;const r=()=>$('#dRing');clearInterval(tmr);
+ tmr=setInterval(()=>{left-=1;const e=r();if(e){e.style.setProperty('--p',left/cfg.d);e.querySelector('span').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');e.classList.toggle('low',left<=15)}if(left<=10&&left>0)SFX.tick(left<=3);if(left<=0){clearInterval(tmr);startVote()}},1000)}
+function startVote(){clearInterval(tmr);S.phase='vote';S.votes={};save();render();line('vote');SFX.horn();alive().forEach(p=>sendPhase(p.n))}
+async function revealVotes(){if(S.phase!=='vote')return;S.phase='tally';save();render();music('off');const order=shuffle(Object.keys(S.votes));const box=$('#votes');
+ for(const n of order){const t=S.votes[n];box.insertAdjacentHTML('beforeend',`<div class="vr">${avHTML(n)}<span>${esc(n)}</span><span class="ar">➜</span>${avHTML(t)}<span>${esc(t)}</span></div>`);SFX.ding();await sleep(1300)}
+ const c=tally(S.votes);$('#tally').innerHTML=Object.entries(c).sort((a,b)=>b[1]-a[1]).map(([n,k])=>`<div>${esc(n)}: ${k}</div>`).join('');await sleep(1800);
+ const top=topOf(c);if(top.length>1&&!S.revote){S.revote=top;S.phase='vote';S.votes={};save();t2('⚖️ A TIE!<small>Revote between '+top.map(esc).join(' & ')+'</small>',3000);render();alive().forEach(p=>sendPhase(p.n));return}
+ S.banished=pick(top);S.phase='banish';save();render();SFX.roll(2600);await sleep(2800);S.phase='banished';const b=P(S.banished);b.alive=false;b.how='banished';S.log.push(b.n+' was banished ('+(b.role==='T'?'Traitor':'Faithful')+')');save();render();
+ if(b.role==='T'){if(window.FXX)FXX.win('🗡️ A TRAITOR!',null,b.n+' was a Traitor!');music('party')}else{if(window.FXX)FXX.loss('🛡️ FAITHFUL',null,b.n+' was innocent...');SFX.sad()}
+ idleRoles();setTimeout(checkWin,3000)}
+function checkWin(){const t=aliveT().length,f=aliveF().length;if(t===0){finish('F');return true}if(t>=f){finish('T');return true}return false}
+function afterBanish(){if(checkWin())return;if(alive().length<=4){S.phase='endgame';S.eg={};save();render();alive().forEach(p=>sendPhase(p.n));SFX.horn();return}startNight()}
+function egResolve(){const vs=Object.values(S.eg);if(vs.length&&vs.every(v=>v==='end')){finish(aliveT().length?'T':'F');return}t2('🔥 Not unanimous!<small>Back to the round table</small>',2400);setTimeout(startTable,2400)}
+function finish(w){clearInterval(tmr);S.phase='end';S.win=w;save();document.body.classList.remove('night');line('end');music('party');
+ const winners=S.ps.filter(p=>w==='T'?p.role==='T':(p.role==='F'&&p.alive)).map(p=>p.n);try{tgNight('Traitors',[winners])}catch(e){}
+ $('#endWrap').innerHTML=`<div class="big1">${w==='T'?'🗡️ THE TRAITORS WIN':'🛡️ THE FAITHFUL WIN'}</div><div class="sub1" style="margin:1vh auto 3vh">${w==='T'?'They lied their way to the end and steal':'Every Traitor was found! The Faithful split'} <b style="color:#f3d38a">${money(S.pot)}</b></div>
+ <div class="circle">${S.ps.map(p=>`<div class="pc ${p.role} ${p.alive?'':'dead'}">${avHTML(p.n)}<div>${esc(p.n)}</div><div class="tag">${p.role==='T'?'🗡️ Traitor':p.sp==='doc'?'🩺 Doctor':p.sp==='det'?'🔎 Detective':'🛡️ Faithful'}${p.how?' · '+p.how:''}</div></div>`).join('')}</div>
+ <div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');if(window.FXX)FXX.bigWin(w==='T'?'🗡️ TRAITORS WIN':'🛡️ FAITHFUL WIN',S.pot,w==='T'?'They steal the pot!':'Split the pot!');
+ if(window.TGB)TGB.askEach(Object.fromEntries(S.ps.map(p=>{const won=winners.includes(p.n);return[p.n,{k:'msg',key:'end'+p.n,emoji:won?'🏆':'💀',title:won?'YOU WIN!':'You lost...',body:(w==='T'?'The Traitors win: ':'The Faithful win: ')+S.ps.filter(x=>x.role==='T').map(x=>x.n).join(', ')+' were the Traitors.',color:won?'#ffcc3d':'#555'}]})));
+ $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');$('#hl').classList.add('hidden');music('chill');if(window.TGB)TGB.clearUI()}}
+/* ---- INPUT ---- */
+function onIn(n,id,v){if(!S)return;const p=P(n);
+ if(id==='peek'){peek(n);return}
+ if(!p||!p.alive)return;
+ if(S.phase==='night'){if(id==='murder'&&p.role==='T')S.nv[n]=v;else if(id==='save'&&p.sp==='doc'&&p.role==='F'){S.save=v;S.sus[n]=v}else if(id==='inv'&&p.sp==='det'&&p.role==='F'){if(S.inv)return;S.inv=v;S.sus[n]=v;const t=P(v);if(t&&window.TGB)TGB.ask({k:'msg',key:'invr'+S.round,emoji:t.role==='T'?'🗡️':'🛡️',kicker:'🔎 Your investigation',title:`${t.n} is ${t.role==='T'?'a TRAITOR!':'FAITHFUL'}`,body:'Keep it secret... or use it wisely at the round table.',color:t.role==='T'?'#b3123a':'#2e7d32'},[n])}else if(id==='suspect')S.sus[n]=v;save();renderNightCount();if(nightDone())setTimeout(resolveNight,1200);return}
+ if(S.phase==='recruitAsk'&&id==='recruit'&&n===S.recruit){S.rec=true;if(v==='yes'){p.role='T';p.sp=null;S.log.push('Someone was recruited');S.victim=null;S.recruited=true}else{S.victim=n;S.recruited=false}save();doMorning();return}
+ if(S.phase==='vote'&&id==='vote'){if(S.revote&&!S.revote.includes(v))return;S.votes[n]=v;save();const c=$('#vin');if(c)c.innerHTML=subsHTML(alive().map(x=>x.n),Object.keys(S.votes));if(alive().every(x=>S.votes[x.n]))setTimeout(revealVotes,1200);return}
+ if(S.phase==='endgame'&&id==='endg'){S.eg[n]=v;save();if(alive().every(x=>S.eg[x.n]))setTimeout(egResolve,800)}}
+function renderNightCount(){const e=$('#nin');if(e)e.textContent=`${Object.keys(S.nv).length+Object.keys(S.sus).length} of ${alive().length} phones have answered`}
+/* ---- RENDER ---- */
+function circle(hideAlive){return`<div class="circle">${S.ps.map(p=>`<div class="pc ${p.alive?'':'dead'} ${hideAlive&&p.alive?'hide':''}" data-n="${esc(p.n)}">${avHTML(p.n)}<div>${esc(p.n)}</div>${!p.alive?`<div class="tag">${p.how==='murdered'?'🗡️ murdered':'🔥 banished'}${p.how==='banished'?' · '+(p.role==='T'?'Traitor':'Faithful'):''}</div>`:''}</div>`).join('')}</div>`}
+function render(){if(!S)return;const st=$('#stage');$('#pot').innerHTML=S.phase==='lobby'?'':`💰 ${money(S.pot)} · 🗡️ ${aliveT().length?'?':'0'} · 👥 ${alive().length}`;let h='';
+ switch(S.phase){
+ case'lobby':h=lobbyHTML('🏰 Enter the castle',`${players().length} player${players().length===1?'':'s'} · Auto picks ${players().length<=5?1:players().length<=9?2:players().length<=15?3:4} Traitor(s)`)+`<button class="bb big blood" id="bGo" ${players().length>=4?'':'disabled'}>🎭 DEAL THE SECRET ROLES</button>`;break;
+ case'roles':h=`<div class="big1">🎭 Roles have been dealt</div><div class="sub1">Look at your phone <b>secretly</b>. Then put it face down. Traitors: keep a straight face. 😐</div>${circle()}<button class="bb big blood" id="bN">🌙 LET NIGHT FALL</button>`;break;
+ case'night':h=`<div class="big1">🌙 Night ${S.round}</div><div class="sub1">${S.recNight?'The Traitors are choosing someone to <b>recruit</b>...':'The Traitors are choosing their victim...'}<br>Everyone: answer on your phone.</div><div class="status" id="nin"></div><div class="ctl" style="display:flex;gap:1vw"><button class="bb ghost" id="bForce">☀️ Skip to morning</button></div>`;break;
+ case'recruitAsk':h=`<div class="big1">🌙 ...</div><div class="sub1">Someone has received a <b>secret offer</b>. Waiting for their answer...</div>`;break;
+ case'breakfast':h=`<div class="big1">☀️ Breakfast</div><div class="sub1">Who will walk through the door?</div>${circle(true)}`;break;
+ case'morningReveal':h=S.victim?`<div class="big1" style="color:#ff6b81">🗡️ ${esc(S.victim)}</div><div class="sub1">was murdered in the night.${S.recruited===false?' They refused to join the Traitors.':''}</div>${circle()}<button class="bb big gold" id="bM">💰 TODAY'S MISSION</button>`:`<div class="big1">✨ Everyone made it!</div><div class="sub1">${S.recruited?'Nobody died... but the Traitors may have <b>recruited</b> someone. 👀':S.docSaved?'🩺 The <b>Doctor</b> saved someone last night!':'A <b>shield</b> saved someone last night! 🛡️'}</div>${circle()}<button class="bb big gold" id="bM">💰 TODAY'S MISSION</button>`;break;
+ case'mission':h=`<div class="mission"><div class="mt">${esc(S.mission[0])}</div><div class="md">${S.mission[1]}</div><div class="status" style="margin-top:1.4vh">Worth <b>${money(S.mission[3])}</b> to the pot</div></div><div style="display:flex;gap:2vw;align-items:center"><div class="ring" id="mRing"><span>${S.mission[2]}</span></div><button class="bb big gold" id="bMS">▶ START THE CLOCK</button></div><div style="display:flex;gap:1vw"><button class="bb ok big" id="bOK">✅ MISSION DONE</button><button class="bb bad big" id="bNO">❌ FAILED</button></div>`;break;
+ case'shield':h=`<div class="big1">${S.mok?'💰 Mission complete!':'😬 Mission failed'}</div><div class="sub1">Pot: <b style="color:#f3d38a">${money(S.pot)}</b>. Host: give a secret 🛡️ shield to the mission MVP? (Only the Faithful can use it.)</div><div class="pickRow">${alive().map(p=>`<button data-sh="${esc(p.n)}">🛡️ ${esc(p.n)}</button>`).join('')}</div><button class="bb big blood" id="bT">🔥 NO SHIELD · ROUND TABLE</button>`;break;
+ case'table':h=`<div class="big1">🔥 The Round Table</div><div class="sub1">Discuss. Accuse. Defend yourself. Who is a Traitor?</div>${circle()}<div style="display:flex;gap:2vw;align-items:center"><div class="ring" id="dRing" style="width:16vh;height:16vh"><span style="font-size:3.6vh">${Math.floor(cfg.d/60)}:${String(cfg.d%60).padStart(2,'0')}</span></div><button class="bb big blood" id="bV">🗳️ VOTE NOW</button></div>`;break;
+ case'vote':h=`<div class="big1">🗳️ Vote on your phone</div><div class="sub1">${S.revote?'Revote between <b>'+S.revote.map(esc).join(' & ')+'</b>':'Who do you banish?'}</div><div id="vin">${subsHTML(alive().map(x=>x.n),Object.keys(S.votes))}</div><button class="bb ghost" id="bRV">📜 Reveal votes now</button>`;break;
+ case'tally':h=`<div class="big1" style="font-size:6vh">📜 The votes</div><div class="votes" id="votes"></div><div class="tally" id="tally"></div>`;break;
+ case'banish':h=`<div class="big1">${avHTML(S.banished)} ${esc(S.banished)}</div><div class="sub1">You have been banished. Please stand and tell everyone...<br><b>are you a Traitor, or are you Faithful?</b></div>`;break;
+ case'banished':{const b=P(S.banished);h=`<div class="sub1" style="font-size:3.4vh">${esc(b.n)} was...</div><div class="role ${b.role}">${b.role==='T'?'🗡️ A TRAITOR':'🛡️ FAITHFUL'}</div><button class="bb big gold" id="bAB">➜ CONTINUE</button>`;break}
+ case'endgame':h=`<div class="big1">⚖️ The Endgame</div><div class="sub1">Only ${alive().length} remain. Vote on your phone: <b>end the game</b> (must be unanimous) or <b>banish again</b>?<br>If any Traitor is still here when it ends, they steal everything.</div>${circle()}`;break;
+ case'end':h=`<div class="big1">🏁 Game over</div>`;break}
+ st.innerHTML=h;const on=(id,f)=>{const e=$('#'+id);if(e)e.onclick=f};
+ on('bGo',assign);on('bN',startNight);on('bForce',resolveNight);on('bM',startMission);on('bMS',()=>{missionTimer();$('#bMS').disabled=true});on('bOK',()=>missionResult(true));on('bNO',()=>missionResult(false));on('bT',()=>giveShield(null));on('bV',startVote);on('bRV',revealVotes);on('bAB',afterBanish);
+ $$('[data-sh]').forEach(b=>b.onclick=()=>giveShield(b.dataset.sh));renderNightCount();hostView()}
+function hostView(){if(!window.TGB||!S)return;const acts={roles:[{id:'night',label:'🌙 Night',k:'y'}],night:[{id:'morning',label:'☀️ Morning',k:'y'}],morningReveal:[{id:'mission',label:'💰 Mission',k:'y'}],mission:[{id:'mok',label:'✅ Done',k:'ok'},{id:'mno',label:'❌ Failed',k:'no'}],shield:[{id:'table',label:'🔥 Round table',k:'y'}],table:[{id:'vote',label:'🗳️ Vote now',k:'y'}],vote:[{id:'reveal',label:'📜 Reveal',k:'y'}],banished:[{id:'cont',label:'➜ Continue',k:'y'}]}[S.phase]||[];
+ TGB.host({title:'🗡️ Traitors · secret host view',q:'Pot '+money(S.pot)+' · Round '+S.round+' · '+S.phase,a:S.ps.filter(p=>p.role==='T').map(p=>(p.alive?'🗡️ ':'☠️ ')+p.n).join(', ')||'Roles not dealt yet',list:S.ps.map(p=>({t:(p.alive?'':'☠️ ')+p.n+(p.shield?' 🛡️':'')+(p.sp==='doc'?' 🩺':p.sp==='det'?' 🔎':''),p:p.role==='T'?'TRAITOR':'Faithful',on:!p.alive})),note:S.phase==='night'?`Traitor picks: ${Object.entries(S.nv).map(([a,b])=>a+'➜'+b).join(', ')||'none yet'}`:'Read the host lines on the TV for drama 🎙️',actions:acts,noBuzzBtns:true})}
+if(window.TGB)TGB.init({game:'Traitors',names:phoneNames,onInput:onIn,onJoin:n=>{if(!S)return;if(S.phase==='lobby'){render();idleAll('🏰 Waiting in the castle...','The game begins soon.')}else if(P(n))setTimeout(()=>{['night','vote','endgame','recruitAsk'].includes(S.phase)?sendPhase(n):TGB.ask(peekSpec(P(n)),[n])},300)},
+ onAct:id=>{if(!S)return;({night:()=>S.phase==='roles'&&startNight(),morning:()=>S.phase==='night'&&resolveNight(),mission:()=>S.phase==='morningReveal'&&startMission(),mok:()=>S.phase==='mission'&&missionResult(true),mno:()=>S.phase==='mission'&&missionResult(false),table:()=>S.phase==='shield'&&giveShield(null),vote:()=>S.phase==='table'&&startVote(),reveal:()=>S.phase==='vote'&&revealVotes(),cont:()=>S.phase==='banished'&&afterBanish()}[id]||(()=>{}))()}});
+setInterval(()=>{if(S&&S.phase==='lobby')render()},3000);
+shellInit({game:'Traitors',style:'spooky',onNew:()=>{clearInterval(tmr);S=null;save();document.body.classList.remove('night');$('#hl').classList.add('hidden');$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill');if(window.TGB)TGB.clearUI()}});
+if(S){$('#setupOv').classList.add('hidden');if(S.phase==='end')finish(S.win);else{if(S.phase==='tally'){S.phase='vote'}if(S.phase==='breakfast')S.phase='morningReveal';if(S.phase==='banish'){S.phase='banished'}if(S.phase==='night')document.body.classList.add('night');render();setTimeout(()=>{if(!S)return;if(['night','vote','endgame'].includes(S.phase))alive().forEach(p=>sendPhase(p.n));else if(S.phase!=='lobby')idleRoles()},1500)}}
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

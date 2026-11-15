@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Night Recap</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><link rel="stylesheet" href="tg-shell.css">
+<style>html,body{overflow:auto!important}#app{height:auto;min-height:100vh}.stage{justify-content:flex-start;padding-bottom:6vh}
+.champ{text-align:center}.champ .av{width:24vh;height:24vh;font-size:10vh;border:1vh solid #ffcc3d;box-shadow:0 0 6vh rgba(255,204,61,.7)}
+.crown{font-size:12vh;line-height:.6;animation:popIn 1s}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4vh 1.2vw;width:min(1500px,94vw)}
+.cardR{background:rgba(255,255,255,.08);border-radius:2vh;padding:1.6vh 1.4vw;border:.25vh solid rgba(255,204,61,.35)}.cardR h4{font-family:var(--fd);color:var(--gold);font-size:2.2vh;margin-bottom:.8vh}
+.row{display:flex;align-items:center;gap:.8vw;font-size:2vh;margin:.4vh 0}.row b{margin-left:auto;font-family:var(--fd)}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app"><div class="hdr"><div class="title">📜 GAME NIGHT RECAP</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button></div></div><div class="stage" id="stage"></div></div>
+<script src="tg-shell.js"></script><script>
+const N=LS.get('tg-night',{log:[]}),AV=LS.get('tg-avatars',{}),PR=LS.get('tg-profiles',{});
+const av=n=>AV[n]?`<img class="av" src="${AV[n]}">`:`<span class="av avL">${esc((n[0]||'?').toUpperCase())}</span>`;
+const t={},wins={},games={};N.log.forEach(e=>{games[e.game]=games[e.game]||[];Object.entries(e.aw).forEach(([n,p])=>{t[n]=(t[n]||0)+p;if(p>=5)wins[n]=(wins[n]||0)+1;games[e.game].push([n,p])})});
+const ranked=Object.entries(t).sort((a,b)=>b[1]-a[1]);const date=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const st=$('#stage');
+if(!ranked.length){st.innerHTML=`<div class="bigT">No games scored yet!</div><div class="status">Play some games and come back for the recap. 🎮</div>`}
+else{const[c,cp]=ranked[0];const most=Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
+ st.innerHTML=`<div class="kicker">${esc(date)}</div><div class="champ"><div class="crown">👑</div>${av(c)}<div class="bigT">${esc(c.toUpperCase())}</div><div class="status">GAME NIGHT CHAMPION · ${cp} points</div></div>
+ <div class="cards"><div class="cardR"><h4>🏆 Final standings</h4>${ranked.map(([n,p],i)=>`<div class="row">${['🥇','🥈','🥉'][i]||i+1} ${av(n).replace('class="av','style="width:3.4vh;height:3.4vh;font-size:1.6vh" class="av')} ${esc(n)}<b>${p}</b></div>`).join('')}</div>
+ <div class="cardR"><h4>🎮 Game winners</h4>${Object.entries(games).map(([g,arr])=>{const top=arr.filter(x=>x[1]>=5).map(x=>x[0]);return`<div class="row">${esc(g)}<b style="font-family:var(--fb)">${top.length?top.map(esc).join(', '):'—'}</b></div>`}).join('')}</div>
+ <div class="cardR"><h4>✨ Night stats</h4><div class="row">🎮 Games played<b>${Object.keys(games).length}</b></div><div class="row">👥 Players who scored<b>${ranked.length}</b></div>${most?`<div class="row">🥇 Most wins<b style="font-family:var(--fb)">${esc(most[0])} (${most[1]})</b></div>`:''}<div class="row">🧒 Kids playing<b>${Object.values(PR).filter(p=>p.a==='kid').length}</b></div><div class="row">💯 Total points handed out<b>${Object.values(t).reduce((a,b)=>a+b,0)}</b></div></div></div>
+ <div class="hint" style="font-size:1.8vh">📸 Tip: take a screenshot of this page and send it to the group chat!</div>`;
+ setTimeout(()=>{if(window.FXX)FXX.bigWin('👑 '+c.toUpperCase(),cp+' pts','Game Night Champion!');else burst()},600)}
+shellInit({game:'Recap',style:'pop'});
+</script><script src="tg-depth.js"></script><script src="tg-night.js"></script></body></html>

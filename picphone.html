@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%9E%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Picture Phone</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#00838f;--bgB:#012f33}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">📞 PICTURE PHONE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>📞 Picture Phone</h2>
+ <h3>Steps per chain</h3><div class="seg" id="segS"><button data-v="4" class="">4 (quick)</button><button data-v="6" class="on">6</button><button data-v="8" class="">8 (long)</button></div><h3>Drawing time</h3><div class="seg" id="segD"><button data-v="45" class="">45s</button><button data-v="60" class="on">60s</button><button data-v="80" class="">80s</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">✍️</span>Everyone writes a <b>secret phrase</b> (or gets a random one).</div><div class="hc"><span class="i">🎨</span>Your phrase goes to the next person, who has to <b>draw</b> it.</div><div class="hc"><span class="i">🤔</span>The drawing goes to the next person, who <b>guesses</b> what it is.</div><div class="hc"><span class="i">🔁</span>Draw, guess, draw, guess... the message gets more and more scrambled!</div><div class="hc"><span class="i">📺</span>At the end, the TV reveals every chain step by step. Prepare to laugh. 😂</div><div class="hc"><span class="i">🗳️</span>Vote for the funniest chain. Everyone in that chain gets <b>+100</b>.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const STARTS=["A cat stuck in a tree","Grandpa doing karate","A shark eating pizza","The Eiffel Tower on fire","A wedding on the moon","A dog that can fly","Mom yelling at the TV","A snowman melting","A camel in a traffic jam","A baby driving a bus","Spaghetti monster","A ninja at the grocery store","A cow on a trampoline","An exploding birthday cake","A fish in a business suit","Breakfast in bed gone wrong","A dragon at the dentist","Superman doing laundry","A haunted refrigerator","Dancing tacos"];
+let cfg=LS.get('tg-pp-cfg',{s:6,d:60});segs(cfg,'tg-pp-cfg',[['segS','s'],['segD','d']]);
+PG.init({key:'tg-pp',game:'Picture Phone',title:'📞 Picture Phone',sub:'Scan to join! Draw, guess, draw, guess...',min:3,style:'funk',rain:['📞','🎨','😂']});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());const n=ps.length,steps=Math.min(cfg.s,n);
+ const st=shuffle(STARTS);
+ const first=await PG.collect({id:'s',secs:45,who:ps,title:`<div class="prompt popIn">✍️ Write a secret phrase for someone to draw!</div>`,sub:'Something fun to draw, like "a cat stuck in a tree"',spec:(nm)=>({k:'text',title:'Write something to draw',body:'Keep it short and silly! (Leave it to us: we fill one in if time runs out)',ph:st[ps.indexOf(nm)%st.length],max:50,btn:'Send ✍️'})});
+ const chains=ps.map((p,i)=>[{t:'text',v:(first[p]&&String(first[p]).trim())||st[i%st.length],by:p}]);
+ for(let s=1;s<steps;s++){const draw=s%2===1;const workOn={};ps.forEach((p,i)=>workOn[p]=(i-s+n*10)%n);
+  const subs=await PG.collect({id:'x'+s,secs:draw?cfg.d:35,who:ps,title:`<div class="kicker">STEP ${s+1} OF ${steps}</div><div class="prompt popIn">${draw?'🎨 Draw what your phone says!':'🤔 Guess what the drawing is!'}</div>`,sub:draw?'Draw it!':'Type your best guess',
+   spec:p=>{const prev=chains[workOn[p]][s-1];return draw?{k:'draw',kicker:'Draw this:',title:prev.v}:{k:'text',kicker:'What is this drawing?',title:'Guess the drawing below 👇',body:'',ph:'I think it\'s...',max:50,btn:'Send 🤔',img:prev.v}}});
+  ps.forEach(p=>{const c=chains[workOn[p]];const v=subs[p];c.push(draw?{t:'img',v:(v&&String(v).startsWith('data:'))?v:'',by:p}:{t:'text',v:(v&&String(v).trim())||'(no guess 🤷)',by:p})})}
+ PG.wait('Reveal time! 😂','Look at the TV 👀','📺');music('play');
+ for(let c=0;c<chains.length;c++){const ch=chains[c];PG.stage(`<div class="kicker">CHAIN ${c+1} OF ${chains.length} · started by ${esc(ch[0].by)}</div><div id="chain" style="display:flex;flex-wrap:wrap;gap:1.4vh 1.2vw;justify-content:center;align-items:center;max-width:95vw"></div>`);
+  for(let k=0;k<ch.length;k++){const x=ch[k];$('#chain').insertAdjacentHTML('beforeend',`${k?'<span style="font-size:4vh">➜</span>':''}<div class="ansC" style="width:${x.t==='img'?'min(20vw,260px)':'auto'};max-width:26vw;text-align:center">${x.t==='img'?(x.v?`<img class="drw" src="${x.v}">`:'<div style="font-size:6vh">🤷</div>'):`<b style="font-size:2.8vh">"${esc(x.v)}"</b>`}<div class="by" style="justify-content:center">${avHTML(x.by)}${esc(x.by)}</div></div>`);SFX.ding();await PG.next(k+1<ch.length?'NEXT STEP ➜':(c+1<chains.length?'NEXT CHAIN ➜':'🗳️ VOTE'))}}
+ PG.stage(`<div class="prompt">🗳️ Which chain was the funniest?</div>${answersGrid(chains.map((ch,i)=>`<span class="num">${i+1}</span>"${esc(ch[0].v)}" ➜ "${esc(ch[ch.length-1].t==='text'?ch[ch.length-1].v:'(drawing)')}"`))}<div id="pgVotes"></div>`);
+ const votes=await PG.vote({id:'fv',secs:30,title:'Funniest chain?',opts:()=>chains.map((ch,i)=>({t:`${i+1}. "${ch[0].v}"`,v:i}))});
+ const cnt=chains.map(()=>0);Object.values(votes).forEach(v=>cnt[+v]++);const mx=Math.max(...cnt);chains.forEach((ch,i)=>{if(mx&&cnt[i]===mx)[...new Set(ch.map(x=>x.by))].forEach(p=>PG.add(p,100))});
+ ps.forEach(p=>PG.add(p,0));PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

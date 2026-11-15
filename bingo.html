@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script>
-<meta charset="utf-8">
+<meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%B1%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Party Bingo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&family=Patrick+Hand&display=swap">
@@ -1042,7 +1042,10 @@ const om=milestone;milestone=function(){om.apply(this,arguments);const n=S.calle
 window.tgSurprise=()=>{last=-99;const r=Math.random;Math.random=()=>0;try{milestone()}finally{Math.random=r}};})();</script><script>/*TGBINGO*/(function(){
 const oc=crown;crown=function(){const raw=($('winName').value.trim()||'').slice(0,60);oc.apply(this,arguments);try{const names=raw.split(/\s*(?:,|&|\band\b|\+)\s*/i).map(x=>x.trim()).filter(Boolean);if(names.length&&window.tgNight)tgNight('Bingo',[[],names],'bingo-'+S.cur+'-'+Date.now())}catch(e){}};
 const w=$('winName');if(w&&window.tgRoster){const dl=document.createElement('datalist');dl.id='tgRosterDL';dl.innerHTML=tgRoster().map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');document.body.appendChild(dl);w.setAttribute('list','tgRosterDL')}
-})();</script><script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
+})();</script><script src="buzzer.js?v=1794800000"></script>
+<script>
+(function(){if(!window.TGB)return;TGB.init({game:'Party Bingo',names:()=>[...new Set([...tgRoster(),...TGB.players()])],onJoin:()=>{}});TGB.ask({k:'msg',key:'bingo',emoji:'🎱',title:'Bingo time!',body:'Mark your cardboard card and shout BINGO! Send reactions from here 👇'})})();</script>
+<script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){
 if(window.TGDEPTH)return;window.TGDEPTH=1;
 let off=false;try{off=localStorage.getItem('tg-3d')==='0'||localStorage.getItem('tg-lite')==='1'}catch(e){}
@@ -1087,5 +1090,5 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
-</script></body>
+</script><script src="tg-night.js"></script></body>
 </html>

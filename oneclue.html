@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%98%9D%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>One Clue</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#00897b;--bgB:#022b26}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">☝️ ONE CLUE</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>☝️ One Clue</h2>
+ <h3>Rounds</h3><div class="seg" id="segR"><button data-v="5" class="">5</button><button data-v="8" class="on">8</button><button data-v="13" class="">13 (classic)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🙈</span>One player is the <b>guesser</b>. Everyone else sees a secret word on their phone.</div><div class="hc"><span class="i">☝️</span>Each helper types <b>ONE word</b> as a clue.</div><div class="hc"><span class="i">❌</span><b>Matching clues cancel out!</b> If two people write "cheese", nobody sees it. Be creative!</div><div class="hc"><span class="i">📺</span>The TV shows the surviving clues. The guesser types one guess on their phone.</div><div class="hc"><span class="i">🤝</span>It's co-op: the whole room tries to get as many right as possible.</div><div class="hc"><span class="i">💯</span>Correct: guesser <b>+100</b>, each unique clue <b>+50</b>.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+const WORDS=["pizza", "guitar", "elephant", "rainbow", "volcano", "snowman", "camera", "pirate", "rocket", "banana", "castle", "dragon", "bicycle", "umbrella", "penguin", "hamburger", "spider", "airplane", "lighthouse", "cactus", "robot", "mermaid", "tornado", "donut", "giraffe", "ladder", "toothbrush", "crown", "popcorn", "kangaroo", "anchor", "candle", "octopus", "skateboard", "sandwich", "unicorn", "igloo", "parachute", "butterfly", "mustache", "treasure", "trampoline", "waterfall", "dinosaur", "lollipop", "helicopter", "hammock", "ghost", "telescope", "zebra", "campfire", "scarecrow", "magnet", "suitcase", "saxophone", "windmill", "jellyfish", "cupcake", "fireworks", "backpack", "lemonade", "dolphin", "tractor", "sunglasses", "hedgehog", "microphone", "mailbox", "pyramid", "snail", "birthday", "wedding", "camel", "falafel", "teapot", "soccer", "basketball", "beach", "hospital", "library", "keyboard", "battery", "fountain", "shark", "squirrel", "pumpkin", "turkey", "sleigh", "carousel", "bowling", "karate", "yoga", "zombie", "vampire", "wizard", "ninja", "astronaut", "chef", "dentist", "firefighter", "teacher", "doctor"];
+let cfg=LS.get('tg-one-cfg',{r:8});segs(cfg,'tg-one-cfg',[['segR','r']]);let team=0;
+PG.init({key:'tg-one',game:'One Clue',title:'☝️ One Clue',sub:'Scan to join! Work together, one word at a time.',min:3,style:'chill',rain:['☝️','💡','⭐']});
+const nk=s=>String(s).toLowerCase().trim().replace(/[^a-z0-9]/g,'').replace(/(es|s)$/,'');
+$('#bStart').onclick=async()=>{ac();PG.reset();team=0;$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());const ws=shuffle(WORDS);
+ for(let r=0;r<cfg.r;r++){const g=ps[r%ps.length],w=ws[r],helpers=PG.players().filter(n=>n!==g);
+  if(window.TGB)TGB.ask({k:'msg',key:'gs'+r,emoji:'🙈',title:"You're the guesser!",body:"Don't look at anyone's phone. Watch the TV for clues."},[g]);
+  const clues=await PG.collect({id:'c',secs:45,who:helpers,title:`<div class="kicker">ROUND ${r+1} OF ${cfg.r} · TEAM SCORE ${team}</div><div style="display:flex;align-items:center;gap:1.4vw;font-family:var(--fd);font-size:5vh">${avHTML(g)} ${esc(g)} is guessing 🙈</div>`,sub:'Helpers: type ONE word clue',spec:n=>({k:'text',kicker:'Secret word',title:w.toUpperCase(),body:'Type ONE word to help '+g+'. Matching clues cancel out!',ph:'One word',max:20,btn:'Send ☝️'})});
+  const ent=Object.entries(clues).map(([n,v])=>[n,String(v).trim().split(/\s+/)[0]||'']).filter(x=>x[1]);const cnt={};ent.forEach(([n,v])=>{const k=nk(v);cnt[k]=(cnt[k]||0)+1});
+  const ok=([n,v])=>cnt[nk(v)]===1&&!nk(v).includes(nk(w))&&!nk(w).includes(nk(v));
+  PG.stage(`<div class="kicker">${esc(g)}, here are your clues!</div>${answersGrid(ent.map(e=>ok(e)?`<b style="font-size:4vh;text-transform:uppercase">${esc(e[1])}</b>`:`<s style="opacity:.5;font-size:3vh;text-transform:uppercase">${esc(e[1])}</s> ❌`))}`);SFX.whoosh();
+  const gs=await PG.collect({id:'gu',secs:40,who:[g],title:`<div class="kicker">${esc(g)}, here are your clues!</div>${answersGrid(ent.map(e=>ok(e)?`<b style="font-size:4vh;text-transform:uppercase">${esc(e[1])}</b>`:`<s style="opacity:.5;font-size:3vh;text-transform:uppercase">${esc(e[1])}</s> ❌`))}`,sub:`${esc(g)}: type your guess!`,spec:n=>({k:'text',kicker:'One guess!',title:'What is the secret word?',ph:'Your guess',max:30,btn:'Guess 🤞'})});
+  let right=nk(gs[g]||'')===nk(w);
+  const show=()=>{PG.stage(`<div class="prompt">The word was <u>${esc(w.toUpperCase())}</u></div><div class="bigT" style="font-size:6vh">${right?'🎉 CORRECT!':'😬 '+(gs[g]?'"'+esc(gs[g])+'"... nope!':'No guess')}</div>${answersGrid(ent.map(e=>`${ok(e)?'':'<s>'}${esc(e[1])}${ok(e)?'':'</s>'}<div class="by">${avHTML(e[0])}${esc(e[0])}</div>`))}${right?'':'<button class="bb ghost" id="ovr">✅ Close enough, count it!</button>'}`);const o=$('#ovr');if(o)o.onclick=()=>{right=true;award();show();PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}};
+  let awarded=false;const award=()=>{if(awarded||!right)return;awarded=true;team++;PG.add(g,100);ent.filter(ok).forEach(([n])=>PG.add(n,50))};
+  award();show();right?(SFX.win(),burst()):SFX.sad();await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
+ PG.stage(`<div class="bigT">🤝 TEAM SCORE: ${team} / ${cfg.r}</div><div class="status">${team>=cfg.r*.8?'🏆 Legendary teamwork!':team>=cfg.r*.5?'👏 Great job!':'😅 Room for improvement!'}</div>`);await PG.next('🏆 FINAL RESULTS');PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

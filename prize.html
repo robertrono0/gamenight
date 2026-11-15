@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prize Wheel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#8e24aa;--bgB:#2a0738}.stage{flex-direction:row;gap:4vw}
+.wb{position:relative;width:min(70vh,52vw);height:min(70vh,52vw)}#wc{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 1vh #ffcc3d,0 0 0 1.8vh #8a3a07,0 3vh 6vh rgba(0,0,0,.5)}
+.ptr{position:absolute;left:50%;top:-3vh;border-left:2.6vh solid transparent;border-right:2.6vh solid transparent;border-top:5.4vh solid #fff;transform:translateX(-50%);filter:drop-shadow(0 .5vh .4vh rgba(0,0,0,.6));z-index:2}
+.hubb{position:absolute;left:50%;top:50%;width:20%;height:20%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6c9,#ffcc3d 45%,#c2410c);display:grid;place-items:center;font-family:var(--fd);font-size:2.6vh;color:#2a0d12;cursor:pointer;border:0}
+.side{width:min(34vw,520px);display:flex;flex-direction:column;gap:1.4vh}.side textarea{min-height:34vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app"><div class="hdr"><div class="title">🎁 PRIZE WHEEL</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button></div></div>
+<div class="stage"><div class="wb"><div class="ptr"></div><canvas id="wc"></canvas><button class="hubb" id="spin">SPIN!</button></div>
+<div class="side"><div class="panel"><div class="kicker">🎁 PRIZES & DARES</div><p class="hint" style="margin:.6vh 0">One per line. Edit anything!</p><textarea class="field" id="pz" style="color:var(--ink)"></textarea><div class="btns" style="margin-top:1vh"><button class="bb gold" id="save">💾 Save wheel</button><button class="bb ghost" id="reset">↺ Default</button></div></div><div class="status" id="res"></div></div></div></div>
+<script src="tg-shell.js"></script><script>
+const DEF=['$5 cash 💵','$10 cash 💵','Pick the next game 🎮','Skip one turn ⏭️','Dance for 10 seconds 💃','Sing a chorus 🎤','+3 leaderboard points 🏆','Free dessert first 🍰','Choose someone to do a dare 😈','Tell a joke 😂','$20 cash! 🤑','Spin again 🔁'];
+let P=LS.get('tg-prizes',DEF),ang=0,busy=false;$('#pz').value=P.join('\n');
+const C=['#e63946','#f4a261','#2a9d8f','#e9c46a','#8338ec','#3a86ff','#ff006e','#06d6a0','#fb5607','#4cc9f0'];const cv=$('#wc');let cx;
+function size(){const r=cv.getBoundingClientRect();cv.width=cv.height=r.width*Math.min(2,devicePixelRatio||1);cx=cv.getContext('2d');draw(ang)}addEventListener('resize',size);
+function draw(a){const W=cv.width,R=W/2,n=P.length,st=Math.PI*2/n;cx.clearRect(0,0,W,W);cx.save();cx.translate(R,R);
+ P.forEach((p,i)=>{const s=a+i*st;cx.beginPath();cx.moveTo(0,0);cx.arc(0,0,R*.98,s,s+st);cx.fillStyle=C[i%C.length];cx.fill();cx.strokeStyle='#fff';cx.lineWidth=W*.004;cx.stroke();cx.save();cx.rotate(s+st/2);cx.textAlign='right';cx.textBaseline='middle';cx.fillStyle='#fff';cx.font=`700 ${Math.min(W*.04,W*.6/ Math.max(8,p.length))}px Fredoka,system-ui`;cx.shadowColor='rgba(0,0,0,.5)';cx.shadowBlur=W*.006;cx.fillText(p.length>22?p.slice(0,21)+'…':p,R*.92,0);cx.restore()});cx.restore()}
+const idx=a=>{const n=P.length,st=Math.PI*2/n;let t=(-Math.PI/2-a)%(Math.PI*2);if(t<0)t+=Math.PI*2;return Math.floor(t/st)%n};
+$('#spin').onclick=()=>{if(busy||!P.length)return;busy=true;ac();SFX.whoosh();const s0=ang,ex=Math.PI*2*(5+Math.random()*3)+Math.random()*Math.PI*2,d=5200+Math.random()*1500,t0=performance.now();let last=idx(s0);
+ (function f(now){const k=Math.min(1,(now-t0)/d),e=1-Math.pow(1-k,4);ang=s0+ex*e;draw(ang);const i=idx(ang);if(i!==last){last=i;SFX.tick(false)}if(k<1)requestAnimationFrame(f);else{busy=false;const p=P[idx(ang)];$('#res').innerHTML=`🎉 <b>${esc(p)}</b>`;if(window.FXX)FXX.win('🎁 YOU GOT...',p,'');else{SFX.win();burst()}}})(t0)};
+$('#save').onclick=()=>{P=$('#pz').value.split('\n').map(x=>x.trim()).filter(Boolean);if(P.length<2){toast('Add at least 2 prizes');return}LS.set('tg-prizes',P);draw(ang);toast('💾 Saved!')};
+$('#reset').onclick=()=>{P=DEF.slice();$('#pz').value=P.join('\n');LS.set('tg-prizes',P);draw(ang)};
+addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();$('#spin').click()}});
+shellInit({game:'Prize Wheel',style:'pop'});setTimeout(size,50);
+</script><script src="tg-depth.js"></script><script src="tg-night.js"></script></body></html>

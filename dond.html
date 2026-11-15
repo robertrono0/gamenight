@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deal or No Deal</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
+<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%BC%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deal or No Deal</title><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet"><style>:root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12;--fd:'Bungee','Impact',sans-serif;--fb:'Fredoka','Segoe UI',system-ui,sans-serif;--t0:#2ec4b6;--t1:#ff4d6d;--t2:#a78bfa;--t3:#ffb703;--ok:#3ddc84;--bad:#ff4d4d}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#0b0718;color:var(--cream);font-family:var(--fb)}
 button{font-family:var(--fb);cursor:pointer;border:0}input,textarea,select{font-family:var(--fb)}
@@ -101,7 +101,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .rank div b{color:var(--gold)}
 </style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
 <div id="app">
- <div class="hdr"><div class="title">💼 DEAL OR NO DEAL</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="hdr"><div class="title">💼 DEAL OR NO DEAL</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bUndo" title="Undo last action (Ctrl+Z)">↩️</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
  <div class="banner" id="banner"></div>
  <div class="main"><div class="ladder" id="lo"></div><div class="center" id="center"></div><div class="ladder hi" id="hi"></div></div>
 </div>
@@ -288,7 +288,7 @@ const ROUNDS={q:[4,3,2,1],c:[6,5,4,3,2,1,1,1,1]},FACT={q:[.28,.45,.65,.85],c:[.1
 const money=v=>v<1?(v*100).toFixed(0)+'¢':'$'+Math.round(v).toLocaleString();
 const nice=v=>v<1000?Math.round(v/10)*10:v<10000?Math.round(v/100)*100:Math.round(v/1000)*1000;
 setStyle('swing');
-let S=LS.get('tg-dond',null);const save=()=>LS.set('tg-dond',S);
+let S=LS.get('tg-dond',null);/* UNDO: every save remembers the state before it (quick bursts like typing count as one step) */const UNDO_KEY='tg-dond',UNDO=[];let _uLast=S?JSON.stringify(S):'',_uT=0;const save=()=>{if(!S){UNDO.length=0;_uLast='';LS.set(UNDO_KEY,S);return}const c=JSON.stringify(S);if(_uLast&&c!==_uLast){const n=Date.now();if(n-_uT>900)UNDO.push(_uLast);_uT=n;if(UNDO.length>60)UNDO.shift()}_uLast=c;LS.set(UNDO_KEY,S)};const saveQuiet=()=>{_uLast=S?JSON.stringify(S):'';LS.set(UNDO_KEY,S)};
 let cfg=LS.get('tg-dond-cfg',{size:'q',n:3});
 $('#names').value=tgRoster().join('\n');$('#names').oninput=()=>tgSetRoster(parseNames($('#names').value));
 [['segSize','size'],['segN','n']].forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set('tg-dond-cfg',cfg);SFX.click()}}));
@@ -352,11 +352,14 @@ function end(){music('party');SFX.win();const r=S.results.slice().sort((a,b)=>b.
  try{tgNight('Deal or No Deal',tgPlaces(r.map(x=>({names:[x.n],v:x.w}))),'dond-'+r.map(x=>x.n+x.w).join('|'))}catch(e){}
  $('#endWrap').innerHTML=`<div class="bigT">🏆 ${esc(r[0].n)} IS THE BIG WINNER!</div><div class="rank" style="margin:3vh auto">${r.map((x,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(x.n)} ${x.deal?'🤝':'💼'}</span><b>${money(x.w)}</b></div>`).join('')}</div><div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;
  $('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['💵','💰','🏆']);if(window.FXX)FXX.bigWin('🏆 '+r[0].n.toUpperCase(),r[0].w,'Tonight\'s Deal or No Deal champion!');$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
+
+/* UNDO button + Ctrl/Cmd+Z */
+(function(){const doUndo=()=>{if(!S){toast('Nothing to undo yet');return}if(S.anim||(typeof busy!=='undefined'&&busy)){toast('One sec, wait for the animation');return}const curJ=JSON.stringify(S);let prev=null;if(_uLast&&curJ!==_uLast)prev=_uLast;else if(UNDO.length)prev=UNDO.pop();if(!prev){toast('Nothing to undo yet');return}try{clearInterval(ringT);$('#offerOv')&&$('#offerOv').classList.add('hidden')}catch(e){}S=JSON.parse(prev);_uLast=prev;LS.set(UNDO_KEY,S);['#endOv','#offerOv'].forEach(s=>{const e=document.querySelector(s);e&&e.classList.add('hidden')});render();try{SFX.skip()}catch(e){}toast('↩️ Undone')};const b=document.getElementById('bUndo');if(b)b.onclick=doUndo;addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!/INPUT|TEXTAREA/.test((document.activeElement||{}).tagName||'')){e.preventDefault();doUndo()}})})();
 shellInit({game:'Deal or No Deal',style:'swing',rain:['💵','💼','💰'],onNew:()=>{S=null;save();$('#endOv').classList.add('hidden');$('#offerOv').classList.add('hidden');$('#setupOv').classList.remove('hidden');music('chill')}});
 if(S&&S.g){$('#setupOv').classList.add('hidden');if(S.g.phase==='offer'){S.g.phase='offerWait';S.g.offers.pop()}if(S.g.phase==='reveal')S.g.phase='final';render()}
 </script>
 <script>/*TGBUZZ*/(function(){function boot(){TGB.init({game:'Deal or No Deal',hostOnly:true,names:()=>[],onAct:id=>{if(id==='call')showOffer();else if(id==='deal')decide(true);else if(id==='nodeal')decide(false)}});hostView()}
-const s=document.createElement('script');s.src='buzzer.js?v=1794769454';s.onload=boot;document.head.appendChild(s)})();</script>
+const s=document.createElement('script');s.src='buzzer.js?v=1794800000';s.onload=boot;document.head.appendChild(s)})();</script>
 <script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){
 if(window.TGDEPTH)return;window.TGDEPTH=1;
@@ -402,4 +405,4 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
-</script></body></html>
+</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script><script src="tg-night.js"></script></body></html>

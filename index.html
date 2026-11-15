@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%89%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Game Night</title>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
 <style>
@@ -51,20 +51,55 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .tip{background:rgba(255,255,255,.07);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.45}
 .tip b{color:var(--gold)}
+</style>
+<style>
+.topbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:-10px 0 18px}
+.tg{font:700 15px 'Fredoka',system-ui;padding:8px 14px;border-radius:999px;border:2px solid rgba(255,204,61,.5);background:rgba(0,0,0,.25);color:var(--cream);cursor:pointer}
+.tg.on{background:var(--gold);color:var(--ink);border-color:#fff}
+.start{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:linear-gradient(135deg,rgba(255,204,61,.18),rgba(255,122,26,.12));border:2px solid var(--gold);border-radius:22px;padding:18px;margin-bottom:16px}
+@media(max-width:760px){.start{grid-template-columns:1fr}}
+.qrBox{background:#fff3dc;border-radius:18px;padding:12px;text-align:center;color:var(--ink);min-width:220px}.qrBox svg{width:200px;height:200px;display:block;margin:0 auto}.qrBox b{font-family:'Bungee';font-size:15px}
+.wall{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-height:44px}
+.pp{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(255,255,255,.1);border:2px solid rgba(255,204,61,.4);font-weight:700;animation:pin .5s cubic-bezier(.3,1.6,.5,1)}
+.pp img,.pp .ph{width:34px;height:34px;border-radius:50%;object-fit:cover;display:grid;place-items:center;background:linear-gradient(#ffcc3d,#ff7a1a);color:var(--ink);font-family:'Bungee'}
+.pp small{opacity:.7;font-size:11px}
+@keyframes pin{from{transform:scale(.3);opacity:0}}
+.rec{margin-top:10px;display:grid;gap:8px}.recC{display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--ink);background:linear-gradient(180deg,#fff7e6,#ffe7bd);border-radius:14px;padding:10px 14px;box-shadow:0 0 0 3px var(--gold)}
+.recC .e{font-size:32px}.recC b{font-family:'Bungee';color:#c2410c;font-weight:400}.recC span{font-size:14px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.g .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.g .tags i{font-style:normal;font-size:11px;font-weight:700;background:rgba(42,13,18,.1);padding:2px 8px;border-radius:99px}
+.g .new{position:absolute;top:10px;right:10px;background:#ff3d6e;color:#fff;font:700 11px 'Fredoka';padding:3px 8px;border-radius:99px;letter-spacing:.1em}.g{position:relative}
+.plB{display:none;position:sticky;bottom:10px;z-index:50;margin-top:14px;background:#2a0d12;border:3px solid var(--gold);border-radius:18px;padding:12px 16px;align-items:center;gap:12px;flex-wrap:wrap}.plB.on{display:flex}
+.plB b{color:var(--gold)}.plB button{font:800 16px 'Fredoka';padding:8px 16px;border-radius:12px;border:0;cursor:pointer;background:var(--gold);color:var(--ink)}.plB button.x{background:rgba(255,255,255,.15);color:#fff}
+.g.pl{outline:4px dashed #3ddc84}.g .pln{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:#3ddc84;color:#062;font:900 16px system-ui;display:grid;place-items:center}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.guide div{background:rgba(255,255,255,.07);border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.4}.guide b{color:var(--gold);display:block;font-family:'Bungee';font-weight:400;font-size:20px}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:8px}.teams div{border-radius:12px;padding:8px 10px;background:rgba(0,0,0,.25);border-left:6px solid var(--tc)}.teams b{color:var(--tc)}
 </style></head><body><div class="wrap">
 <h1>GAME<br>NIGHT</h1>
-<div class="sub">🎉 13 games, one place 🎉</div>
-
+<div class="sub" id="gcount">🎉 games, one place 🎉</div>
+<div class="topbar" id="settings">
+ <button class="tg" data-s="kid">🧸 Kid mode</button><button class="tg" data-s="spicy">🌶️ Spicy (adults)</button><button class="tg" data-s="big">🔠 Big text</button><button class="tg" data-s="team">👥 Team night</button><button class="tg" id="plOn">🎬 Party playlist</button><button class="tg" id="thBtn">🎨 Theme</button><a class="tg" href="prize.html" style="text-decoration:none">🎡 Prize wheel</a><a class="tg" href="recap.html" style="text-decoration:none">📜 Night recap</a>
+</div>
+<div id="thRow" style="display:none;flex-wrap:wrap;gap:6px;justify-content:center;margin:-6px 0 16px"></div>
+<div class="start">
+ <div class="qrBox"><b>📱 SCAN TO CHECK IN</b><div id="ciQR"><div style="padding:60px 0;opacity:.6">Connecting...</div></div><div style="font-size:12px;opacity:.7">Same Wi-Fi · type your name · make your character</div></div>
+ <div>
+  <h2 style="margin:0">👋 Who's here tonight <span id="ciN" style="opacity:.7;font-size:16px"></span></h2>
+  <div class="wall" id="wall"><span style="opacity:.7">Nobody yet. Guests scan the QR and pick their character! (Or type names below.)</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="revb" id="recBtn" style="width:auto;padding:10px 18px;margin:0">🎯 What should we play?</button><button class="tg" id="teamBtn" style="display:none">🎲 Shuffle teams</button></div>
+  <div class="rec" id="rec"></div><div class="teams" id="teamsV"></div>
+ </div>
+</div>
 <div class="night">
  <div class="nbox">
   <h2 style="margin-top:0">👥 Tonight's players</h2>
-  <p class="hint2">Type everyone once. Every game fills in these names for you.</p>
+  <p class="hint2">Fills in by itself when guests check in. You can also type names, one per line.</p>
   <textarea id="roster" placeholder="Fadi&#10;Rita&#10;Anita&#10;Rob&#10;..."></textarea>
   <div class="hint2" id="rCount"></div>
  </div>
  <div class="nbox">
   <h2 style="margin-top:0">🏆 Game Night leaderboard</h2>
-  <p class="hint2">Games add points by themselves: 🥇 5 · 🥈 3 · 🥉 1. Imposter round winners get 1 each.</p>
+  <p class="hint2">Games add points by themselves: 🥇 5 · 🥈 3 · 🥉 1. Team night adds up each team.</p>
   <div id="lb"></div>
   <button id="lbReveal" class="revb">🥁 Reveal the standings on the TV</button>
   <details class="man"><summary>➕ Add points by hand (Bingo, bonus, anything)</summary>
@@ -74,38 +109,30 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
   <details class="man"><summary>📜 History</summary><div id="hist"></div><button id="lbReset" class="rst">🗑️ Reset the leaderboard</button></details>
  </div>
 </div>
-<div class="buzz">🔔 <b>Phone buzzers are built in</b> for Jeopardy, Family Feud and Emoji Decode, and a <b>🎤 host remote</b> (answers on your phone) also works in Spelling Bee, Tic-Tac-Trivia and Balloon Pop. Tap <b>📱 Buzzers</b> (bottom right of the TV): players scan one QR and their phone becomes a buzzer. Tap a name to make them the <b>🎤 host</b>: their phone shows the answers with ✅ / ❌ buttons. Everyone on the same Wi-Fi. Multibuzzer still works as a backup. <a href="buzztest.html" style="color:var(--gold);font-weight:800">🔔 Test the buzzers here first</a></div>
-<h2>🏆 The big shows</h2>
-<div class="games">
- <a class="g" href="jeopardy.html"><div class="e">💰</div><h3>Jeopardy!</h3><p>Teams, solo or tournament. 69 categories, answer clock, Daily Doubles, Final Wagers and a podium.</p><span class="t">~45-90 min · the finale</span></a>
- <a class="g" href="feud.html"><div class="e">🗣️</div><h3>Family Feud</h3><p>Two families face off. Type what people say, even with bad grammar, and the board finds it. 82 surveys, answer clock, no repeats.</p><span class="t">~15-35 min · 2 teams</span></a>
- <a class="g" href="spelling.html"><div class="e">🐝</div><h3>Spelling Bee</h3><p>Starts easy and gets harder. Lifelines, tournament heats and a champion podium.</p><span class="t">~20-40 min</span></a>
- <a class="g" href="dond.html"><div class="e">💼</div><h3>Deal or No Deal</h3><p>Pick a case, open the rest, and face the Banker's offers. DEAL or NO DEAL? The audience yells advice!</p><span class="t">~10-30 min · any group</span></a>
-</div>
-<h2>🎉 Party games (any group size)</h2>
-<div class="games">
- <a class="g" href="imposter.html"><div class="e">🕵️</div><h3>Who's the Imposter?</h3><p>One QR code, everyone gets a secret word except the imposter. English, Arabic or both.</p><span class="t">~15 min · 3 to 30+</span></a>
- <a class="g" href="charades.html"><div class="e">🎭</div><h3>Charades</h3><p>Act it, describe it or hum it. The word goes to the host's phone, so the TV stays secret. 60-second turns.</p><span class="t">~20-30 min · 2-4 teams</span></a>
- <a class="g" href="likely.html"><div class="e">👉</div><h3>Most Likely To</h3><p>Everyone points at once! Plus Would You Rather: run to a side of the room. Trophies at the end.</p><span class="t">~15-25 min · 3 to 30+</span></a>
- <a class="g" href="bingo.html"><div class="e">🎱</div><h3>Party Bingo</h3><p>Cardboard cards and prize rounds. Auto-call is on ▶ so you can eat too.</p><span class="t">~30-40 min · everyone</span></a>
-</div>
-<h2>⚡ Quick fun</h2>
-<div class="games">
- <a class="g" href="emoji.html"><div class="e">😎</div><h3>Emoji Decode</h3><p>Emojis spell out a movie, song, food or saying. Buzz in and decode it first. Over 120 puzzles.</p><span class="t">~10-20 min · 2-4 teams</span></a>
- <a class="g" href="price.html"><div class="e">💲</div><h3>The Price Is Right</h3><p>Guess the price of Labubus, AirPods, Costco chicken and more. Closest without going over!</p><span class="t">~10-20 min · 2-4 teams</span></a>
- <a class="g" href="tictac.html"><div class="e">❌⭕</div><h3>Tic-Tac-Trivia</h3><p>Trivia tic-tac-toe. Answer right to claim a square, wrong and the other team can steal.</p><span class="t">~10-20 min · 2 teams</span></a>
- <a class="g" href="pluck.html"><div class="e">🎈</div><h3>Balloon Pop</h3><p>Hangman with 4 themes: balloons, classic hangman, a melting snowman or a pizza that gets eaten. 10-second clock and golden letters.</p><span class="t">~10-20 min · any size</span></a>
-</div>
+<div class="buzz">📱 <b>Phones work everywhere:</b> guests scan once and their phone follows them into every game (buzzers, voting, drawing, secret roles). Tap <b>📱</b> in the bottom right of any game for the QR, or to make someone the <b>🎤 host</b> (their phone shows answers, a soundboard and a "next game" button). <a href="buzztest.html" style="color:var(--gold);font-weight:800">🔔 Test the phones first</a></div>
+<div class="filters" id="filters"></div>
+<div id="cats"></div>
 <a class="key" href="answers.html"><span style="font-size:30px">📱</span><span><b>Host answer key for Jeopardy</b><br>Open this on your phone during the game. Searchable, and always matches the game.</span></a>
+<div class="plB" id="plB"><span>🎬 <b>Party playlist:</b> tap games in the order you want to play them.</span><span id="plList" style="flex:1;opacity:.85"></span><button id="plGo">▶ Start the party</button><button class="x" id="plClr">Clear</button></div>
+
+<h2>🚀 First time hosting? Start here</h2>
+<div class="guide">
+ <div><b>1. Open on the TV</b>Open this site on the laptop connected to the TV (or cast/screen-share the tab). Tap ⛶ in any game for full screen.</div>
+ <div><b>2. Check everyone in</b>Guests scan the big QR above, type their name and make a character. They show up on the wall.</div>
+ <div><b>3. Pick a game</b>Tap 🎯 <b>What should we play?</b> or build a 🎬 playlist. Every game explains itself with a ❓ How to Play screen.</div>
+ <div><b>4. Pick a host phone</b>In a game, tap 📱 (bottom right), then tap your name to become 🎤 host. Your phone runs the show.</div>
+ <div><b>5. Celebrate</b>Points go to the leaderboard by themselves. End with 🥁 Reveal the standings and the 📜 Night recap.</div>
+</div>
 
 <h2>🗓️ Suggested running order</h2>
 <div class="show">
- <div class="step"><div class="tm">Arrival</div><div><b>🕵️ Imposter + 👉 Most Likely To</b><span>Easy icebreakers while people arrive and grab food.</span></div></div>
- <div class="step"><div class="tm">Dinner</div><div><b>🎱 Bingo</b><span>Works while people eat. Turn on ▶ Auto so you can eat too.</span></div></div>
- <div class="step"><div class="tm">After</div><div><b>🗣️ Family Feud or 🐝 Spelling Bee</b><span>Everyone's full and sitting down. Feud for team energy, Spelling Bee for a calmer round.</span></div></div>
- <div class="step"><div class="tm">Get up!</div><div><b>🎭 Charades</b><span>Gets everyone off the couch after the food coma.</span></div></div>
- <div class="step"><div class="tm">Dessert</div><div><b>😎 Emoji Decode, 💲 Price Is Right or 🎈 Balloon Pop</b><span>Quick, silly games while dessert is served.</span></div></div>
- <div class="step"><div class="tm">Finale</div><div><b>💰 Jeopardy!</b><span>Save the best for last. Tournament if everyone wants a champion.</span></div></div>
+ <div class="step"><div class="tm">Arrival</div><div><b>📱 Check-in + 🕵️ Who Said It? or 👉 Most Likely To</b><span>Icebreakers while people arrive and grab food.</span></div></div>
+ <div class="step"><div class="tm">Dinner</div><div><b>🎱 Bingo or ⚡ Quiz Race</b><span>Works while people eat. Bingo has ▶ Auto.</span></div></div>
+ <div class="step"><div class="tm">After</div><div><b>🗣️ Family Feud or 🎡 Wheel of Fortune</b><span>Team energy after the food.</span></div></div>
+ <div class="step"><div class="tm">Get up!</div><div><b>🚦 Red Light Green Light or 🎭 Charades</b><span>Gets everyone off the couch.</span></div></div>
+ <div class="step"><div class="tm">Dessert</div><div><b>✍️ Fill in the Blank, 🎨 Sketch Off or 👶 Baby Photos</b><span>Big laughs while dessert is served.</span></div></div>
+ <div class="step"><div class="tm">Late</div><div><b>🗡️ Traitors</b><span>The big social deduction showdown.</span></div></div>
+ <div class="step"><div class="tm">Finale</div><div><b>💰 Jeopardy! + 🥁 the standings reveal</b><span>Save the best for last.</span></div></div>
 </div>
 
 <h2>✅ Before guests arrive</h2>
@@ -113,23 +140,26 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
  <label><input type="checkbox">Open all the games once on the TV laptop so they load fast later</label>
  <label><input type="checkbox">Sound check: tap 🎵 in each game and set the TV volume</label>
  <label><input type="checkbox">Screen sharing? Turn on "share sound" so the music comes through</label>
- <label><input type="checkbox">Open everything from robertrono0.github.io/gamenight so the Imposter QR works on every phone</label>
- <label><input type="checkbox">Type everyone's names in "Tonight's players" at the top of this page</label>
+ <label><input type="checkbox">Open everything from robertrono0.github.io/gamenight so the QR codes work on every phone</label>
+ <label><input type="checkbox">Test phones with 🔔 Test the phones (2 or 3 phones)</label>
  <label><input type="checkbox">Cardboard bingo cards + markers (or candy corn!) for everyone</label>
  <label><input type="checkbox">Paper and pens for Jeopardy answers and Final Wager bets</label>
- <label><input type="checkbox">Prize cash ready: $100 for Bingo (split by round) + any Jeopardy prize</label>
+ <label><input type="checkbox">Prize cash ready for Bingo, Jeopardy and the 🎡 Prize wheel</label>
  <label><input type="checkbox">Answer key open on your phone</label>
- <label><input type="checkbox">Laptop charging, screen sleep turned off</label>
+ <label><input type="checkbox">Laptop charging (the screen stays awake by itself)</label>
 </div>
 
 <h2>💡 Host tips</h2>
 <div class="tips">
- <div class="tip"><b>Made a mistake?</b> Every game has ↩️ Undo. Jeopardy's is in the ☰ menu.</div>
- <div class="tip"><b>Refreshed by accident?</b> No worries. Every game saves itself and picks up where you left off.</div>
- <div class="tip"><b>Jeopardy reading rule:</b> nobody answers until you finish reading the clue. The clock waits for you.</div>
- <div class="tip"><b>Full screen</b> looks best on a TV: tap ⛶ in any game.</div>
+ <div class="tip"><b>Made a mistake?</b> Every game has ↩️ Undo (Ctrl+Z). Jeopardy's is in the ☰ menu.</div>
+ <div class="tip"><b>Refreshed by accident?</b> No worries. Games save themselves and pick up where you left off.</div>
+ <div class="tip"><b>Phones not connecting?</b> Same Wi-Fi as the TV. A backup panel appears so you can tap who buzzed.</div>
+ <div class="tip"><b>Grandparents playing?</b> Turn on 🔠 Big text. Phones have an ع button for Arabic.</div>
+ <div class="tip"><b>Kids around?</b> Turn on 🧸 Kid mode. Spicy prompts stay off unless you turn on 🌶️.</div>
+ <div class="tip" id="liteTip"><b>Slow or laggy laptop?</b> Turn off the 3D lights and floating sparkles for every game.<br><label style="padding:8px 0 0;font-weight:700;opacity:1;text-decoration:none"><input type="checkbox" id="fx3d"> ✨ Fancy 3D effects on</label></div>
 </div>
 </div>
+
 <script>
 // keep the checklist ticks for this viewer
 const boxes=[...document.querySelectorAll('#chk input')];let saved=[];try{saved=JSON.parse(localStorage.getItem('tg-hub')||'[]')}catch(e){}
@@ -159,12 +189,13 @@ function drawMan(){const names=[...new Set([...tgRoster(),...Object.keys(totals(
  $('manNames').querySelectorAll('button').forEach(b=>b.onclick=()=>{const n=b.dataset.n;sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];drawMan()})}
 function totals(){const N=g('tg-night')||{log:[]},t={};N.log.forEach(e=>Object.entries(e.aw).forEach(([n,p])=>t[n]=(t[n]||0)+p));return t}
 function draw(){const t=totals(),arr=Object.entries(t).sort((a,b)=>b[1]-a[1]),md=['🥇','🥈','🥉'];const N=g('tg-night')||{log:[]};
- $('lb').innerHTML=arr.length?arr.map(([n,p],i)=>{const games=N.log.filter(e=>e.aw[n]>0).length;return`<div class="lbr${i===0?' top':''}"><div class="md">${md[i]||i+1}</div><div>${i===0?'👑 ':''}${esc(n)}<small>${games} game${games===1?'':'s'} scored</small></div><div class="pts">${p}</div></div>`}).join(''):'<div class="empty">No points yet. Play a game! 🎮</div>';
+ let TT='';try{const S2=JSON.parse(localStorage.getItem('tg-settings')||'{}'),T2=JSON.parse(localStorage.getItem('tg-night-teams')||'null');if(S2.team&&T2&&T2.teams){const tt=T2.teams.map((tm,i)=>({n:tm.name,p:tm.m.reduce((s,x)=>s+(t[x]||0),0),i})).sort((a,b)=>b.p-a.p);TT=`<div style="margin-bottom:8px">${tt.map((x,k)=>`<div class="lbr${k===0?' top':''}"><div class="md">${['🥇','🥈','🥉'][k]||k+1}</div><div>${esc(x.n)}<small>team total</small></div><div class="pts">${x.p}</div></div>`).join('')}</div>`}}catch(e){}
+ $('lb').innerHTML=TT+(arr.length?arr.map(([n,p],i)=>{const games=N.log.filter(e=>e.aw[n]>0).length;return`<div class="lbr${i===0?' top':''}"><div class="md">${md[i]||i+1}</div><div>${i===0?'👑 ':''}${esc(n)}<small>${games} game${games===1?'':'s'} scored</small></div><div class="pts">${p}</div></div>`}).join(''):'<div class="empty">No points yet. Play a game! 🎮</div>');
  $('hist').innerHTML=N.log.slice().reverse().map(e=>`<div class="hrow"><span><b>${esc(e.game)}</b>: ${Object.entries(e.aw).map(([n,p])=>esc(n)+' +'+p).join(', ')}</span><button data-id="${esc(e.id)}" title="Remove">✕</button></div>`).join('')||'<div class="empty">Nothing yet</div>';
  $('hist').querySelectorAll('button').forEach(b=>b.onclick=()=>{const N=g('tg-night')||{log:[]};N.log=N.log.filter(e=>e.id!==b.dataset.id);s('tg-night',N);draw()});drawMan()}
 document.querySelectorAll('.mrow button').forEach(b=>b.onclick=()=>{if(!sel.length)return;const p=+b.dataset.p,N=g('tg-night')||{log:[]},aw={};sel.forEach(n=>aw[n]=p);N.log.push({id:'manual:'+Date.now(),game:'Bonus',t:Date.now(),aw});s('tg-night',N);sel=[];draw()});
 let arm=0;$('lbReset').onclick=()=>{if(Date.now()-arm>3000){arm=Date.now();$('lbReset').textContent='Tap again to reset everything';return}s('tg-night',{log:[]});$('lbReset').textContent='🗑️ Reset the leaderboard';draw()};
-addEventListener('storage',draw);addEventListener('focus',draw);draw()})();
+window.tgLBdraw=draw;addEventListener('storage',draw);addEventListener('focus',draw);draw()})();
 </script><div id="revOv"><h1 id="revT">🥁 THE STANDINGS 🥁</h1><div id="revList"></div><button id="revClose">✕ Close</button></div>
 <script>(function(){const $=id=>document.getElementById(id),esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let ac=null;const tone=(f,d,g=.2,t='sawtooth')=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),v=ac.createGain(),fl=ac.createBiquadFilter();fl.type='lowpass';fl.frequency.value=2500;o.type=t;o.frequency.value=f;v.gain.setValueAtTime(g,ac.currentTime);v.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(fl);fl.connect(v);v.connect(ac.destination);o.start();o.stop(ac.currentTime+d+.05)}catch(e){}};
@@ -180,7 +211,7 @@ $('lbReveal').onclick=()=>{const N=JSON.parse(localStorage.getItem('tg-night')||
    if(last){fan();$('revT').textContent='👑 '+n.toUpperCase()+' WINS GAME NIGHT! 👑'}else tone(330+40*(order.length-k),.18,.12,'triangle')},d))})};
 $('revClose').onclick=()=>{timers.forEach(clearTimeout);$('revOv').classList.remove('on')};})();</script>
 <!--HOUSE--><style>
-#hmBtn{position:fixed;right:18px;bottom:18px;z-index:500;border:0;border-radius:999px;padding:14px 22px;font:700 18px Fredoka,system-ui,sans-serif;color:#2a0d12;background:linear-gradient(180deg,#ffe07a,#ffb21e);box-shadow:0 6px 0 #a8620a,0 10px 24px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;gap:10px}
+#hmBtn{position:fixed;left:18px;bottom:18px;z-index:500;border:0;border-radius:999px;padding:14px 22px;font:700 18px Fredoka,system-ui,sans-serif;color:#2a0d12;background:linear-gradient(180deg,#ffe07a,#ffb21e);box-shadow:0 6px 0 #a8620a,0 10px 24px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;gap:10px}
 #hmBtn:active{transform:translateY(4px);box-shadow:0 2px 0 #a8620a}
 #hmBtn .eq{display:inline-flex;gap:3px;align-items:flex-end;height:20px}
 #hmBtn .eq i{width:4px;background:#2a0d12;border-radius:2px;height:4px}
@@ -291,4 +322,104 @@ document.addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.
  const b=document.createElement('div');b.className='tgBurst';b.style.left=e.clientX+'px';b.style.top=e.clientY+'px';document.body.appendChild(b);setTimeout(()=>b.remove(),520)},{passive:true});
 if(document.body)stage();else document.addEventListener('DOMContentLoaded',stage);
 })();
+</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script><script>(function(){const c=document.getElementById("fx3d");if(!c)return;let on=true;try{on=localStorage.getItem("tg-3d")!=="0"&&localStorage.getItem("tg-lite")!=="1"}catch(e){}c.checked=on;c.onchange=()=>{try{localStorage.setItem("tg-3d",c.checked?"1":"0");if(c.checked)localStorage.removeItem("tg-lite")}catch(e){}location.reload()}})();</script><script src="buzzer.js?v=1794800000"></script>
+<script>
+/* ===== Game catalog: f=file, e=emoji, n=name, d=description, t=time, p=[min,max] players, ph: 0 none, 1 optional/host, 2 everyone needs phone, k=kid friendly, c=category, x=extra tags, nw=new ===== */
+const GAMES=[
+ {f:'jeopardy.html',e:'💰',n:'Jeopardy!',d:'Teams, solo or tournament. 69 categories, Daily Doubles, Final Wagers and a podium.',t:'45-90 min',p:[2,40],ph:1,k:0,c:'show',x:'the finale'},
+ {f:'feud.html',e:'🗣️',n:'Family Feud',d:'Two families face off. Type what people say, even with bad grammar, and the board finds it.',t:'15-35 min',p:[4,40],ph:1,k:1,c:'show'},
+ {f:'wheel.html',e:'🎡',n:'Wheel of Fortune',d:'Spin the wheel, buy vowels, avoid Bankrupt and solve. Bonus round with a mystery envelope!',t:'20-40 min',p:[2,30],ph:1,k:1,c:'show',nw:1},
+ {f:'fastmoney.html',e:'💸',n:'Fast Money',d:'Two players, 5 survey questions, 20 seconds. Can you hit 200 points together?',t:'5-10 min',p:[2,40],ph:1,k:1,c:'show',nw:1},
+ {f:'dond.html',e:'💼',n:'Deal or No Deal',d:'Pick a case, open the rest, and face the Banker. DEAL or NO DEAL?',t:'10-30 min',p:[1,40],ph:1,k:1,c:'show'},
+ {f:'price.html',e:'💲',n:'The Price Is Right',d:'Guess the price of AirPods, Costco chicken and more. Closest without going over!',t:'10-20 min',p:[2,40],ph:0,k:1,c:'show'},
+ {f:'spelling.html',e:'🐝',n:'Spelling Bee',d:'Starts easy, gets harder. Lifelines, heats and a champion podium.',t:'20-40 min',p:[2,30],ph:1,k:1,c:'show'},
+ {f:'quiz.html',e:'⚡',n:'Quiz Race',d:'Everyone answers trivia on their phone. Faster correct answers score more!',t:'10-20 min',p:[2,50],ph:2,k:1,c:'phone',nw:1},
+ {f:'blank.html',e:'✍️',n:'Fill in the Blank',d:'Write the funniest answer to a prompt, then vote. Clean or 🌶️ spicy.',t:'15-25 min',p:[3,30],ph:2,k:0,c:'phone',nw:1},
+ {f:'whosaid.html',e:'🕵️',n:'Who Said It?',d:'Answer questions about yourself, then guess who wrote what.',t:'15-25 min',p:[3,25],ph:2,k:1,c:'phone',nw:1},
+ {f:'twotruths.html',e:'🤥',n:'Two Truths and a Lie',d:'Write 2 truths and 1 lie on your phone. Can the room spot the lie?',t:'15-30 min',p:[3,20],ph:2,k:1,c:'phone',nw:1},
+ {f:'fakeout.html',e:'🎭',n:'Fake Out',d:'Write fake answers to weird true facts and fool your friends.',t:'15-25 min',p:[3,20],ph:2,k:0,c:'phone',nw:1},
+ {f:'herd.html',e:'🐮',n:'Herd Mind',d:'Answer like everyone else. Odd one out gets the Pink Cow!',t:'10-20 min',p:[3,40],ph:2,k:1,c:'phone',nw:1},
+ {f:'rush.html',e:'🔤',n:'Category Rush',d:'One letter, six categories, two minutes. Only unique answers score.',t:'10-20 min',p:[2,30],ph:2,k:1,c:'phone',nw:1},
+ {f:'rank.html',e:'📶',n:'Rank It',d:'One player ranks 5 things. Can everyone guess their favorite and least favorite?',t:'15-25 min',p:[3,30],ph:2,k:1,c:'phone',nw:1},
+ {f:'oneclue.html',e:'☝️',n:'One Clue',d:'Co-op: give one-word clues to the guesser. Matching clues cancel out!',t:'10-20 min',p:[3,30],ph:2,k:1,c:'phone',nw:1},
+ {f:'higherlower.html',e:'⬆️',n:'Higher or Lower',d:'Taller, faster, older? Vote on your phone and build a streak.',t:'10 min',p:[1,60],ph:2,k:1,c:'phone',nw:1},
+ {f:'year.html',e:'📅',n:'Guess the Year',d:'When did it happen? Plus a Timeline mode: what came first?',t:'10-20 min',p:[1,60],ph:2,k:1,c:'phone',nw:1},
+ {f:'traitors.html',e:'🗡️',n:'Traitors',d:'Secret Traitors murder at night. Find them at the round table. Doctor and Detective roles too.',t:'45-75 min',p:[5,30],ph:2,k:0,c:'deduce',x:'big showdown',nw:1},
+ {f:'imposter.html',e:'🕵️',n:"Who's the Imposter?",d:'Everyone gets a secret word except the imposter. English, Arabic or both.',t:'15 min',p:[3,40],ph:2,k:1,c:'deduce'},
+ {f:'sketch.html',e:'🎨',n:'Sketch Off',d:'Draw silly prompts on your phone. The gallery votes for the best.',t:'15-25 min',p:[2,30],ph:2,k:1,c:'draw',nw:1},
+ {f:'livedraw.html',e:'✏️',n:'Draw & Guess',d:'One person draws live on the TV while everyone races to guess.',t:'15-30 min',p:[3,16],ph:2,k:1,c:'draw',nw:1},
+ {f:'picphone.html',e:'📞',n:'Picture Phone',d:'Draw, guess, draw, guess... then watch the chains fall apart. 😂',t:'15-25 min',p:[3,16],ph:2,k:1,c:'draw',nw:1},
+ {f:'baby.html',e:'👶',n:'Baby Photo Match',d:'Everyone sends a baby photo. Guess who is who!',t:'15-25 min',p:[3,30],ph:2,k:1,c:'draw',nw:1},
+ {f:'redlight.html',e:'🚦',n:'Red Light Green Light',d:'Tap your phone to run. Move on red and you are OUT!',t:'5-10 min',p:[2,60],ph:2,k:1,c:'quick',nw:1},
+ {f:'slap.html',e:'🖐️',n:'Slap It!',d:'When the picture matches the word, slap your phone. Slowest slapper loses!',t:'5-10 min',p:[2,40],ph:2,k:1,c:'quick',nw:1},
+ {f:'name5.html',e:'🖐️',n:'Name 5 in 10',d:'Name 5 things in 10 seconds. Teams, chaos, shouting.',t:'10-15 min',p:[2,40],ph:0,k:1,c:'quick',nw:1},
+ {f:'grab.html',e:'🏃',n:'Grab It!',d:'"Bring back something blue!" First ones back score.',t:'10 min',p:[2,40],ph:0,k:1,c:'quick',nw:1},
+ {f:'emoji.html',e:'😎',n:'Emoji Decode',d:'Emojis spell out a movie, song, food or saying. Buzz in first!',t:'10-20 min',p:[2,40],ph:1,k:1,c:'quick'},
+ {f:'tictac.html',e:'❌⭕',n:'Tic-Tac-Trivia',d:'Answer right to claim a square. Wrong and the other team can steal.',t:'10-20 min',p:[2,30],ph:1,k:1,c:'quick'},
+ {f:'pluck.html',e:'🎈',n:'Balloon Pop',d:'Hangman with 4 themes and a 10-second clock.',t:'10-20 min',p:[1,40],ph:1,k:1,c:'quick'},
+ {f:'likely.html',e:'👉',n:'Most Likely To',d:'Everyone points at once! Plus Would You Rather.',t:'15-25 min',p:[3,40],ph:0,k:1,c:'classic'},
+ {f:'charades.html',e:'🎭',n:'Charades',d:'Act it, describe it or hum it. The word goes to the host phone.',t:'20-30 min',p:[4,40],ph:1,k:1,c:'classic'},
+ {f:'bingo.html',e:'🎱',n:'Party Bingo',d:'Cardboard cards and prize rounds. Auto-call so you can eat too.',t:'30-40 min',p:[2,80],ph:0,k:1,c:'classic'}];
+const EXTRA=[['spywords.html',{e:'🕵️‍♂️',n:'Spy Words',d:'Two teams, 25 words, one-word clues from the spymasters. Avoid the bomb!',t:'15-30 min',p:[4,30],ph:1,k:1,c:'deduce',nw:1}],['mindmeld.html',{e:'🧠',n:'Mind Meld',d:'Where on the dial is the hidden target? Read your teammate\'s mind.',t:'15-30 min',p:[4,30],ph:1,k:1,c:'phone',nw:1}],['colorclue.html',{e:'🎨',n:'Color Clue',d:'One-word clues for one color out of a giant grid.',t:'15-25 min',p:[3,20],ph:2,k:1,c:'draw',nw:1}],['colorclash.html',{e:'🃏',n:'Color Clash',d:'Our UNO-style card game: private hands on phones, 8 modes, 2-20+ players.',t:'15-30 min',p:[2,24],ph:2,k:1,c:'cards',nw:1}],['kart.html',{e:'🏎️',n:'Party Kart',d:'Race on one shared screen, steering with your phone. Drifts, ramps and items!',t:'10-20 min',p:[2,8],ph:2,k:1,c:'quick',nw:1}]];
+const CATS=[['show','🏆 The big shows'],['phone','📱 Phone party games'],['deduce','🕵️ Secrets & lies'],['draw','🎨 Draw & create'],['cards','🃏 Cards'],['quick','⚡ Quick & active'],['classic','🎉 Party classics']];
+let SET={};try{SET=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}catch(e){}
+const saveSet=()=>{try{localStorage.setItem('tg-settings',JSON.stringify(SET))}catch(e){}};
+const esc2=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let ALL=GAMES.slice(),FILT='all';
+async function loadExtra(){for(const[f,g]of EXTRA){try{const r=await fetch(f,{method:'HEAD'});if(r.ok)ALL.push({f,...g})}catch(e){}}drawCats()}
+const ph=g=>g.ph===2?'📱 phones':g.ph===1?'📱 optional':'📺 TV only';
+function drawCats(){document.getElementById('gcount').textContent=`🎉 ${ALL.length} games, one place 🎉`;
+ document.getElementById('filters').innerHTML=[['all','All'],['kids','🧸 Kids OK'],['phones','📱 Phone games'],['tv','📺 No phones needed'],['big','👥 10+ players'],['new','✨ New']].map(([k,l])=>`<button class="tg ${FILT===k?'on':''}" data-f="${k}">${l}</button>`).join('');
+ document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{FILT=b.dataset.f;drawCats()});
+ const ok=g=>FILT==='all'||(FILT==='kids'&&g.k)||(FILT==='phones'&&g.ph===2)||(FILT==='tv'&&g.ph<2)||(FILT==='big'&&g.p[1]>=10)||(FILT==='new'&&g.nw);
+ document.getElementById('cats').innerHTML=CATS.map(([c,l])=>{const gs=ALL.filter(g=>g.c===c&&ok(g));if(!gs.length)return'';return`<h2>${l}</h2><div class="games">${gs.map(g=>{const pi=PL.findIndex(x=>x.f===g.f);return`<a class="g ${pi>=0?'pl':''}" href="${g.f}" data-g="${g.f}">${pi>=0?`<span class="pln">${pi+1}</span>`:''}${g.nw?'<span class="new">NEW</span>':''}<div class="e">${g.e}</div><h3>${esc2(g.n)}</h3><p>${esc2(g.d)}</p><div class="tags"><i>⏱️ ${g.t}</i><i>👥 ${g.p[0]}-${g.p[1]}${g.p[1]>=30?'+':''}</i><i>${ph(g)}</i>${g.k?'<i>🧸 kids OK</i>':''}</div></a>`}).join('')}</div>`}).join('');
+ document.querySelectorAll('[data-g]').forEach(a=>a.onclick=e=>{if(!plMode)return;e.preventDefault();const g=ALL.find(x=>x.f===a.dataset.g);const i=PL.findIndex(x=>x.f===g.f);if(i>=0)PL.splice(i,1);else PL.push({f:g.f,n:g.e+' '+g.n});savePL();drawCats()})}
+/* ===== settings ===== */
+document.querySelectorAll('#settings [data-s]').forEach(b=>{b.classList.toggle('on',!!SET[b.dataset.s]);b.onclick=()=>{SET[b.dataset.s]=!SET[b.dataset.s];saveSet();b.classList.toggle('on',!!SET[b.dataset.s]);document.documentElement.style.zoom=SET.big?1.12:1;drawTeams();if(window.tgLBdraw)tgLBdraw()}});
+document.documentElement.style.zoom=SET.big?1.12:1;
+/* ===== party playlist ===== */
+let PL=[],plMode=false;try{PL=(JSON.parse(localStorage.getItem('tg-playlist')||'null')||{}).list||[]}catch(e){}
+const savePL=()=>{try{localStorage.setItem('tg-playlist',JSON.stringify({list:PL}))}catch(e){}document.getElementById('plList').textContent=PL.map((x,i)=>(i+1)+'. '+x.n).join('  ·  ')||'(nothing yet)'};
+document.getElementById('plOn').onclick=()=>{plMode=!plMode;document.getElementById('plOn').classList.toggle('on',plMode);document.getElementById('plB').classList.toggle('on',plMode);savePL();drawCats()};
+document.getElementById('plGo').onclick=()=>{if(!PL.length){alert('Tap some games first!');return}location.href=PL[0].f+'?from=playlist'};
+document.getElementById('plClr').onclick=()=>{PL=[];try{localStorage.removeItem('tg-playlist')}catch(e){}savePL();drawCats()};
+/* ===== check-in wall ===== */
+const R=()=>{try{const r=JSON.parse(localStorage.getItem('tg-roster'));return Array.isArray(r)?r:[]}catch(e){return[]}};
+function addRoster(n){const r=R();if(!r.some(x=>x.toLowerCase()===n.toLowerCase())){r.push(n);try{localStorage.setItem('tg-roster',JSON.stringify(r))}catch(e){}const t=document.getElementById('roster');t.value=r.join('\n');t.dispatchEvent(new Event('input'))}}
+function avatar(n){const a=window.TGB&&TGB.avatar(n);return a?`<img src="${a}">`:`<span class="ph">${esc2((n[0]||'?').toUpperCase())}</span>`}
+function drawWall(){const r=R(),on=window.TGB?TGB.players():[],pr=window.TGB?TGB.profiles():{};document.getElementById('ciN').textContent=r.length?`(${r.length}${on.length?', '+on.length+' phones connected':''})`:'';
+ if(r.length)document.getElementById('wall').innerHTML=r.map(n=>`<div class="pp">${avatar(n)}${esc2(n)}${pr[n]&&pr[n].a==='kid'?' <small>🧒</small>':''}${on.includes(n)?' <small>🟢</small>':''}</div>`).join('');drawTeams()}
+if(window.TGB){TGB.init({game:'Check-in',hostOnly:false,names:()=>[...new Set([...R(),...TGB.players()])],onJoin:n=>{addRoster(n);drawWall()}});
+ TGB.ask({k:'msg',key:'ci',emoji:'🎉',title:"You're checked in!",body:'Watch the TV. The host will start a game soon. Tap 📸 at the top to change your character.'});
+ const q=()=>{try{document.getElementById('ciQR').innerHTML=TGB.qr(TGB.link('p'))}catch(e){}};q();setTimeout(q,1500);
+ addEventListener('tgavatar',drawWall);addEventListener('tgprofile',drawWall);setInterval(drawWall,3000)}
+drawWall();
+/* ===== team night ===== */
+const TCOL=['#2ec4b6','#ff4d6d','#a78bfa','#ffb703'],TNM=['Team Fire 🔥','Team Ice ❄️','Team Yalla 🚀','Team Habibi 💛'];
+function drawTeams(){const tb=document.getElementById('teamBtn'),tv=document.getElementById('teamsV');tb.style.display=SET.team?'':'none';if(!SET.team){tv.innerHTML='';return}
+ let T=null;try{T=JSON.parse(localStorage.getItem('tg-night-teams')||'null')}catch(e){}const r=R();if(!T||!T.teams||r.some(n=>!T.teams.some(t=>t.m.includes(n))))T=shuffleTeams(r,T&&T.teams?T.teams.length:2);
+ tv.innerHTML=T.teams.map((t,i)=>`<div style="--tc:${TCOL[i]}"><b>${t.name}</b><br>${t.m.map(esc2).join(', ')||'<i>empty</i>'}</div>`).join('')+`<div style="--tc:#fff;background:none;border:0">${[2,3,4].map(k=>`<button class="tg ${T.teams.length===k?'on':''}" data-tk="${k}">${k} teams</button>`).join(' ')}</div>`;
+ tv.querySelectorAll('[data-tk]').forEach(b=>b.onclick=()=>{shuffleTeams(R(),+b.dataset.tk);drawTeams();window.tgLBdraw&&tgLBdraw()})}
+function shuffleTeams(r,k){const sh=r.slice().sort(()=>Math.random()-.5),teams=Array.from({length:k||2},(_,i)=>({name:TNM[i],m:[]}));sh.forEach((n,i)=>teams[i%teams.length].m.push(n));const T={teams};try{localStorage.setItem('tg-night-teams',JSON.stringify(T))}catch(e){}return T}
+document.getElementById('teamBtn').onclick=()=>{let k=2;try{k=JSON.parse(localStorage.getItem('tg-night-teams')).teams.length}catch(e){}shuffleTeams(R(),k);drawTeams();window.tgLBdraw&&tgLBdraw()};
+/* ===== recommender ===== */
+document.getElementById('recBtn').onclick=()=>{const r=R(),on=window.TGB?TGB.players():[],pr=window.TGB?TGB.profiles():{};const n=Math.max(r.length,on.length),kids=Object.entries(pr).filter(([k,v])=>v.a==='kid'&&r.includes(k)).length||(SET.kid?1:0);
+ let played=[];try{played=(JSON.parse(localStorage.getItem('tg-night')||'{}').log||[]).map(e=>e.game)}catch(e){}
+ const hr=new Date().getHours();
+ const sc=ALL.map(g=>{let s=0,why=[];if(n<g.p[0]){s-=100}else if(n>g.p[1]){s-=40}else{s+=20;why.push(`fits ${n} players`)}
+  if(g.ph===2){if(on.length>=Math.min(n,3)){s+=15;why.push(`${on.length} phones are connected`)}else s-=25}
+  if(kids){if(g.k){s+=15;why.push(kids>1?`great with the ${kids} kids`:'kid-friendly')}else s-=60}
+  if(played.some(p=>p&&g.n.toLowerCase().includes(p.toLowerCase().split(' ')[0]))){s-=30}else s+=5;
+  if(n>=12&&g.p[1]>=30){s+=10;why.push('works for a big crowd')}
+  if(hr<19&&['quick','phone'].includes(g.c)){s+=6}if(hr>=21&&(g.c==='show'||g.c==='deduce')){s+=8;why.push('perfect later in the night')}
+  if(g.nw)s+=3;return{g,s:s+Math.random()*6,why}}).sort((a,b)=>b.s-a.s).slice(0,3);
+ document.getElementById('rec').innerHTML=(n?'':'<div class="hint2">Tip: check people in first for better picks!</div>')+sc.map(({g,why})=>`<a class="recC" href="${g.f}"><span class="e">${g.e}</span><span><b>${esc2(g.n)}</b><br><span>${esc2((why.slice(0,2).join(', ')||g.d))}. ⏱️ ${g.t}</span></span></a>`).join('')};
+loadExtra();savePL();
+</script>
+<script src="tg-night.js"></script><script>
+(function(){const row=document.getElementById('thRow');let S={};try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}catch(e){}
+const draw=()=>{const T=window.TG_THEMES||{};row.innerHTML=Object.entries(T).map(([k,v])=>`<button class="tg ${(S.theme||'classic')===k?'on':''}" data-th="${k}">${v[0]}</button>`).join('')+'<div style="flex-basis:100%;text-align:center;font-size:13px;opacity:.75">Changes the colors, falling decorations and music in every game.</div>';
+ row.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};S.theme=b.dataset.th;localStorage.setItem('tg-settings',JSON.stringify(S));location.reload()})};
+document.getElementById('thBtn').onclick=()=>{row.style.display=row.style.display==='none'?'flex':'none';draw()};
+const cur=(window.TG_THEMES||{})[S.theme];if(cur&&S.theme!=='classic')document.getElementById('thBtn').textContent='🎨 '+cur[0]})();
 </script></body></html>

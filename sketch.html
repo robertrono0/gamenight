@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%A8%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sketch Off</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#ad1457;--bgB:#3d0620}.stage{gap:2vh}.gal{grid-template-columns:repeat(auto-fit,minmax(min(22vw,300px),1fr))!important}.gal .ansC{padding:1vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🎨 SKETCH OFF</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🎨 Sketch Off</h2>
+ <h3>Rounds</h3><div class="seg" id="segR"><button data-v="2" class="">2</button><button data-v="3" class="on">3</button><button data-v="5" class="">5</button></div><h3>Drawing time</h3><div class="seg" id="segT"><button data-v="60" class="">60s</button><button data-v="90" class="on">90s</button><button data-v="120" class="">120s</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🎨</span>Everyone gets the same silly prompt, like <b>"A cat at a job interview"</b>.</div><div class="hc"><span class="i">📱</span>Draw it on your phone with your finger. Colors and an eraser included!</div><div class="hc"><span class="i">🖼️</span>All drawings show up on the TV as a gallery (no names).</div><div class="hc"><span class="i">🗳️</span>Vote for your favorite. You can't vote for your own.</div><div class="hc"><span class="i">💯</span><b>+100</b> per vote. The winner gets a <b>+100 bonus</b>.</div><div class="hc"><span class="i">😂</span>Stick figures welcome. Talent optional.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const PR=["A cat at a job interview","Grandma on a roller coaster","A pizza going on vacation","Your dream house","A dinosaur at a wedding","The worst superhero ever","A fish riding a bike","Dad trying to use TikTok","A snowman in the desert","A dog driving a car","Your favorite food as a monster","A robot making breakfast","Santa at the beach","A banana at the gym","The ugliest Christmas sweater","An alien at Costco","A giraffe in a tiny car","Mom's face when you're late","A camel at Disneyland","Your future self in 30 years","A shark at the dentist","The host of this party","A cow skateboarding","A haunted kitchen","A penguin at a barbecue","The perfect sandwich","A cat DJ","Someone eating a whole kunafa","A mermaid at the mall","A llama in a business suit","An angry cupcake","Your pet as a king or queen","A vampire at a sleepover","The world's longest hot dog","A wedding cake disaster","A bear doing yoga"];
+let cfg=LS.get('tg-sketch-cfg',{r:3,t:90});segs(cfg,'tg-sketch-cfg',[['segR','r'],['segT','t']]);
+PG.init({key:'tg-sketch',game:'Sketch Off',title:'🎨 Sketch Off',sub:'Scan to join! Draw on your phone.',min:2,style:'pop',rain:['🎨','🖍️','⭐']});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const pr=shuffle(PR);
+ for(let r=0;r<cfg.r;r++){const p=pr[r];
+  const subs=await PG.collect({id:'d',secs:cfg.t,title:`<div class="kicker">ROUND ${r+1} OF ${cfg.r}</div><div class="prompt popIn">🎨 ${esc(p)}</div>`,sub:'Draw it on your phone! ✏️',spec:n=>({k:'draw',kicker:'Draw this:',title:p})});
+  const items=shuffle(Object.entries(subs).filter(([n,v])=>String(v).startsWith('data:image')));if(!items.length){toast('No drawings this round');continue}
+  PG.stage(`<div class="prompt" style="font-size:3.6vh">🎨 ${esc(p)}</div>${answersGrid(items.map(([n,v],i)=>`<span class="num">${i+1}</span><img class="drw" src="${v}">`),'gal')}<div id="pgVotes"></div>`);SFX.whoosh();music('play');
+  const votes=await PG.vote({id:'v',secs:30,title:'Vote for the best drawing!',sub:p,opts:()=>items.map(([n],i)=>({t:'Drawing #'+(i+1),v:i})),exclude:(n,x)=>items[x.v][0]===n});
+  const cnt=items.map(()=>0);Object.values(votes).forEach(v=>cnt[+v]++);const mx=Math.max(...cnt),gain={};items.forEach(([n],i)=>{const g=cnt[i]*100+(mx>0&&cnt[i]===mx?100:0);if(g){PG.add(n,g);gain[n]=g}});
+  PG.stage(`<div class="prompt" style="font-size:3.6vh">🎨 ${esc(p)}</div>${answersGrid(items.map(([n,v],i)=>`<span class="num">${i+1}</span><img class="drw" src="${v}"><div class="by">${avHTML(n)}${esc(n)}<span class="vt">${cnt[i]?cnt[i]+' 🗳️'+(cnt[i]===mx?' 👑':''):''}</span></div>`),'gal')}`);$$('.ansC').forEach((e,i)=>{if(cnt[i]===mx&&mx)e.classList.add('win')});SFX.win();burst();
+  await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

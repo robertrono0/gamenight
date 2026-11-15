@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🔔 Buzzer Test</title>
+<!DOCTYPE html><html lang="en"><head><script>/*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%94%94%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🔔 Buzzer Test</title>
 <style>*{box-sizing:border-box;margin:0}body{min-height:100vh;background:radial-gradient(ellipse at 50% 110%,#7a2410,#4a1420 40%,#1d0a10 80%);color:#fff3dc;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:2.4vh;padding:4vh 3vw;text-align:center}
 h1{font-size:6vh;color:#ffcc3d}.sub{font-size:2.4vh;opacity:.9;max-width:900px;line-height:1.4}
 .btns{display:flex;gap:1.4vw;flex-wrap:wrap;justify-content:center}button{font:900 2.6vh system-ui;padding:1.6vh 3.4vh;border-radius:2vh;border:0;cursor:pointer;background:linear-gradient(#ffe27a,#ffb703);color:#2a0d12;box-shadow:0 .6vh 0 #8a3a07}button.g{background:rgba(255,255,255,.15);color:#fff;box-shadow:none}
@@ -10,7 +10,7 @@ h1{font-size:6vh;color:#ffcc3d}.sub{font-size:2.4vh;opacity:.9;max-width:900px;l
 <div id="who">Nobody connected yet</div>
 <div class="btns"><button id="go">▶ Test round</button><button class="g" id="rs">🔄 Reset</button></div>
 <div id="res"></div>
-<script src="buzzer.js?v=1794769454"></script>
+<script src="buzzer.js?v=1794800000"></script>
 <script>
 let t0=0,rows=[];const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function drawR(){$('res').innerHTML=rows.map((r,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(r.n)}</span><span>${r.ms} ms</span></div>`).join('')}
@@ -21,4 +21,4 @@ let was=false;setInterval(()=>{const o=TGB.isOpen();if(o&&!was)t0=performance.no
 $('go').onclick=()=>{rows=[];drawR();TGB.openIn(3);TGB.host({title:'🔔 Buzzer test',note:'Phones are counting down',actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'go',label:'▶ New test round',k:'y'}]})};
 $('rs').onclick=()=>{rows=[];drawR();TGB.reset()};
 TGB.host({title:'🔔 Buzzer test',note:'Tap ▶ New test round to start',actions:[{id:'go',label:'▶ New test round',k:'y'}]});
-</script></body></html>
+</script><script>/*TGWAKE*//* keep the TV laptop / host phone screen awake while a game is open */(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script></body></html>

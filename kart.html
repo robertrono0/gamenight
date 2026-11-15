@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8F%8E%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Party Kart</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#33691e;--bgB:#0f2006}.stage{gap:2vh}.stage{gap:1vh;justify-content:flex-start}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🏎️ PARTY KART</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🏎️ Party Kart</h2>
+ <h3>Laps</h3><div class="seg" id="segL"><button data-v="2" class="">2</button><button data-v="3" class="on">3</button><button data-v="5" class="">5</button></div><h3>Track</h3><div class="seg" id="segK"><button data-v="city" class="on">🏙️ City Loop</button><button data-v="beach" class="">🏖️ Beach Bend</button><button data-v="snow" class="">❄️ Snow Circuit</button><button data-v="desert" class="">🏜️ Desert Dash</button></div><h3>CPU racers</h3><div class="seg" id="segC"><button data-v="0" class="">None</button><button data-v="2" class="on">+2 🤖</button><button data-v="4" class="">+4 🤖</button></div><p class="hint">Up to 8 racers per race. With more players, races run in heats and points add up.</p>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>Your phone is your steering wheel: hold <b>◀</b> or <b>▶</b> to steer. Your kart drives forward by itself!</div><div class="hc"><span class="i">💨</span>Hold <b>DRIFT</b> while turning to slide around corners. Let go for a <b>speed boost</b>!</div><div class="hc"><span class="i">🛹</span>Hit a ramp and tap DRIFT in the air for a <b>trick boost</b>.</div><div class="hc"><span class="i">❓</span>Drive through <b>? boxes</b> for items, then tap the item button: ⚡ boost, 🛡️ shield, 🛢️ oil slick, 🌶️ pepper rocket.</div><div class="hc"><span class="i">🏁</span>Most laps first wins! Off the road you slow down.</div><div class="hc"><span class="i">🏆</span>1st to 8th all score points for the Game Night leaderboard.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+let cfg=LS.get('tg-kart-cfg',{l:3,k:'city',c:2});segs(cfg,'tg-kart-cfg',[['segL','l'],['segK','k'],['segC','c']]);
+PG.init({key:'tg-kart',game:'Party Kart',title:'🏎️ Party Kart',sub:'Scan to join! Your phone is the steering wheel.',min:1,style:'funk',rain:['🏎️','🏁','⭐']});
+const TRK={city:{g:'#3b6e2a',g2:'#2f5a22',r:'#4a4a52',pts:[[.12,.5],[.18,.18],[.4,.12],[.52,.32],[.66,.14],[.88,.2],[.9,.55],[.75,.62],[.84,.86],[.55,.9],[.42,.66],[.25,.88]]},
+ beach:{g:'#e8d29a',g2:'#d9c07f',r:'#5a5a62',pts:[[.1,.4],[.25,.12],[.5,.2],[.72,.1],[.92,.3],[.85,.6],[.92,.85],[.6,.88],[.45,.65],[.3,.9],[.08,.75]]},
+ snow:{g:'#e8f1f8',g2:'#d4e3ef',r:'#56606e',pts:[[.15,.3],[.35,.12],[.6,.22],[.85,.12],[.9,.45],[.7,.5],[.88,.8],[.6,.9],[.35,.75],[.12,.88],[.2,.6]]},
+ desert:{g:'#d9a25b',g2:'#c48b45',r:'#50454a',pts:[[.1,.5],[.2,.15],[.45,.25],[.55,.1],[.85,.18],[.92,.5],[.7,.45],[.6,.7],[.88,.88],[.5,.92],[.3,.7],[.15,.85]]}};
+const COLS=['#e63946','#3a86ff','#ffb703','#06d6a0','#8338ec','#ff006e','#fb5607','#4cc9f0'];
+let cv,cx,W,H,path=[],RW,raf=0,R=null;const ctl={};const AVI={};
+PG._handlers.ctl=(n,v)=>{ctl[n]=v||{}};PG._handlers.item=n=>{if(R)useItem(R.karts.find(k=>k.n===n))};
+function catmull(ps,N){const out=[],n=ps.length;for(let i=0;i<n;i++){const p0=ps[(i-1+n)%n],p1=ps[i],p2=ps[(i+1)%n],p3=ps[(i+2)%n];for(let t=0;t<N;t++){const s=t/N,s2=s*s,s3=s2*s;out.push([.5*((2*p1[0])+(-p0[0]+p2[0])*s+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*s2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*s3),.5*((2*p1[1])+(-p0[1]+p2[1])*s+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*s2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*s3)])}}return out}
+function setup(){PG.stage(`<canvas id="kc" style="width:96vw;height:76vh;border-radius:2vh;box-shadow:0 0 0 .5vh #ffcc3d,0 2vh 5vh rgba(0,0,0,.5)"></canvas><div id="khud" style="display:flex;gap:.6vw;flex-wrap:wrap;justify-content:center"></div>`);cv=$('#kc');const r=cv.getBoundingClientRect();W=cv.width=Math.round(r.width);H=cv.height=Math.round(r.height);cx=cv.getContext('2d');
+ const T=TRK[cfg.k];path=catmull(T.pts,40).map(p=>[p[0]*W,p[1]*H]);RW=Math.min(W,H)*.13}
+const N=()=>path.length;
+function nearest(x,y,hint){let best=hint||0,bd=1e9;const n=N(),from=hint==null?0:hint-30,to=hint==null?n:hint+60;for(let j=from;j<to;j++){const i=(j%n+n)%n,p=path[i],d=(p[0]-x)**2+(p[1]-y)**2;if(d<bd){bd=d;best=i}}return[best,Math.sqrt(bd)]}
+function inRange(i,a,b){const n=N();i=(i%n+n)%n;return a<=b?i>=a&&i<=b:i>=a||i<=b}
+function race(names){const n=N(),start=Math.floor(n*.02),ang=Math.atan2(path[start+1][1]-path[start][1],path[start+1][0]-path[start][0]);
+ R={karts:names.map((nm,i)=>{const row=Math.floor(i/2),col=i%2,back=-(row+1)*RW*.9,side=(col?.25:-.25)*RW*1.4;const p=path[(start-row*6+n)%n];return{n:nm,cpu:nm.startsWith('🤖'),c:COLS[i%8],x:p[0]+Math.cos(ang)*0+Math.cos(ang+Math.PI/2)*side,y:p[1]+Math.sin(ang+Math.PI/2)*side,a:ang,v:0,idx:(start-row*6+n)%n,lap:0,prog:0,done:0,drift:0,charge:0,boost:0,spin:0,air:0,trick:0,shield:0,item:'',fin:0}}),
+  oil:[],peppers:[],boxes:[],t0:0,go:false,fin:[],laps:cfg.l,sparks:[]};
+ const box=f=>{const i=Math.floor(n*f),p=path[i],a=Math.atan2(path[(i+1)%n][1]-p[1],path[(i+1)%n][0]-p[0]);[-.28,0,.28].forEach(o=>R.boxes.push({x:p[0]+Math.cos(a+Math.PI/2)*o*RW*1.6,y:p[1]+Math.sin(a+Math.PI/2)*o*RW*1.6,t:0}))};box(.22);box(.55);box(.82);
+ R.ramps=[[Math.floor(n*.38),Math.floor(n*.385)],[Math.floor(n*.7),Math.floor(n*.705)]];R.pads=[[Math.floor(n*.12),Math.floor(n*.135)],[Math.floor(n*.62),Math.floor(n*.635)],[Math.floor(n*.92),Math.floor(n*.935)]];
+ R.karts.forEach(k=>{if(!k.cpu&&window.TGB&&TGB.avatar(k.n)){const im=new Image();im.src=TGB.avatar(k.n);AVI[k.n]=im}});pads();
+ return new Promise(res=>{R.done=res;countdown3()})}
+function pads(){if(!window.TGB||!R)return;const m={};R.karts.filter(k=>!k.cpu).forEach(k=>m[k.n]={k:'pad',key:'pad'+k.n+(k.item||'')+R.karts.indexOf(k),id:'pad',title:'🏎️ '+k.n,body:k.fin?'🏁 Finished!':`Lap ${Math.min(k.lap+1,R.laps)}/${R.laps}`,item:k.item,color:k.c});TGB.askEach(m)}
+async function countdown3(){draw();for(const c of ['🔴','🟠','🟢']){R.light=c;draw();SFX.tick(c==='🟢');await sleep(800)}R.light='GO!';R.go=true;R.t0=performance.now();SFX.horn();music('play');let last=performance.now();
+ const loop=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;step(dt);draw();if(R&&!R.over)raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop);setTimeout(()=>{if(R)R.light=''},900)}
+function useItem(k){if(!k||!k.item||k.fin)return;const it=k.item;k.item='';pads();
+ if(it==='⚡'){k.boost=1.3;SFX.whoosh()}else if(it==='🛡️'){k.shield=5;SFX.ok()}else if(it==='🛢️'){R.oil.push({x:k.x-Math.cos(k.a)*RW*.6,y:k.y-Math.sin(k.a)*RW*.6,t:12});SFX.click()}
+ else if(it==='🌶️'){const order=rank(),me=order.indexOf(k),tgt=me>0?order[me-1]:null;R.peppers.push({x:k.x,y:k.y,idx:k.idx,tgt,t:6});SFX.horn()}}
+function rank(){return R.karts.slice().sort((a,b)=>(b.fin?1e6-b.fin:0)-(a.fin?1e6-a.fin:0)||b.lap-a.lap||b.prog-a.prog)}
+function hit(k){if(k.shield>0||k.air>0)return false;k.spin=1;k.v*=.3;SFX.sad();return true}
+function step(dt){if(!R.go)return;const n=N(),order=rank();
+ R.karts.forEach(k=>{let c=ctl[k.n]||{};
+  if(k.cpu){const look=path[(k.idx+12)%n],want=Math.atan2(look[1]-k.y,look[0]-k.x);let d=want-k.a;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;c={l:d<-.06?1:0,r:d>.06?1:0,d:Math.abs(d)>.6?1:0};if(k.item&&Math.random()<.01)useItem(k)}
+  if(k.fin){k.v*=.97}else if(k.spin>0){k.spin-=dt;k.a+=dt*12}
+  else{const steer=(c.r?1:0)-(c.l?1:0),[i,dist]=nearest(k.x,k.y,k.idx);k.idx=i;const off=dist>RW*.55;
+   const max=(k.boost>0?430:off?150:300)*(k.cpu?.9:1);k.v+=(k.v<max?260:-400)*dt;if(k.air<=0)k.a+=steer*dt*2.6*(c.d?1.55:1)*Math.min(1,k.v/120);
+   if(c.d&&steer&&k.air<=0){k.drift=1;k.charge+=dt;if(Math.random()<.5)R.sparks.push({x:k.x,y:k.y,t:.4,c:k.charge>.8?'#4cc9f0':'#ffcc3d'})}else{if(k.drift&&k.charge>.8){k.boost=Math.max(k.boost,.9);SFX.whoosh()}k.drift=0;k.charge=0}
+   if(k.air>0&&c.d&&!k.trick){k.trick=1;R.sparks.push({x:k.x,y:k.y,t:1,txt:'✨ TRICK!'})}
+   if(R.ramps.some(([a,b])=>inRange(i,a,b))&&k.air<=0&&!off){k.air=.7;k.trick=0}
+   if(R.pads.some(([a,b])=>inRange(i,a,b))&&!off){k.boost=Math.max(k.boost,.6)}
+   const prevProg=k.prog;k.prog=i/n;if(prevProg>.85&&k.prog<.15){k.lap++;if(k.lap>=R.laps){k.fin=R.fin.length+1;R.fin.push(k.n);if(!k.cpu)SFX.win();pads()}else{if(!k.cpu)pads();SFX.ding()}}if(prevProg<.15&&k.prog>.85)k.lap--}
+  if(k.air>0){k.air-=dt;if(k.air<=0&&k.trick){k.boost=Math.max(k.boost,.7)}}
+  k.boost=Math.max(0,k.boost-dt);k.shield=Math.max(0,k.shield-dt);
+  k.x+=Math.cos(k.a)*k.v*dt;k.y+=Math.sin(k.a)*k.v*dt;k.x=Math.max(8,Math.min(W-8,k.x));k.y=Math.max(8,Math.min(H-8,k.y));
+  R.boxes.forEach(b=>{if(b.t<=0&&!k.item&&(b.x-k.x)**2+(b.y-k.y)**2<(RW*.3)**2){b.t=4;const pos=order.indexOf(k);k.item=pos>=order.length/2?pick(['⚡','🌶️','⚡','🛡️']):pick(['🛢️','🛡️','⚡','🌶️','🛢️']);if(!k.cpu){pads();SFX.ding()}}});
+  R.oil=R.oil.filter(o=>{o.t-=dt/R.karts.length;if(k.air<=0&&(o.x-k.x)**2+(o.y-k.y)**2<(RW*.28)**2&&hit(k)){return false}return o.t>0})});
+ R.boxes.forEach(b=>b.t=Math.max(0,b.t-dt));
+ for(let i=0;i<R.karts.length;i++)for(let j=i+1;j<R.karts.length;j++){const a=R.karts[i],b=R.karts[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),m=RW*.32;if(d<m&&d>0){const p=(m-d)/2;a.x-=dx/d*p;a.y-=dy/d*p;b.x+=dx/d*p;b.y+=dy/d*p}}
+ R.peppers=R.peppers.filter(p=>{p.t-=dt;p.idx=(p.idx+Math.round(dt*120))%n;const q=path[p.idx];if(p.tgt){const dx=p.tgt.x-p.x,dy=p.tgt.y-p.y,d=Math.hypot(dx,dy);if(d<RW*1.5){p.x+=dx/d*520*dt;p.y+=dy/d*520*dt}else{p.x+=(q[0]-p.x)*.3;p.y+=(q[1]-p.y)*.3}if(d<RW*.3){hit(p.tgt);return false}}else{p.x=q[0];p.y=q[1]}return p.t>0});
+ R.sparks=R.sparks.filter(s=>(s.t-=dt)>0);
+ const humans=R.karts.filter(k=>!k.cpu);if(humans.every(k=>k.fin)||(R.fin.length&&R.karts.every(k=>k.fin||k.cpu&&R.fin.length>=R.karts.length-1))||(performance.now()-R.t0)/1000>240){finishRace()}}
+function finishRace(){if(R.over)return;R.over=true;cancelAnimationFrame(raf);const order=rank();order.forEach(k=>{if(!k.fin){k.fin=R.fin.length+1;R.fin.push(k.n)}});const res=R.done;draw();setTimeout(()=>res(R.fin.slice()),1200)}
+function draw(){if(!cx||!R)return;const T=TRK[cfg.k];cx.fillStyle=T.g;cx.fillRect(0,0,W,H);for(let i=0;i<40;i++){cx.fillStyle=T.g2;cx.fillRect((i*137)%W,(i*91)%H,22,22)}
+ const line=(w,col,dash)=>{cx.beginPath();path.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.closePath();cx.lineWidth=w;cx.strokeStyle=col;cx.setLineDash(dash||[]);cx.lineJoin='round';cx.stroke();cx.setLineDash([])};
+ line(RW*1.12,'#fff',[RW*.3,RW*.3]);line(RW*1.12,'rgba(230,57,70,.85)',[RW*.3,RW*.3].map((x,i)=>x));line(RW,T.r);line(2,'rgba(255,255,255,.35)',[18,18]);
+ const seg=([a,b],col)=>{cx.beginPath();for(let i=a;i<=b;i++){const p=path[i%N()];i===a?cx.moveTo(p[0],p[1]):cx.lineTo(p[0],p[1])}cx.lineWidth=RW*.95;cx.strokeStyle=col;cx.stroke()};R.pads.forEach(p=>seg(p,'rgba(76,201,240,.75)'));R.ramps.forEach(p=>seg(p,'rgba(255,138,0,.9)'));
+ const s0=path[Math.floor(N()*.02)],s1=path[Math.floor(N()*.02)+1],sa=Math.atan2(s1[1]-s0[1],s1[0]-s0[0])+Math.PI/2;for(let k=-4;k<4;k++){cx.fillStyle=k%2?'#fff':'#111';cx.fillRect(s0[0]+Math.cos(sa)*k*RW/8-4,s0[1]+Math.sin(sa)*k*RW/8-4,RW/8,8)}
+ cx.font=`${RW*.32}px system-ui`;cx.textAlign='center';cx.textBaseline='middle';R.boxes.forEach(b=>{if(b.t<=0)cx.fillText('❓',b.x,b.y)});R.oil.forEach(o=>cx.fillText('🛢️',o.x,o.y));R.peppers.forEach(p=>cx.fillText('🌶️',p.x,p.y));
+ R.sparks.forEach(s=>{if(s.txt){cx.font=`bold ${RW*.3}px Fredoka`;cx.fillStyle='#fff';cx.fillText(s.txt,s.x,s.y-RW*(1-s.t)*.6);cx.font=`${RW*.32}px system-ui`}else{cx.fillStyle=s.c;cx.beginPath();cx.arc(s.x+(Math.random()-.5)*10,s.y+(Math.random()-.5)*10,3,0,7);cx.fill()}});
+ R.karts.forEach(k=>{const sc=1+(k.air>0?Math.sin((.7-k.air)/.7*Math.PI)*.5:0),L=RW*.55*sc,Wd=RW*.34*sc;cx.save();cx.translate(k.x,k.y);if(k.air>0){cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(6,10,L*.6,Wd*.5,k.a,0,7);cx.fill()}cx.rotate(k.a);
+  if(k.boost>0){cx.fillStyle='rgba(255,140,0,.85)';cx.beginPath();cx.moveTo(-L/2,-Wd/3);cx.lineTo(-L/2-L*.6*Math.random()-L*.3,0);cx.lineTo(-L/2,Wd/3);cx.fill()}
+  cx.fillStyle='#111';[[-L*.3,-Wd*.55],[L*.3,-Wd*.55],[-L*.3,Wd*.55],[L*.3,Wd*.55]].forEach(([x,y])=>cx.fillRect(x-L*.12,y-Wd*.12,L*.24,Wd*.24));cx.fillStyle=k.c;cx.beginPath();cx.roundRect(-L/2,-Wd/2,L,Wd,Wd*.3);cx.fill();cx.restore();
+  const ar=RW*.21*sc;cx.save();cx.beginPath();cx.arc(k.x,k.y-RW*.05,ar,0,7);cx.closePath();cx.fillStyle='#fff';cx.fill();if(AVI[k.n]&&AVI[k.n].complete){cx.clip();cx.drawImage(AVI[k.n],k.x-ar,k.y-RW*.05-ar,ar*2,ar*2)}else{cx.fillStyle=k.c;cx.font=`bold ${ar*1.2}px Bungee`;cx.fillText(k.cpu?'🤖':(k.n[0]||'?').toUpperCase(),k.x,k.y-RW*.03)}cx.restore();
+  if(k.shield>0){cx.strokeStyle='rgba(76,201,240,.9)';cx.lineWidth=3;cx.beginPath();cx.arc(k.x,k.y,RW*.36,0,7);cx.stroke()}
+  cx.font=`bold ${RW*.17}px Fredoka`;cx.fillStyle='#fff';cx.strokeStyle='rgba(0,0,0,.7)';cx.lineWidth=3;cx.strokeText(k.n,k.x,k.y-RW*.36);cx.fillText(k.n,k.x,k.y-RW*.36);cx.font=`${RW*.32}px system-ui`});
+ if(R.light){cx.font=`bold ${H*.16}px Bungee`;cx.fillStyle='#fff';cx.fillText(R.light,W/2,H/2)}
+ const h=$('#khud');if(h&&(!R._h||performance.now()-R._h>250)){R._h=performance.now();h.innerHTML=rank().map((k,i)=>`<span style="padding:.5vh 1vw;border-radius:2vh;background:${k.c};color:#fff;font-weight:800;font-size:1.9vh">${i+1}. ${esc(k.n)} · ${k.fin?'🏁':'Lap '+Math.min(k.lap+1,R.laps)}${k.item?' '+k.item:''}</span>`).join('')}}
+addEventListener('keydown',e=>{if(!R)return;const k=R.karts.find(x=>!x.cpu);if(!k)return;const c=ctl[k.n]||{};if(e.key==='ArrowLeft')c.l=1;if(e.key==='ArrowRight')c.r=1;if(e.key===' ')c.d=1;if(e.key==='Shift')useItem(k);ctl[k.n]=c});
+addEventListener('keyup',e=>{if(!R)return;const k=R.karts.find(x=>!x.cpu);if(!k)return;const c=ctl[k.n]||{};if(e.key==='ArrowLeft')c.l=0;if(e.key==='ArrowRight')c.r=0;if(e.key===' ')c.d=0;ctl[k.n]=c});
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());
+ const heats=[];for(let i=0;i<ps.length;i+=8)heats.push(ps.slice(i,i+8));
+ for(let h=0;h<heats.length;h++){let field=heats[h].slice();for(let c=0;c<cfg.c&&field.length<8;c++)field.push('🤖 CPU '+(c+1));
+  PG.stage(`<div class="kicker">${heats.length>1?`HEAT ${h+1} OF ${heats.length}`:'THE RACE'}</div><div class="prompt">🏁 ${field.map(esc).join(' · ')}</div><div class="status">Phones: hold ◀ ▶ to steer, DRIFT for boosts!</div>`);await PG.next('🚦 START YOUR ENGINES');
+  setup();const fin=await race(field);const pts=[100,70,50,35,25,15,10,5],gain={};fin.forEach((n,i)=>{if(!n.startsWith('🤖')){PG.add(n,pts[i]||5);gain[n]=pts[i]||5}});R=null;
+  music('party');if(window.FXX&&fin[0])FXX.win('🏁 '+fin[0].toUpperCase(),null,'wins the race!');
+  PG.stage(`<div class="bigT">🏁 RESULTS</div>${answersGrid(fin.map((n,i)=>`${['🥇','🥈','🥉'][i]||i+1+'.'} <b>${esc(n)}</b>${gain[n]?`<span class="vt" style="float:right">+${gain[n]}</span>`:''}`))}`);await PG.next(h+1<heats.length?'NEXT HEAT ➜':'🏆 FINAL RESULTS')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+</body></html>

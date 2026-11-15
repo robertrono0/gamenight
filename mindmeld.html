@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mind Meld</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#311b92;--bgB:#0d0628}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🧠 MIND MELD</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🧠 Mind Meld</h2>
+ <div id="teamSetup"></div><h3>Rounds per team</h3><div class="seg" id="segR"><button data-v="3" class="">3</button><button data-v="5" class="on">5</button><button data-v="7" class="">7</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🧠</span>A dial runs between two ideas, like <b>COLD ⟷ HOT</b>. A secret target is hidden somewhere on it.</div><div class="hc"><span class="i">📱</span>One player (the <b>psychic</b>) sees the target on their phone and gives a <b>one-phrase clue</b>, like "soup".</div><div class="hc"><span class="i">🎚️</span>Their team discusses, then the host moves the needle on the TV (← → keys or drag).</div><div class="hc"><span class="i">🎯</span>Bullseye = <b>4</b>, close = <b>3</b>, near = <b>2</b>.</div><div class="hc"><span class="i">↔️</span>The other team guesses if the target is further <b>left or right</b> for <b>+1</b>.</div><div class="hc"><span class="i">🏆</span>Most points wins!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+const KEY='tg-mm';function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const SPEC=[["Cold", "Hot"], ["Useless", "Useful"], ["Boring", "Exciting"], ["Cheap", "Expensive"], ["Healthy", "Unhealthy"], ["Easy to spell", "Hard to spell"], ["Kid food", "Adult food"], ["Overrated", "Underrated"], ["Scary", "Not scary"], ["Bad gift", "Great gift"], ["Tiny", "Huge"], ["Soft", "Hard"], ["Old-fashioned", "Modern"], ["Smells bad", "Smells good"], ["Bad pizza topping", "Good pizza topping"], ["Normal", "Weird"], ["Quiet", "Loud"], ["Forgettable", "Unforgettable"], ["Sad song", "Happy song"], ["Ugly", "Beautiful"], ["Not a sport", "Definitely a sport"], ["Bad superpower", "Great superpower"], ["Rough", "Smooth"], ["Dangerous", "Safe"], ["Villain", "Hero"], ["Bad movie", "Great movie"], ["Snack", "Meal"], ["Hard to do", "Easy to do"], ["Unpopular", "Popular"], ["Bad habit", "Good habit"], ["Waste of time", "Worth the time"], ["Fake", "Real"], ["Rare", "Common"], ["Mild", "Spicy"], ["Bad at a wedding", "Great at a wedding"], ["Arab mom approves", "Arab mom disapproves"]];const TS=teamSetup($('#teamSetup'),KEY);let cfg=LS.get('tg-mm-cfg',{r:5});segs(cfg,'tg-mm-cfg',[['segR','r']]);let G=null,needle=50,dragging=false;
+$('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('Add at least 2 players');return}ac();G={teams,turn:0,r:0,specs:shuffle(SPEC)};$('#setupOv').classList.add('hidden');music('play');round()};
+function dial(target,show){const a=v=>Math.PI*(1-v/100);const R=40,cx=50,cy=48,pt=v=>[cx+R*Math.cos(a(v)),cy-R*Math.sin(a(v))];
+ const wedge=(c,w,col)=>{const[x1,y1]=pt(Math.max(0,c-w)),[x2,y2]=pt(Math.min(100,c+w));return`<path d="M${cx} ${cy} L${x1} ${y1} A${R} ${R} 0 0 1 ${x2} ${y2} Z" fill="${col}"/>`};
+ const[nx,ny]=pt(needle);return`<svg viewBox="0 0 100 52" style="width:min(1100px,90vw)" id="dialSvg"><path d="M10 48 A40 40 0 0 1 90 48 Z" fill="#1e1b3a" stroke="#ffcc3d" stroke-width=".8"/>${show?wedge(target,10,'#ffcc3d')+wedge(target,6,'#fff')+wedge(target,2.5,'#3ddc84'):''}<line x1="50" y1="48" x2="${nx}" y2="${ny}" stroke="#ff4d6d" stroke-width="1.6" stroke-linecap="round"/><circle cx="50" cy="48" r="2.4" fill="#ff4d6d"/></svg>`}
+function round(){const T=G.teams[G.turn],psychic=T.m.length?T.m[G.r%T.m.length]:T.name,sp=G.specs[(G.r*G.teams.length+G.turn)%G.specs.length],target=5+Math.random()*90;needle=50;$('#scores').innerHTML=scoreBar(G.teams,G.turn);
+ if(window.TGB){TGB.ask({k:'dial',key:'mm'+G.r+G.turn,kicker:'🧠 You are the psychic',title:'Secret target',left:sp[0],right:sp[1],target:Math.round(target)},[psychic]);const others=TGB.players().filter(n=>n!==psychic);if(others.length)TGB.ask({k:'msg',key:'mmw'+G.r+G.turn,emoji:'🧠',title:'Look at the TV!',body:psychic+' is giving a clue.'},others)}
+ const draw=(show)=>{$('#stage').innerHTML=`<div class="kicker">${esc(T.name)} · PSYCHIC: ${esc(psychic)} 🧠</div><div style="display:flex;justify-content:space-between;width:min(1100px,90vw);font-family:var(--fd);font-size:4vh"><span>⬅️ ${esc(sp[0])}</span><span>${esc(sp[1])} ➡️</span></div>${dial(target,show)}<div class="status">${show?'':'Psychic: say your clue! Team: discuss. Host: ← → keys or drag the needle.'}</div>${show?'':'<button class="bb gold big" id="lock">🔒 LOCK IN</button>'}<div id="mmRes"></div>`;
+  const svg=$('#dialSvg');const move=e=>{const r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*52;let ang=Math.atan2(48-y,x-50);needle=Math.max(0,Math.min(100,100-ang/Math.PI*100));draw(false)};
+  if(!show){svg.onpointerdown=e=>{dragging=true;move(e)};svg.onpointermove=e=>{if(dragging)move(e)};onpointerup=()=>dragging=false;$('#lock').onclick=lock}};
+ const key=e=>{if(!$('#lock'))return;if(e.key==='ArrowLeft'){needle=Math.max(0,needle-2);draw(false)}else if(e.key==='ArrowRight'){needle=Math.min(100,needle+2);draw(false)}else if(e.key==='Enter')lock()};onkeydown=key;
+ const lock=async()=>{onkeydown=null;const O=G.teams[1-G.turn]||null;let lr=null;
+  if(O){$('#stage').insertAdjacentHTML('beforeend',`<div class="status"><b style="color:${O.c}">${esc(O.name)}</b>: is the target further LEFT or RIGHT?</div><div class="btns"><button class="bb big" data-lr="L">⬅️ LEFT</button><button class="bb big" data-lr="R">RIGHT ➡️</button></div>`);$('#lock').remove();lr=await new Promise(res=>$$('[data-lr]').forEach(b=>b.onclick=()=>res(b.dataset.lr)))}
+  const d=Math.abs(needle-target),pts=d<=2.5?4:d<=6?3:d<=10?2:0;T.score+=pts;let msg=`${pts?'🎯 +'+pts+' for '+esc(T.name):'😬 Missed!'}`;
+  if(O&&lr&&d>2.5&&((lr==='L'&&target<needle)||(lr==='R'&&target>needle))){O.score+=1;msg+=` · ✅ ${esc(O.name)} +1`}
+  draw(true);$('#mmRes').innerHTML=`<div class="status">${msg}</div><button class="bb gold big" id="nx">NEXT ➜</button>`;pts>=3?(SFX.win(),burst()):pts?SFX.ok():SFX.sad();$('#scores').innerHTML=scoreBar(G.teams,G.turn);
+  $('#nx').onclick=()=>{G.turn=(G.turn+1)%G.teams.length;if(G.turn===0)G.r++;if(G.r>=cfg.r){end();return}round()}};
+ draw(false);SFX.whoosh()}
+function end(){music('party');SFX.win();const w=[...G.teams].sort((a,b)=>b.score-a.score);$('#endWrap').innerHTML=`<div class="bigT">🏆 ${esc(w[0].name)} WIN!</div>${podium(G.teams)}<div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');$('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');$('#setupOv').classList.remove('hidden')}}
+if(window.TGB)TGB.init({game:'Mind Meld',names:phoneNames});
+shellInit({game:'Mind Meld',style:'chill',rain:['🧠','🎯','⭐']});
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

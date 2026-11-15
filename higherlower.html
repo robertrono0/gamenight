@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%AC%86%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Higher or Lower</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#6a1b9a;--bgB:#1e0533}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">⬆️ HIGHER OR LOWER</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>⬆️ Higher or Lower</h2>
+ <h3>Cards</h3><div class="seg" id="segR"><button data-v="10" class="">10</button><button data-v="15" class="on">15</button><button data-v="20" class="">20</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🃏</span>The TV shows one thing with a number, like <b>Eiffel Tower: 330 m tall</b>.</div><div class="hc"><span class="i">🤔</span>Then a second thing appears. Is its number <b>HIGHER</b> or <b>LOWER</b>?</div><div class="hc"><span class="i">📱</span>Everyone votes on their phone.</div><div class="hc"><span class="i">✅</span>Right = <b>+100</b>, plus <b>+50</b> for every answer in a row you get right (streak!).</div><div class="hc"><span class="i">❌</span>Wrong resets your streak.</div><div class="hc"><span class="i">🏆</span>Most points wins. Numbers are approximate.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const SETS=[
+ {u:'m tall',t:'height',items:[['🏙️','Burj Khalifa',828],['🗼','Eiffel Tower',330],['🏢','Empire State Building',443],['🗽','Statue of Liberty (with base)',93],['🔺','Great Pyramid of Giza',139],['🗼','CN Tower (Toronto)',553],['🏢','Taipei 101',508],['🏙️','Shanghai Tower',632],['🏢','One World Trade Center',541],['🗼','Space Needle',184],['🌉','Golden Gate Bridge towers',227],['🏛️','Leaning Tower of Pisa',56],['🌈','Gateway Arch (St. Louis)',192],['🏢','Petronas Towers',452],['🕰️','Big Ben\'s tower',96],['🌊','Niagara Falls (Horseshoe)',57]]},
+ {u:'mph top speed',t:'speed',items:[['🐆','Cheetah',70],['🦁','Lion',50],['🐎','Racehorse',44],['🐕','Greyhound',45],['🦘','Kangaroo',44],['🐘','Elephant',25],['🏃','Usain Bolt',27],['🐻','Grizzly bear',35],['🐈','House cat',30],['🐇','Rabbit',35],['🦓','Zebra',40],['🦒','Giraffe',35],['🐢','Sea turtle',22],['🐊','Crocodile (on land)',11]]},
+ {u:'(year founded)',t:'year',items:[['🥤','Coca-Cola',1886],['🍎','Apple',1976],['🔍','Google',1998],['📦','Amazon',1994],['👟','Nike',1964],['🏰','Disney',1923],['☕','Starbucks',1971],['🎬','Netflix',1997],['📘','Facebook',2004],['▶️','YouTube',2005],['📸','Instagram',2010],['🛒','Costco',1983],['🍔','In-N-Out',1948],['🧱','LEGO',1932],['🎮','Nintendo',1889],['🚗','Ford',1903],['⚡','Tesla',2003],['🍟','McDonald\'s (first restaurant)',1940]]},
+ {u:'(movie year)',t:'movie',items:[['🦁','The Lion King',1994],['🚢','Titanic',1997],['⭐','Star Wars',1977],['🤠','Toy Story',1995],['🐠','Finding Nemo',2003],['🟢','Shrek',2001],['❄️','Frozen',2013],['🕷️','Spider-Man (Tobey Maguire)',2002],['🌌','Avatar',2009],['🦸','Avengers: Endgame',2019],['💗','Barbie',2023],['🏠','Home Alone',1990],['🦖','Jurassic Park',1993],['🧞','Aladdin (cartoon)',1992]]}];
+let cfg=LS.get('tg-hl-cfg',{r:15});segs(cfg,'tg-hl-cfg',[['segR','r']]);
+PG.init({key:'tg-hl',game:'Higher or Lower',title:'⬆️ Higher or Lower',sub:'Scan to join! Higher or lower? Vote on your phone.',min:1,style:'pop',rain:['⬆️','⬇️','⭐']});
+const fmt=(v,u)=>u.includes('year')?String(v):v.toLocaleString();
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();const stk={};
+ let set=pick(SETS),pool=shuffle(set.items),a=pool.pop();
+ for(let r=0;r<cfg.r;r++){if(pool.length<1){set=pick(SETS.filter(s=>s!==set));pool=shuffle(set.items);a=pool.pop()}let b=pool.pop();if(b[2]===a[2]){b=pool.pop()||b}
+  const word=set.t==='height'?['TALLER','SHORTER']:set.t==='speed'?['FASTER','SLOWER']:['NEWER (later)','OLDER (earlier)'];
+  const card=(x,show)=>`<div class="ansC popIn" style="text-align:center;min-width:28vw"><div style="font-size:12vh">${x[0]}</div><div style="font-family:var(--fd);font-size:3.6vh">${esc(x[1])}</div><div style="font-family:var(--fd);font-size:6vh;color:#c2410c">${show?fmt(x[2],set.u):'???'}</div><div style="font-size:2vh">${esc(set.u)}</div></div>`;
+  PG.stage(`<div class="kicker">CARD ${r+1} OF ${cfg.r}</div><div style="display:flex;gap:3vw;align-items:center">${card(a,1)}<div style="font-family:var(--fd);font-size:6vh">VS</div>${card(b,0)}</div><div class="prompt" style="font-size:3.6vh">Is <b>${esc(b[1])}</b> ${word[0].split(' ')[0]} or ${word[1].split(' ')[0]}?</div><div id="pgVotes"></div>`);SFX.whoosh();
+  const votes=await PG.vote({id:'hl',secs:15,title:`${b[0]} ${b[1]}`,sub:`vs ${a[1]} (${fmt(a[2],set.u)} ${set.u})`,opts:()=>[{t:'⬆️ '+word[0],v:'h'},{t:'⬇️ '+word[1],v:'l'}]});
+  const ans=b[2]>a[2]?'h':'l',gain={};Object.entries(votes).forEach(([n,v])=>{if(v===ans){stk[n]=(stk[n]||0)+1;const g=100+50*(stk[n]-1);PG.add(n,g);gain[n]=g}else stk[n]=0});PG.players().forEach(n=>PG.add(n,0));
+  SFX.roll(900);await sleep(1000);PG.stage(`<div style="display:flex;gap:3vw;align-items:center">${card(a,1)}<div style="font-family:var(--fd);font-size:8vh;color:${ans==='h'?'#5cf09a':'#ff6b6b'}">${ans==='h'?'⬆️':'⬇️'}</div>${card(b,1)}</div><div class="status">${Object.keys(gain).length?'✅ '+Object.keys(gain).map(n=>esc(n)+(stk[n]>1?' 🔥'+stk[n]:'')).join(', '):'😬 Nobody got it!'}</div>`);SFX.ding();
+  await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT CARD ➜');a=b}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

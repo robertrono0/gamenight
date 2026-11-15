@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%94%A4%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Category Rush</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#5e35b1;--bgB:#1c0b45}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🔤 CATEGORY RUSH</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🔤 Category Rush</h2>
+ <h3>Rounds</h3><div class="seg" id="segR"><button data-v="2" class="">2</button><button data-v="3" class="on">3</button><button data-v="5" class="">5</button></div><h3>Seconds</h3><div class="seg" id="segT"><button data-v="90" class="">90</button><button data-v="120" class="on">120</button><button data-v="150" class="">150 (relaxed)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🔤</span>A random <b>letter</b> and <b>6 categories</b> appear.</div><div class="hc"><span class="i">📱</span>On your phone, write an answer for each category that <b>starts with that letter</b>.</div><div class="hc"><span class="i">🚫</span>If someone else wrote the same answer, it doesn't count for either of you!</div><div class="hc"><span class="i">✅</span><b>+1</b> for every unique, valid answer.</div><div class="hc"><span class="i">👆</span>Host: tap any answer on the TV to throw it out (or bring it back).</div><div class="hc"><span class="i">🏆</span>Most points after all rounds wins.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const CATS=["A boy's name","A girl's name","A country","A city","An animal","A food","A fruit or vegetable","A famous person","A movie","A TV show","A sport","Something in a kitchen","A color","A brand","A job","A thing at the beach","A drink","A dessert","A body part","Something you wear","A song","A cartoon character","A school subject","A thing in a car","An app or website","Something cold","Something you're afraid of","A holiday thing","A Middle Eastern food","A car brand","A store","A board or video game","A pizza topping","A word that describes a person","Something with wheels","Something in a bathroom","A superhero or villain","A musical instrument","A breakfast food","Something you'd find in a purse"];
+const LETS='ABCDEFGHIJKLMNOPRSTW';
+let cfg=LS.get('tg-rush-cfg',{r:3,t:120});segs(cfg,'tg-rush-cfg',[['segR','r'],['segT','t']]);
+PG.init({key:'tg-rush',game:'Category Rush',title:'🔤 Category Rush',sub:'Scan to join! One letter, six categories.',min:2,style:'funk',rain:['🔤','✏️','⭐']});
+const nk=s=>String(s).toLowerCase().trim().replace(/^(a|an|the)\s+/,'').replace(/[^a-z0-9]/g,'');
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const lets=shuffle(LETS.split(''));
+ for(let r=0;r<cfg.r;r++){const L=lets[r],cats=shuffle(CATS).slice(0,6);
+  const subs=await PG.collect({id:'c',secs:cfg.t,title:`<div class="kicker">ROUND ${r+1} OF ${cfg.r}</div><div style="font-family:var(--fd);font-size:16vh;color:var(--gold);line-height:1;text-shadow:0 1vh 0 #6b4a07">${L}</div><div class="ansG" style="grid-template-columns:repeat(3,1fr)">${cats.map((c,i)=>`<div class="ansC" style="padding:1.2vh 1.4vw">${i+1}. ${esc(c)}</div>`).join('')}</div>`,sub:`Everything starts with <b>${L}</b>!`,spec:n=>({k:'text',kicker:'Letter: '+L,title:`Everything starts with "${L}"`,fields:cats.map(c=>({ph:c})),max:40,btn:'Done ✏️'})});
+  const ent=Object.entries(subs).map(([n,v])=>[n,[].concat(v)]);const strike={};
+  const valid=(i,n,a)=>{const k=nk(a);if(!k||k[0]!==L.toLowerCase())return 0;if(strike[i+'|'+n])return 0;return ent.filter(([m,v])=>m!==n&&nk(v[i]||'')===k&&!strike[i+'|'+m]).length?0:1};
+  const draw=()=>{PG.stage(`<div class="kicker">LETTER ${L}</div><div style="display:flex;flex-direction:column;gap:1vh;width:min(1500px,95vw);max-height:66vh;overflow:auto">${cats.map((c,i)=>`<div style="display:flex;flex-wrap:wrap;gap:.6vw;align-items:center;padding:.8vh 1vw;border-radius:1.4vh;background:rgba(255,255,255,.07)"><b style="font-family:var(--fd);color:var(--gold);min-width:18vw;font-size:2vh">${esc(c)}</b>${ent.map(([n,v])=>{const a=(v[i]||'').trim();if(!a)return'';const ok=valid(i,n,a);return`<span data-s="${i}|${esc(n)}" style="cursor:pointer;display:inline-flex;align-items:center;gap:.4vw;padding:.4vh .9vw .4vh .4vh;border-radius:2vh;font-weight:700;font-size:2vh;background:${ok?'#16a35a':'rgba(255,80,80,.35)'};${ok?'':'text-decoration:line-through;opacity:.8'}">${avHTML(n)}${esc(a)}</span>`}).join('')}</div>`).join('')}</div><div class="hint" style="font-size:1.8vh;opacity:.8">Host: tap an answer to throw it out or bring it back. Duplicates and wrong letters are already red.</div>`);
+   $$('[data-s]').forEach(e=>e.onclick=()=>{const k=e.dataset.s;strike[k]=!strike[k];SFX.click();draw();PG.next('✅ SCORE IT').then(score)})};
+  let scored=false;const score=()=>{if(scored)return;scored=true};draw();SFX.whoosh();music('play');await PG.next('✅ SCORE IT');
+  const gain={};ent.forEach(([n,v])=>{let g=0;cats.forEach((c,i)=>g+=valid(i,n,(v[i]||'').trim()));if(g){PG.add(n,g);gain[n]=g}});
+  PG.stage(PG.board(gain));SFX.win();await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT LETTER ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

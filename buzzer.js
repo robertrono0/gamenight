@@ -2308,7 +2308,7 @@ var qrcode = function() {
 ;/* Thanksgiving Game Night: phone buzzers + host remote (TV side) */
 (function(){
 "use strict";
-const BUILD='1794769454';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
+const BUILD='1794800000';const Q=new URLSearchParams(location.search),PEERP=Q.get('peer');
 function peerOpts(){if(!PEERP)return{debug:0};const[h,p]=PEERP.split(':');return{host:h,port:+p||9000,path:'/',secure:false,debug:0}}
 const ls={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const rid=n=>{const a='abcdefghijkmnpqrstuvwxyz23456789';let s='';const r=new Uint32Array(n);crypto.getRandomValues(r);for(const x of r)s+=a[x%a.length];return s};
@@ -2336,13 +2336,18 @@ function allNames(){let n=[];try{n=O.names()||[]}catch(e){}if(!n.length&&window.
 function onData(c,d){let p=P.get(c.peer);if(!p){p={c,name:null,role:'player'};P.set(c.peer,p)}
  if(d.t==='join'){let nm=String(d.name||'').trim().slice(0,24);const al=allNames(),hit=al.find(x=>x.toLowerCase()===nm.toLowerCase());if(hit)nm=hit;p.name=nm;p.pid=d.pid;
   for(const[k,o]of P)if(k!==c.peer&&o.pid===d.pid&&o.role==='player'){try{o.c.close()}catch(e){}P.delete(k)}
-  if(p.role==='host'){p.role='player';HOSTS.delete(c.peer)}push(p);draw();try{O.onJoin&&O.onJoin(p.name)}catch(e){}return}
+  if(p.role==='host'){p.role='player';HOSTS.delete(c.peer)}push(p);sendUI(p);draw();try{O.onJoin&&O.onJoin(p.name)}catch(e){}return}
  if(d.t==='role'&&d.r==='player'){p.role='player';HOSTS.delete(c.peer);push(p);draw();return}
  if(d.t==='host'){if(d.key!==HKEY){send(c,{t:'denied',why:'key'});return}
   p.role='host';p.pid=d.pid;HOSTS.add(c.peer);pushHost();draw();return}
  if(d.t==='hi'){send(c,{t:'names',names:allNames(),game:O.game});return}
+ if(d.t==='in'&&p.role==='player'&&p.name){try{O.onInput&&O.onInput(p.name,d.id,d.v,d.key)}catch(e){console.error(e)}return}
+ if(d.t==='react'&&p.name){react(d.e,p.name);return}
+ if(d.t==='avatar'&&p.name&&typeof d.img==='string'&&d.img.length<160000&&/^data:image\//.test(d.img)){setAv(p.name,d.img);return}
+ if(d.t==='profile'&&p.name&&d.p&&typeof d.p==='object'){PROF[p.name]={e:String(d.p.e||'').slice(0,16),c:String(d.p.c||'').slice(0,9),a:['kid','teen','adult'].includes(d.p.a)?d.p.a:''};try{localStorage.setItem('tg-profiles',JSON.stringify(PROF))}catch(e){}try{dispatchEvent(new CustomEvent('tgprofile',{detail:p.name}))}catch(e){}return}
  if(d.t==='buzz'&&p.role==='player'&&p.name){buzz(p.name);return}
- if(d.t==='act'&&p.role==='host'){if(d.id==='open')TGB.open();else if(d.id==='lock')TGB.lock();else if(O.onAct)O.onAct(d.id,d)}}
+ if(d.t==='act'&&p.role==='host'){const id=String(d.id||'');if(id.startsWith('sfx:')){board(id.slice(4));return}if(id==='nav:next'){navNext();return}if(id==='nav:home'){location.href='index.html';return}if(id.startsWith('react:')){react(id.slice(6),'Host');return}
+  if(d.id==='open')TGB.open();else if(d.id==='lock')TGB.lock();else if(O.onAct)O.onAct(d.id,d)}}
 // ---------- buzz logic ----------
 const live=()=>st.q.filter(n=>!st.out.has(n));
 function buzz(name){if(!st.open||st.out.has(name)||st.q.includes(name))return;if(st.elig&&!st.elig.has(name))return;
@@ -2354,8 +2359,45 @@ function stateFor(name){if(!name)return{s:'pick'};const al=allNames();if(al.leng
  if(st.open)return{s:'notyou',team};return{s:'wait',team,cd:st.cd}}
 function push(p){if(p.role!=='player')return;const x=stateFor(p.name);if(x.s==='pick')x.names=allNames();send(p.c,{t:'st',...x,game:O.game,me:p.name})}
 function pushAll(){for(const p of P.values())push(p)}
-function pushHost(){if(!HOSTS.size)return;const lv=live();const m={t:'host',game:O.game,view:st.hostView,open:st.open,q:st.q.map(n=>({n,out:st.out.has(n),team:O.teamOf(n)})),first:lv[0]||null,noBuzz:st.opened&&!st.open?connectedNames().filter(n=>!st.q.includes(n)&&(!st.elig||st.elig.has(n))):[],players:connectedNames()};for(const h of HOSTS){const p=P.get(h);if(p)send(p.c,m)}}
+function pushHost(){if(!HOSTS.size)return;const lv=live();const m={t:'host',game:O.game,view:st.hostView,open:st.open,q:st.q.map(n=>({n,out:st.out.has(n),team:O.teamOf(n)})),first:lv[0]||null,sb:1,next:nextLabel(),noBuzz:st.opened&&!st.open?connectedNames().filter(n=>!st.q.includes(n)&&(!st.elig||st.elig.has(n))):[],players:connectedNames()};for(const h of HOSTS){const p=P.get(h);if(p)send(p.c,m)}}
 function connectedNames(){return[...new Set([...P.values()].filter(p=>p.role==='player'&&p.name).map(p=>p.name))]}
+
+// ---------- phone screens (votes, typing, drawing, photos, secret cards) ----------
+const UI={all:null,per:{}};
+function sendUI(p){if(!p||p.role!=='player'||!p.name)return;const s=Object.prototype.hasOwnProperty.call(UI.per,p.name)?UI.per[p.name]:UI.all;send(p.c,{t:'ui',spec:s||null,now:Date.now()})}
+function sendUIAll(){for(const p of P.values())sendUI(p)}
+// ---------- selfie avatars (kept on this laptop only) ----------
+let AV={};try{AV=JSON.parse(localStorage.getItem('tg-avatars')||'{}')||{}}catch(e){AV={}}
+function setAv(n,img){AV[n]=img;try{localStorage.setItem('tg-avatars',JSON.stringify(AV))}catch(e){const ks=Object.keys(AV);if(ks.length>1){delete AV[ks[0]];try{localStorage.setItem('tg-avatars',JSON.stringify(AV))}catch(e2){}}}try{dispatchEvent(new CustomEvent('tgavatar',{detail:n}))}catch(e){}if(!$p.classList.contains('tgb-hide'))drawPanel()}
+let PROF={};try{PROF=JSON.parse(localStorage.getItem('tg-profiles')||'{}')||{}}catch(e){}
+// ---------- live reactions ----------
+const RX=['😂','🔥','😱','👏','❤️','🤯','😭','🎉'],rxT={};
+function react(e,who){if(!RX.includes(e))return;const now=Date.now();if(rxT[who]&&now-rxT[who]<450)return;rxT[who]=now;
+ const el=document.createElement('div');el.className='tgbRx';const av=AV[who];el.innerHTML=`<span class="e">${e}</span>${av?`<img src="${av}" alt="">`:`<small>${esc(who)}</small>`}`;el.style.left=(4+Math.random()*88)+'vw';el.style.setProperty('--dx',(Math.random()*12-6)+'vw');document.body.appendChild(el);setTimeout(()=>el.remove(),3600)}
+// ---------- host soundboard ----------
+let NB=null;function nz(d,f,g,at=0,type='bandpass'){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();if(!NB){NB=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const x=NB.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1}
+ const t=ac.currentTime+at,s=ac.createBufferSource(),fl=ac.createBiquadFilter(),v=ac.createGain();s.buffer=NB;fl.type=type;fl.frequency.value=f;v.gain.setValueAtTime(g,t);v.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(v);v.connect(ac.destination);s.start(t,Math.random()*.5);s.stop(t+d+.05)}catch(e){}}
+function tn(f,d,g,type,at=0,to){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const t=ac.currentTime+at,o=ac.createOscillator(),v=ac.createGain();o.type=type||'square';o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+.01);v.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(v);v.connect(ac.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+const BOARD={drum(){for(let i=0;i<40;i++)nz(.06,220,.1+.25*i/40,i*.05);nz(1.2,6000,.35,2.05,'highpass');tn(130,.8,.25,'sawtooth',2.05)},
+ clap(){for(let i=0;i<70;i++)nz(.05,1200+Math.random()*1800,.08+Math.random()*.12,Math.random()*2.6)},
+ horn(){[0,.32,.64].forEach((a,i)=>[0,7,12].forEach(s=>tn(233*Math.pow(2,s/12),i===2?1:.26,.09,'sawtooth',a)))},
+ wrong(){tn(110,.9,.3,'sawtooth');tn(116,.9,.2,'square')},
+ ding(){tn(1568,1,.25,'sine');tn(2093,1.1,.2,'sine',.12)},
+ tada(){[523,659,784,1047].forEach((f,i)=>tn(f,i===3?1.2:.18,.15,'triangle',i*.12))},
+ cricket(){for(let k=0;k<3;k++)for(let i=0;i<4;i++)tn(4200,.03,.08,'sine',k*.6+i*.06)},
+ sad(){[392,370,349,330].forEach((f,i)=>tn(f/2,i===3?1.2:.38,.18,'sawtooth',i*.42))},
+ boo(){tn(160,1.6,.2,'sawtooth',0,90);nz(1.5,400,.15)},
+ suspense(){[0,.5,1,1.5].forEach(a=>{tn(98,.45,.25,'sawtooth',a);tn(104,.45,.15,'square',a)})}};
+function board(k){const f=BOARD[k];if(f)f();const lab={drum:'🥁',clap:'👏',horn:'📯',wrong:'❌',ding:'🔔',tada:'🎉',cricket:'🦗',sad:'😢',boo:'👎',suspense:'😰'}[k];if(lab)react2(lab)}
+function react2(e){const el=document.createElement('div');el.className='tgbRx big';el.innerHTML=`<span class="e">${e}</span>`;el.style.left='46vw';el.style.setProperty('--dx','0vw');document.body.appendChild(el);setTimeout(()=>el.remove(),3600)}
+// ---------- party playlist ----------
+function playlist(){try{return JSON.parse(localStorage.getItem('tg-playlist')||'null')}catch(e){return null}}
+function curFile(){return(location.pathname.split('/').pop()||'index.html')}
+function nextLabel(){const pl=playlist();if(!pl||!pl.list||!pl.list.length)return null;const i=pl.list.findIndex(x=>x.f===curFile());const n=pl.list[i+1];return n?n.n:'🏆 Final standings'}
+function navNext(){const pl=playlist();if(!pl||!pl.list)return;const i=pl.list.findIndex(x=>x.f===curFile());const n=pl.list[i+1];location.href=n?n.f+'?from=playlist':'index.html#reveal'}
+// ---------- offline backup: host taps who buzzed ----------
+let offSince=Date.now();setInterval(()=>{if(ready){offSince=0}else if(!offSince)offSince=Date.now();if($m)$m.classList.toggle('tgb-hide',!!(ready||O.hostOnly||!offSince||Date.now()-offSince<10000||!allNames().length))},2000);
+function manualBuzz(n){if(!st.open)TGB.open();buzz(n)}
 // ---------- public API ----------
 const TGB=window.TGB={
  init(o){Object.assign(O,o);ui();connect()},
@@ -2373,15 +2415,21 @@ const TGB=window.TGB={
  unHost(name){for(const[k,p]of P)if(p.name===name&&p.role==='host')demote(k)},
  hostCount(){let n=0;for(const p of P.values())if(p.role==='host')n++;return n},
   isHost(name){for(const p of P.values())if(p.name===name&&p.role==='host')return true;return false},
- connected:connectedNames,
+ connected:connectedNames,players:connectedNames,
+ ask(spec,names){if(names){[].concat(names).forEach(n=>UI.per[n]=spec)}else{UI.all=spec;UI.per={}}sendUIAll()},
+ askEach(map){Object.assign(UI.per,map);sendUIAll()},
+ clearUI(){UI.all=null;UI.per={};sendUIAll()},
+ avatar(n){return AV[n]||''},profile(n){return PROF[n]||null},profiles(){return PROF},link,qr,avatars(){return AV},react,sfx:board,next:navNext,nextLabel,isReady(){return ready},manualBuzz,
  refreshNames(){for(const p of P.values())if(p.role==='player')send(p.c,{t:'names',names:allNames(),game:O.game})},
  showPanel(){$p.classList.remove('tgb-hide');drawPanel()}};
 function promote(k){const p=P.get(k);if(p)send(p.c,{t:'promote',key:HKEY})}
 function demote(k){const p=P.get(k);if(p){send(p.c,{t:'demote'});p.role='player';HOSTS.delete(k);push(p);draw()}}
 function flashMsg(a,b){if(!$f)return;$f.innerHTML=`<div class="fx2">${esc(a)}</div><div class="fx3">${esc(b)}</div>`;$f.classList.remove('on');void $f.offsetWidth;$f.classList.add('on')}
-function flash(n){if(!$f)return;const t=O.teamOf(n);$f.innerHTML=`<div class="fx1">🔔</div><div class="fx2">${esc(n)}</div><div class="fx3">BUZZED FIRST!</div>${t&&t.label&&t.label!==n?`<div class="fx4" style="color:${t.color||'#fff'}">${esc(t.label)}</div>`:''}`;$f.classList.remove('on');void $f.offsetWidth;$f.classList.add('on');clearTimeout($f._t);$f._t=setTimeout(()=>$f.classList.remove('on'),1800)}
+function flash(n){if(!$f)return;const t=O.teamOf(n);$f.innerHTML=`<div class="fx1">${AV[n]?`<img src="${AV[n]}" style="width:16vh;height:16vh;border-radius:50%;object-fit:cover;border:.6vh solid #ffcc3d">`:'🔔'}</div><div class="fx2">${esc(n)}</div><div class="fx3">BUZZED FIRST!</div>${t&&t.label&&t.label!==n?`<div class="fx4" style="color:${t.color||'#fff'}">${esc(t.label)}</div>`:''}`;$f.classList.remove('on');void $f.offsetWidth;$f.classList.add('on');clearTimeout($f._t);$f._t=setTimeout(()=>$f.classList.remove('on'),1800)}
 // ---------- UI ----------
-let $b,$s,$p,$f;
+let $b,$s,$p,$f,$m;
+function drawMan(){if(!$m)return;$m.innerHTML=`📵 <b>Phones offline?</b> Tap who answered first:<div class="r">${allNames().map(n=>`<button data-mb="${esc(n)}">${esc(n)}</button>`).join('')}</div>`;$m.querySelectorAll('[data-mb]').forEach(b=>b.onclick=()=>manualBuzz(b.dataset.mb))}
+setInterval(()=>{if($m&&!$m.classList.contains('tgb-hide'))drawMan()},5000);
 function ui(){if($b)return;const css=document.createElement('style');css.textContent=`
 #tgbBtn{position:fixed;right:14px;bottom:14px;z-index:9990;font:700 15px system-ui,sans-serif;padding:10px 16px;border-radius:30px;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.6);color:#fff;cursor:pointer;backdrop-filter:blur(4px)}
 #tgbBtn i{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff4d4d;margin-right:6px;vertical-align:middle}#tgbBtn.ok i{background:#3ddc84}
@@ -2404,10 +2452,15 @@ function ui(){if($b)return;const css=document.createElement('style');css.textCon
 #tgbPanel .url{font:600 13px monospace;word-break:break-all;opacity:.7;margin-top:6px}
 #tgbPanel .pl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:center}#tgbPanel .hb{background:rgba(61,220,132,.2);border:2px solid #3ddc84;color:#fff;font:700 16px system-ui;padding:8px 14px;border-radius:20px}#tgbPanel .hb.on{background:#ffcc3d;color:#2a0d12;border-color:#fff}#tgbPanel .hb small{font-size:11px;opacity:.7}#tgbPanel .pl span{padding:6px 12px;border-radius:20px;background:rgba(61,220,132,.2);border:2px solid #3ddc84;font-weight:700}
 #tgbPanel .row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}#tgbPanel button{font:800 17px system-ui;padding:10px 20px;border-radius:14px;border:0;cursor:pointer;background:#ffcc3d;color:#2a0d12}#tgbPanel button.g{background:rgba(255,255,255,.15);color:#fff}
-#tgbPanel .st{text-align:center;font-weight:700;margin-top:10px}`;document.head.appendChild(css);
+#tgbPanel .st{text-align:center;font-weight:700;margin-top:10px}
+.tgbRx{position:fixed;bottom:-8vh;z-index:9994;pointer-events:none;display:flex;flex-direction:column;align-items:center;animation:tgbRx 3.4s cubic-bezier(.2,.6,.4,1) forwards}
+.tgbRx .e{font-size:7vh;filter:drop-shadow(0 .6vh .6vh rgba(0,0,0,.5))}.tgbRx.big .e{font-size:16vh}.tgbRx img{width:4.4vh;height:4.4vh;border-radius:50%;object-fit:cover;border:.3vh solid #fff;margin-top:-1vh}.tgbRx small{font:800 1.6vh system-ui;color:#fff;background:rgba(0,0,0,.55);padding:.2vh .8vh;border-radius:1vh}
+@keyframes tgbRx{0%{transform:translate(0,0) scale(.4);opacity:0}10%{opacity:1;transform:translate(0,-10vh) scale(1.1)}100%{transform:translate(var(--dx),-80vh) scale(1);opacity:0}}
+#tgbMan{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:9991;background:rgba(20,6,10,.94);border:2px solid #ffcc3d;border-radius:18px;padding:10px 14px;font:700 14px system-ui;color:#fff3dc;max-width:94vw;text-align:center}#tgbMan.tgb-hide{display:none}#tgbMan b{color:#ffcc3d}#tgbMan .r{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:6px}#tgbMan button{font:800 15px system-ui;padding:7px 12px;border-radius:12px;border:0;background:#fff3dc;color:#2a0d12;cursor:pointer}
+#tgbPanel .avs{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px}#tgbPanel .avs img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #ffcc3d}`;document.head.appendChild(css);
  $b=document.createElement('button');$b.id='tgbBtn';$b.onclick=()=>TGB.showPanel();document.body.appendChild($b);
  $s=document.createElement('div');$s.id='tgbStrip';document.body.appendChild($s);
- $f=document.createElement('div');$f.id='tgbFlash';document.body.appendChild($f);$p=document.createElement('div');$p.id='tgbPanel';$p.className='tgb-hide';$p.onclick=e=>{if(e.target===$p)$p.classList.add('tgb-hide')};document.body.appendChild($p);draw()}
+ $f=document.createElement('div');$f.id='tgbFlash';document.body.appendChild($f);$m=document.createElement('div');$m.id='tgbMan';$m.className='tgb-hide';document.body.appendChild($m);drawMan();$p=document.createElement('div');$p.id='tgbPanel';$p.className='tgb-hide';$p.onclick=e=>{if(e.target===$p)$p.classList.add('tgb-hide')};document.body.appendChild($p);draw()}
 function link(role){const base=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'')+'buzz.html';return base+'?v='+BUILD+(PEERP?'&peer='+encodeURIComponent(PEERP):'')+'#'+ID+(role==='host'?'~'+HKEY:'')}
 function qr(t){try{const q=qrcode(0,'M');q.addData(t);q.make();return q.createSvgTag({cellSize:6,margin:2,scalable:true})}catch(e){return''}}
 function drawPanel(){const n=connectedNames(),h=HOSTS.size;
@@ -2416,7 +2469,7 @@ function drawPanel(){const n=connectedNames(),h=HOSTS.size;
  $p.innerHTML=`<div class="in"><h2>📱 Phone buzzers</h2><div class="sub">Everyone on the <b>same Wi-Fi</b>, scan with your camera, tap your name. Done!</div>
  <div class="qs"><div class="qb"><h3>📱 PLAYERS: scan me</h3>${qr(link('p'))}<div class="url">${esc(link('p'))}</div></div>
  <div class="qb h"><h3>🎤 HOST ONLY</h3><div style="font-size:14px;margin-bottom:6px">Your private remote: answers, ✅ / ❌ buttons</div>${qr(link('host'))}<div style="font-weight:800;margin-top:6px">${h?`✅ ${h} host remote${h>1?'s':''} connected`:'Not connected yet'}<div style="font-size:13px;margin-top:4px">New host? They scan this, or tap 🎤 on their phone if they hosted before.</div></div></div></div>
- <div class="st">${ready?'🟢 Ready':'🟡 Connecting... (needs internet)'} · ${n.length} player${n.length===1?'':'s'} connected</div>
+ <div class="st">${ready?'🟢 Ready':'🟡 Connecting... (needs internet)'} · ${n.length} player${n.length===1?'':'s'} connected</div>${n.some(x=>AV[x])?`<div class="avs">${n.filter(x=>AV[x]).map(x=>`<img src="${AV[x]}" title="${esc(x)}">`).join('')}</div>`:''}
  <div style="text-align:center;margin-top:14px;font-weight:800">🎤 Choose the host: tap a name</div>
  <div class="pl">${[...P.entries()].filter(([k,p])=>p.name||p.role==='host').map(([k,p])=>p.role==='host'?`<button class="hb on" data-dm="${esc(k)}">🎤 ${esc(p.name||'Host phone')} <small>(tap to make player)</small></button>`:`<button class="hb" data-pr="${esc(k)}">${esc(p.name)}</button>`).join('')||'<i style="opacity:.7">Nobody yet</i>'}</div>
  <div class="row"><button id="tgbClose">✓ Done</button><button class="g" id="tgbRnd">🎲 Random host</button><button class="g" id="tgbKick">🔄 New host QR (signs out current hosts)</button></div></div>`;
@@ -2427,7 +2480,7 @@ function drawPanel(){const n=connectedNames(),h=HOSTS.size;
 function draw(){if(!$b)return;const n=connectedNames().length;$b.className=ready?'ok':'';$b.innerHTML=O.hostOnly?`<i></i>🎤 Host remote${HOSTS.size?' ✅':''}`:`<i></i>📱 Buzzers · ${n}`;if(O.hostOnly){if(!$p.classList.contains('tgb-hide'))drawPanel();$s.innerHTML='';return}
  if(!$p.classList.contains('tgb-hide'))drawPanel();
  const lv=live();let h='';
- if(lv.length){const f=lv[0],t=O.teamOf(f);h+=`<span class="b1">🔔 ${esc(f)}${t&&t.label&&t.label!==f?` · ${esc(t.label)}`:''}</span>`;lv.slice(1,6).forEach((x,i)=>{const t2=O.teamOf(x);h+=`<span class="bn" style="--c:${t2&&t2.color||'#fff'}">${i+2}. ${esc(x)}</span>`})}
+ if(lv.length){const f=lv[0],t=O.teamOf(f);h+=`<span class="b1">${AV[f]?`<img src="${AV[f]}" style="width:3.4vh;height:3.4vh;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:.6vh">`:'🔔 '}${esc(f)}${t&&t.label&&t.label!==f?` · ${esc(t.label)}`:''}</span>`;lv.slice(1,6).forEach((x,i)=>{const t2=O.teamOf(x);h+=`<span class="bn" style="--c:${t2&&t2.color||'#fff'}">${i+2}. ${esc(x)}</span>`})}
  else if(st.open)h+=`<span class="op">🔓 BUZZERS OPEN</span>`;
  else if(st.cd>0)h+=`<span class="lk" style="font-size:2.4vh">⏳ Buzzers open in ${st.cd}...</span>`;
  [...st.out].filter(x=>st.q.includes(x)).forEach(x=>h+=`<span class="bo">${esc(x)}</span>`);

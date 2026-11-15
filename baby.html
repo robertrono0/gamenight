@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%91%B6%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Baby Photo Match</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#f06292;--bgB:#4a1027}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">👶 BABY PHOTO MATCH</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>👶 Baby Photo Match</h2>
+ <h3>Upload time</h3><div class="seg" id="segT"><button data-v="120" class="">2 min</button><button data-v="240" class="on">4 min</button><button data-v="600" class="">10 min (send during dinner)</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📸</span>Everyone sends a <b>baby or childhood photo</b> of themselves from their phone.</div><div class="hc"><span class="i">🔒</span>Photos stay on this laptop only (never posted online) and are wiped when you tap <b>Clear photos</b>.</div><div class="hc"><span class="i">👀</span>The host checks every photo first and can remove any.</div><div class="hc"><span class="i">🕵️</span>One by one, photos appear on the TV. Everyone guesses <b>who it is</b> on their phone.</div><div class="hc"><span class="i">✅</span><b>+100</b> for a correct guess. The baby gets <b>+50</b> for everyone fooled.</div><div class="hc"><span class="i">😍</span>Prepare for a lot of "awww".</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+let cfg=LS.get('tg-baby-cfg',{t:240});segs(cfg,'tg-baby-cfg',[['segT','t']]);let PHOTOS={};
+PG.init({key:'tg-baby',game:'Baby Photo Match',title:'👶 Baby Photo Match',sub:'Scan to join, then send a baby photo of yourself!',min:3,style:'pop',rain:['👶','🍼','💕']});
+$('#bStart').onclick=async()=>{ac();PG.reset();PHOTOS={};$('#setupOv').classList.add('hidden');music('chill');await PG.lobby();
+ const subs=await PG.collect({id:'ph',secs:cfg.t,title:`<div class="prompt popIn">📸 Send a baby or childhood photo of YOURSELF</div>`,sub:'Tap the button on your phone and pick a photo 👶',spec:n=>({k:'photo',emoji:'👶',title:'Send your baby photo!',body:'Pick a photo of you as a baby or little kid. Only the host sees it before the game.'})});
+ Object.entries(subs).forEach(([n,v])=>{if(String(v).startsWith('data:image'))PHOTOS[n]=v});
+ const review=()=>{PG.stage(`<div class="prompt" style="font-size:3.6vh">👀 Host check: tap ✕ to remove any photo</div><div class="ansG" style="grid-template-columns:repeat(auto-fit,minmax(min(14vw,200px),1fr))">${Object.entries(PHOTOS).map(([n,v])=>`<div class="ansC" style="padding:.8vh"><img class="drw" src="${v}" style="aspect-ratio:1;object-fit:cover"><div class="by">${esc(n)}<button data-x="${esc(n)}" style="margin-left:auto;background:#c1121f;color:#fff;border-radius:1vh;padding:.2vh .8vh;font-weight:800">✕</button></div></div>`).join('')}</div><div class="hint">Photos stay on this laptop only.</div>`);$$('[data-x]').forEach(b=>b.onclick=()=>{delete PHOTOS[b.dataset.x];review();PG.next('▶ START GUESSING').then(()=>{})})};
+ review();await PG.next(`▶ START GUESSING (${Object.keys(PHOTOS).length} photos)`);
+ const items=shuffle(Object.entries(PHOTOS)),names=PG.players();
+ for(let i=0;i<items.length;i++){const[au,img]=items[i];
+  PG.stage(`<div class="kicker">BABY ${i+1} OF ${items.length}</div><img src="${img}" style="max-height:52vh;max-width:70vw;border-radius:3vh;box-shadow:0 0 0 .8vh #fff,0 2vh 5vh rgba(0,0,0,.5)" class="popIn"><div class="status">👶 Who is this cutie?</div><div id="pgVotes"></div>`);SFX.whoosh();
+  const votes=await PG.vote({id:'b',secs:25,title:'Who is this baby? 👶',who:names.filter(n=>n!==au),opts:n=>Object.keys(PHOTOS).filter(x=>x!==n).map(x=>({t:x,v:x,img:avatarOf(x)}))});
+  const right=Object.entries(votes).filter(([n,v])=>v===au).map(([n])=>n),wrong=Object.keys(votes).length-right.length;right.forEach(n=>PG.add(n,100));PG.add(au,wrong*50);SFX.roll(1200);await sleep(1300);
+  PG.stage(`<div style="display:flex;gap:3vw;align-items:center"><img src="${img}" style="max-height:44vh;max-width:40vw;border-radius:3vh;box-shadow:0 0 0 .8vh #fff"><div style="font-size:12vh">➜</div><div style="text-align:center">${avHTML(au).replace('class="av','style="width:30vh;height:30vh;font-size:12vh" class="av')}<div class="bigT" style="font-size:5vh">${esc(au)}!</div></div></div><div class="status">${right.length?'✅ '+right.map(esc).join(', ')+' guessed it! (+100)':'😱 Nobody guessed!'}${wrong?` · ${esc(au)} fooled ${wrong} (+${wrong*50})`:''}</div>`);SFX.win();burst(innerWidth/2,innerHeight/3,80,['💕','👶','🍼']);
+  await PG.next(i+1<items.length?'NEXT BABY ➜':'🏆 FINAL RESULTS')}
+ PHOTOS={};PG.end();$('#endWrap').insertAdjacentHTML('beforeend','<div class="hint" style="margin-top:1vh">🔒 Baby photos have been cleared from this laptop.</div>')};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

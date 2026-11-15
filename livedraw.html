@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9C%8F%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Draw and Guess</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#0277bd;--bgB:#011f33}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">✏️ DRAW AND GUESS</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>✏️ Draw and Guess</h2>
+ <h3>Turns per player</h3><div class="seg" id="segR"><button data-v="1" class="on">1</button><button data-v="2" class="">2</button></div><h3>Drawing time</h3><div class="seg" id="segT"><button data-v="60" class="">60s</button><button data-v="80" class="on">80s</button><button data-v="100" class="">100s</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">✏️</span>One player draws a secret word on their phone. It shows up <b>live</b> on the TV!</div><div class="hc"><span class="i">⌨️</span>Everyone else types guesses on their phone, as many as they want.</div><div class="hc"><span class="i">⚡</span>Faster correct guesses score more (up to <b>+200</b>).</div><div class="hc"><span class="i">🎨</span>The artist gets <b>+50</b> for every person who guesses it.</div><div class="hc"><span class="i">💡</span>Letters of the word are revealed as time runs out.</div><div class="hc"><span class="i">🚫</span>No letters or numbers in your drawing!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+const WORDS=["pizza", "guitar", "elephant", "rainbow", "volcano", "snowman", "camera", "pirate", "rocket", "banana", "castle", "dragon", "bicycle", "umbrella", "penguin", "hamburger", "spider", "airplane", "lighthouse", "cactus", "robot", "mermaid", "tornado", "donut", "giraffe", "ladder", "toothbrush", "crown", "popcorn", "kangaroo", "anchor", "candle", "octopus", "skateboard", "sandwich", "unicorn", "igloo", "parachute", "butterfly", "mustache", "treasure", "trampoline", "waterfall", "dinosaur", "lollipop", "helicopter", "hammock", "ghost", "telescope", "zebra", "campfire", "scarecrow", "magnet", "suitcase", "saxophone", "windmill", "jellyfish", "cupcake", "fireworks", "backpack", "lemonade", "dolphin", "tractor", "sunglasses", "hedgehog", "microphone", "mailbox", "pyramid", "snail", "birthday", "wedding", "camel", "falafel", "teapot", "soccer", "basketball", "beach", "hospital", "library", "keyboard", "battery", "fountain", "shark", "squirrel", "pumpkin", "turkey", "sleigh", "carousel", "bowling", "karate", "yoga", "zombie", "vampire", "wizard", "ninja", "astronaut", "chef", "dentist", "firefighter", "teacher", "doctor"];
+let cfg=LS.get('tg-ld-cfg',{r:1,t:80});segs(cfg,'tg-ld-cfg',[['segR','r'],['segT','t']]);
+PG.init({key:'tg-ld',game:'Draw and Guess',title:'✏️ Draw & Guess',sub:'Scan to join! Draw live, guess fast.',min:3,style:'funk',rain:['✏️','🎨','⭐']});
+let T=null;PG._handlers.d_live=(n,v)=>{if(T&&n===T.artist&&String(v).startsWith('data:image')){const i=$('#live');if(i)i.src=v}};
+PG._handlers.g=(n,v)=>{if(!T||!T.on||n===T.artist||T.got[n])return;const ok=String(v).toLowerCase().replace(/[^a-z]/g,'')===T.word.replace(/[^a-z]/g,'');
+ if(ok){const left=Math.max(0,T.until-Date.now())/(cfg.t*1000);T.got[n]=Math.round(80+120*left);PG.add(n,T.got[n]);PG.add(T.artist,50);SFX.ok();if(window.TGB)TGB.ask({k:'msg',key:'gt'+n+T.word,emoji:'🎉',title:`Got it! +${T.got[n]}`,body:'The word was '+T.word.toUpperCase()},[n]);feed(`✅ <b>${esc(n)}</b> got it!`);if(T.guessers.every(x=>T.got[x]))T.on=false}
+ else feed(`${esc(n)}: ${esc(String(v).slice(0,24))}`)};
+function feed(h){const f=$('#feed');if(f){f.insertAdjacentHTML('afterbegin',`<div style="padding:.4vh .8vw;border-radius:1vh;background:rgba(255,255,255,.08);font-size:2vh;animation:popIn .3s">${h}</div>`);while(f.children.length>12)f.lastChild.remove()}}
+const hint=(w,k)=>w.split('').map((c,i)=>i<k||c===' '?c.toUpperCase():'_').join(' ');
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());const ws=shuffle(WORDS);let wi=0;
+ for(let r=0;r<ps.length*cfg.r;r++){const artist=ps[r%ps.length];if(!PG.players().includes(artist))continue;const opts=ws.slice(wi,wi+3);wi+=3;
+  PG.wait(`${artist} is picking a word...`,'Get ready to guess! ✏️','⏳');
+  const pk=await PG.collect({id:'pick',secs:15,who:[artist],title:`<div style="display:flex;align-items:center;gap:1.4vw;font-family:var(--fd);font-size:5vh">${avHTML(artist)} ${esc(artist)}</div><div class="prompt">is choosing a word to draw...</div>`,sub:'Artist: pick a word',spec:n=>({k:'choice',title:'Pick a word to draw',opts:opts.map(x=>({t:x.toUpperCase(),v:x}))})});
+  const word=pk[artist]||opts[0],guessers=PG.players().filter(n=>n!==artist);T={artist,word,got:{},on:true,until:Date.now()+cfg.t*1000,guessers};
+  if(window.TGB){TGB.ask({k:'draw',key:'dr'+r,id:'d',live:1,kicker:'Draw this (no letters!)',title:word.toUpperCase(),secs:cfg.t,until:T.until},[artist]);TGB.askEach(Object.fromEntries(guessers.map(n=>[n,{k:'text',key:'gu'+r,id:'g',again:1,kicker:'Guess the drawing on the TV!',title:'Type your guesses',ph:'Your guess',max:30,btn:'Guess ⚡',secs:cfg.t,until:T.until}])))}
+  PG.stage(`<div style="display:grid;grid-template-columns:auto 1fr;gap:2vw;align-items:start;width:min(1500px,95vw)"><div style="text-align:center"><img id="live" style="width:min(62vh,48vw);aspect-ratio:1;background:#fff;border-radius:2vh;box-shadow:0 0 0 .6vh var(--gold)" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="><div id="hintL" style="font-family:var(--fd);font-size:5vh;letter-spacing:.2em;margin-top:1vh">${hint(word,0)}</div></div><div><div style="display:flex;align-items:center;gap:1vw;font-weight:800;font-size:2.6vh">${avHTML(artist)} ${esc(artist)} is drawing</div><div style="display:flex;gap:1vw;align-items:center;margin:1.4vh 0"><div class="ring" id="pgRing"><span>${cfg.t}</span></div><button class="bb ghost" id="ldSkip">⏭ End turn</button></div><div id="feed" style="display:flex;flex-direction:column;gap:.5vh"></div></div></div>`);
+  $('#ldSkip').onclick=()=>{T.on=false};music('tense');
+  let shown=0;while(T.on&&Date.now()<T.until){await sleep(200);const l=(T.until-Date.now())/1000,r2=$('#pgRing');if(r2){r2.style.setProperty('--p',l/cfg.t);r2.querySelector('span').textContent=Math.ceil(l);r2.classList.toggle('low',l<=10)}const want=Math.floor((1-l/cfg.t)*Math.max(0,word.length-2)*.7);if(want>shown){shown=want;$('#hintL').textContent=hint(word,shown)}}
+  T.on=false;music('play');PG.wait('Round over!','Look at the TV 👀','📺');$('#hintL').textContent=word.toUpperCase();$('#hintL').style.color='#5cf09a';SFX.win();
+  const gain={};Object.entries(T.got).forEach(([n,g])=>gain[n]=g);const ng=Object.keys(T.got).length;if(ng)gain[artist]=ng*50;
+  await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=ps.length*cfg.r?'🏆 FINAL RESULTS':'NEXT ARTIST ➜')}
+ PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

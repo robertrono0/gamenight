@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%96%90%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Slap It</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#ef6c00;--bgB:#3d1600}.stage{gap:2vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🖐️ SLAP IT</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🖐️ Slap It</h2>
+ <h3>Cards</h3><div class="seg" id="segR"><button data-v="25" class="">25 (quick)</button><button data-v="40" class="on">40</button><button data-v="60" class="">60</button></div><h3>Speed</h3><div class="seg" id="segS"><button data-v="1700" class="">🐢 Chill</button><button data-v="1300" class="on">🐇 Normal</button><button data-v="1000" class="">⚡ Crazy</button></div>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🗣️</span>The TV chants 5 words in a loop: <b>PIZZA, DOG, DONUT, DUCK, TACO</b>... and flips a picture card each time.</div><div class="hc"><span class="i">🖐️</span>When the <b>picture matches the word</b> being said, everyone <b>SLAPS</b> the big button on their phone!</div><div class="hc"><span class="i">🐢</span>The <b>last</b> one to slap gets a penalty card. Missed it entirely? Penalty too!</div><div class="hc"><span class="i">🚫</span>Slap when it's <b>not</b> a match? Penalty!</div><div class="hc"><span class="i">🃏</span>Fewest penalty cards at the end wins.</div><div class="hc"><span class="i">🔊</span>Turn the sound up. Chanting along out loud is encouraged!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const CY=[['🍕','PIZZA'],['🐶','DOG'],['🍩','DONUT'],['🦆','DUCK'],['🌮','TACO']];
+let cfg=LS.get('tg-slap-cfg',{r:40,s:1300});segs(cfg,'tg-slap-cfg',[['segR','r'],['segS','s']]);
+PG.init({key:'tg-slap',game:'Slap It',title:'🖐️ Slap It!',sub:'Scan to join! Slap your phone when the picture matches the word.',min:2,style:'funk',rain:['🍕','🐶','🍩','🦆','🌮']});
+let taps=[],pen={},flipT=0,match=false;PG._handlers.slap=(n,v)=>{taps.push([n,Date.now()])};
+const say=w=>{try{const u=new SpeechSynthesisUtterance(w);u.rate=1.3;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}};
+$('#bStart').onclick=async()=>{ac();PG.reset();pen={};$('#setupOv').classList.add('hidden');music('chill');const ps=await PG.lobby();ps.forEach(n=>pen[n]=0);
+ if(window.TGB)TGB.ask({k:'tap',key:'slap'+Date.now(),id:'slap',title:'SLAP when it matches!',btn:'🖐️ SLAP!',color:'#ff9f1c'});music('play');
+ for(let c=3;c>0;c--){PG.stage(`<div style="font-family:var(--fd);font-size:30vh;color:var(--gold)">${c}</div>`);SFX.tick(c===1);await sleep(800)}
+ for(let i=0;i<cfg.r;i++){const w=CY[i%5];match=Math.random()<.32;let card=match?w:pick(CY.filter(x=>x!==w));
+  taps=[];flipT=Date.now();say(w[1]);
+  PG.stage(`<div class="kicker">CARD ${i+1} OF ${cfg.r}</div><div style="font-family:var(--fd);font-size:9vh;letter-spacing:.06em">${w[1]}</div><div class="ansC popIn" style="font-size:22vh;line-height:1.1;padding:2vh 4vw">${card[0]}</div><div class="subs">${ps.map(n=>`<div class="pp in">${avHTML(n)}${esc(n)} 🃏${pen[n]}</div>`).join('')}</div>`);SFX.tick(true);
+  await sleep(match?Math.max(cfg.s,2200):cfg.s);
+  const valid=taps.filter(t=>t[1]>=flipT-150),who=[...new Set(valid.map(t=>t[0]))];
+  if(match){const missing=ps.filter(n=>!who.includes(n));let loser=missing.length?missing:[who[who.length-1]];loser.forEach(n=>{if(n)pen[n]++});
+   if(loser[0]){SFX.buzz();t2(`🐢 ${loser.map(esc).join(', ')}<small>${missing.length?'missed the slap!':'slapped last!'} +1 card</small>`,1000)}else SFX.ok();await sleep(900)}
+  else if(who.length){who.forEach(n=>pen[n]++);SFX.buzz();t2(`🚫 NOT A MATCH!<small>${who.map(esc).join(', ')} +1 card</small>`,1000);await sleep(900)}}
+ const mx=Math.max(...Object.values(pen));Object.entries(pen).forEach(([n,p])=>PG.add(n,(mx-p)*10+10));
+ PG.stage(`<div class="bigT">🃏 PENALTY CARDS</div>${PG.board().replace('📊 SCORES','')}<div class="status">Fewest cards wins! (Score = fewer cards)</div>`);
+ PG.stage(`<div class="bigT" style="font-size:5vh">🃏 PENALTY CARDS (fewest wins)</div><div style="display:flex;flex-direction:column;gap:.8vh;width:min(800px,90vw)">${Object.entries(pen).sort((a,b)=>a[1]-b[1]).map(([n,p],i)=>`<div class="ansC" style="display:flex;align-items:center;gap:1vw">${['🥇','🥈','🥉'][i]||i+1} ${avHTML(n)} ${esc(n)}<span class="vt">🃏 ${p}</span></div>`).join('')}</div>`);
+ await PG.next('🏆 FINAL RESULTS');PG.end()};
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

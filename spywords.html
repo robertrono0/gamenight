@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%95%B5%EF%B8%8F%E2%80%8D%E2%99%82%EF%B8%8F%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spy Words</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tg-shell.css">
+<style>:root{--bgA:#263238;--bgB:#0b1013}.stage{gap:2vh}.stage{gap:1.4vh}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
+<div id="app">
+ <div class="hdr"><div class="title">🕵️‍♂️ SPY WORDS</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib" data-how title="How to play">❓</button><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button><button class="ib" id="bNew" title="New game">🔁</button></div></div>
+ <div class="scores" id="scores"></div>
+ <div class="stage" id="stage"></div>
+</div>
+<div class="ov" id="setupOv"><div class="card">
+ <h2>🕵️‍♂️ Spy Words</h2>
+ <div id="teamSetup"></div><p class="hint">Uses 2 teams. Each team needs a <b>spymaster</b> with a phone (they see the secret key).</p>
+ <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
+</div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🟥🟦</span>Two teams. Each has a <b>spymaster</b> who sees the secret key on their phone.</div><div class="hc"><span class="i">🗣️</span>The spymaster says <b>ONE word and a number</b>, like "Ocean, 2", to point at their team's words.</div><div class="hc"><span class="i">👆</span>The team talks it over and the host taps their guesses on the TV, one at a time.</div><div class="hc"><span class="i">⬜</span>Hit a neutral word or the other team's word and your turn ends.</div><div class="hc"><span class="i">💣</span>Hit the <b>BOMB</b> and your team loses instantly!</div><div class="hc"><span class="i">🏆</span>First team to find all their words wins.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
+<script src="tg-shell.js"></script>
+<script src="buzzer.js?v=1794800000"></script>
+<script src="tg-party.js"></script>
+<script>
+const KEY='tg-spy';function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
+
+const TS=teamSetup($('#teamSetup'),KEY);const SW=["apple", "anchor", "bank", "bat", "battery", "beach", "bear", "bell", "berlin", "boot", "bridge", "brush", "bug", "button", "cake", "camel", "car", "card", "castle", "cat", "chair", "chest", "china", "circle", "clock", "cloud", "coat", "code", "comet", "crown", "date", "diamond", "doctor", "dog", "dragon", "dress", "drum", "duck", "egg", "engine", "eye", "fan", "fire", "fish", "flag", "flute", "fork", "ghost", "giant", "glass", "gold", "grass", "hand", "heart", "hole", "honey", "horse", "ice", "iron", "jam", "jet", "judge", "key", "king", "kiwi", "knife", "lab", "lamp", "lemon", "light", "lion", "lock", "mail", "map", "mars", "match", "milk", "mint", "moon", "mouse", "nail", "net", "night", "note", "nut", "oil", "olive", "orange", "palm", "pan", "paper", "park", "party", "pen", "phone", "piano", "pie", "pilot", "pipe", "pirate", "pizza", "plane", "plate", "pool", "pound", "queen", "rain", "ring", "robot", "rock", "rose", "ruler", "salt", "school", "scorpion", "shark", "ship", "shoe", "sink", "slip", "snow", "soap", "soul", "space", "spider", "spring", "square", "star", "stick", "storm", "straw", "sun", "swing", "table", "tail", "tea", "teacher", "tie", "tooth", "tower", "train", "tree", "truck", "turkey", "van", "wall", "watch", "wave", "web", "whale", "wind", "witch", "worm"];let G=null;
+function sms(){return TS.teams().slice(0,2)}
+$('#bStart').onclick=()=>{let teams=TS.teams();if(teams.length<2){toast('Need 2 teams');return}teams=teams.slice(0,2);ac();const first=rnd(2);const words=shuffle(SW).slice(0,25);const roles=shuffle([...Array(first?8:9).fill(0),...Array(first?9:8).fill(1),...Array(7).fill(2),3]);
+ G={teams,words,roles,open:Array(25).fill(false),turn:first,sm:[teams[0].m[0]||'',teams[1].m[0]||''],clue:'',over:-1};$('#setupOv').classList.add('hidden');music('play');pickSM()};
+const CC=['#e63946','#3a86ff','#d9c9a3','#111'],CN=['RED','BLUE'];
+function pickSM(){const t=G.teams;$('#stage').innerHTML=`<div class="prompt">🕵️ Choose the spymasters</div><div style="display:flex;gap:3vw">${[0,1].map(i=>`<div class="panel" style="border-color:${CC[i]}"><div class="kicker" style="color:${CC[i]}">${CN[i]}: ${esc(t[i].name)}</div><div class="chips" style="margin-top:1vh">${t[i].m.map(n=>`<button class="chip ${G.sm[i]===n?'on':''}" data-i="${i}" data-n="${esc(n)}">${esc(n)}</button>`).join('')}</div></div>`).join('')}</div><div class="status">Spymasters: scan the QR (📱 bottom right) so your phone shows the secret key.</div><button class="bb gold big" id="go">▶ START</button>`;
+ $$('[data-n]').forEach(b=>b.onclick=()=>{G.sm[+b.dataset.i]=b.dataset.n;pickSM()});$('#go').onclick=()=>{sendKey();render()}}
+function sendKey(){if(!window.TGB)return;const cells=G.words.map((w,i)=>({t:w.toUpperCase(),c:CC[G.roles[i]],dark:G.roles[i]!==2,done:G.open[i]}));
+ G.sm.forEach((n,i)=>{if(n)TGB.ask({k:'grid',key:'key'+G.open.filter(Boolean).length+i,kicker:`🕵️ ${CN[i]} spymaster`,title:'Secret key',body:'Your team = '+CN[i]+'. ⬛ = BOMB. Give ONE word + a number!',cells,cols:5,fs:11,color:CC[i]},[n])});
+ const others=(window.TGB?TGB.players():[]).filter(n=>!G.sm.includes(n));if(others.length)TGB.ask({k:'msg',key:'spyw',emoji:'🕵️',title:'Look at the TV!',body:'Listen to your spymaster and talk it over with your team.'},others)}
+const left=t=>G.roles.filter((r,i)=>r===t&&!G.open[i]).length;
+function render(){$('#scores').innerHTML=`<div class="sc ${G.turn===0?'on':''}" style="--tc:${CC[0]}"><div><div class="n">🟥 ${esc(G.teams[0].name)}</div><div class="m">Spymaster: ${esc(G.sm[0]||'?')}</div></div><div class="s">${left(0)}</div></div><div class="sc ${G.turn===1?'on':''}" style="--tc:${CC[1]}"><div><div class="n">🟦 ${esc(G.teams[1].name)}</div><div class="m">Spymaster: ${esc(G.sm[1]||'?')}</div></div><div class="s">${left(1)}</div></div>`;
+ $('#stage').innerHTML=`<div class="status">${G.over>=0?`🏆 <b style="color:${CC[G.over]}">${CN[G.over]}</b> WINS!`:`<b style="color:${CC[G.turn]}">${CN[G.turn]}</b>'s turn. Spymaster ${esc(G.sm[G.turn])}: one word + a number!`}</div>
+ <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1vh .8vw;width:min(1500px,94vw)">${G.words.map((w,i)=>`<button class="spy" data-i="${i}" style="height:10.4vh;border-radius:1.4vh;font-family:var(--fd);font-size:min(3vh,2.4vw);${G.open[i]||G.over>=0?`background:${CC[G.roles[i]]};color:${G.roles[i]===2?'#333':'#fff'};${G.open[i]?'':'opacity:.55'}`:'background:linear-gradient(#fff7e6,#ffe7bd);color:#2a0d12;box-shadow:0 .5vh 0 #b08a5a'}">${G.open[i]&&G.roles[i]===3?'💣 ':''}${esc(w.toUpperCase())}</button>`).join('')}</div>
+ ${G.over>=0?`<button class="bb gold big" id="again">🔁 NEW GAME</button>`:`<button class="bb big" id="pass">⏭ END TURN</button>`}`;
+ $$('.spy').forEach(b=>b.onclick=()=>tap(+b.dataset.i));const p=$('#pass');if(p)p.onclick=()=>{G.turn=1-G.turn;SFX.whoosh();render()};const a=$('#again');if(a)a.onclick=()=>$('#setupOv').classList.remove('hidden');
+ if(window.TGB)TGB.host({title:'🕵️ Spy Words',q:CN[G.turn]+"'s turn",a:'',list:G.words.map((w,i)=>({t:w,p:['🟥','🟦','⬜','💣'][G.roles[i]],on:G.open[i]})),actions:[{id:'pass',label:'⏭ End turn',k:'no'}],noBuzzBtns:true})}
+function tap(i){if(G.over>=0||G.open[i])return;G.open[i]=true;const r=G.roles[i];
+ if(r===3){G.over=1-G.turn;SFX.sad();if(window.FXX)FXX.loss('💣 BOOM!',null,CN[G.turn]+' hit the bomb!');end();return}
+ if(r===G.turn){SFX.ok();if(!left(G.turn)){G.over=G.turn;end();return}}else{if(r<2&&!left(r)){G.over=r;end();return}SFX.buzz();G.turn=1-G.turn;t2(r===2?'⬜ Neutral!<small>Turn over</small>':'😬 Other team\'s word!<small>Turn over</small>',1400)}
+ sendKey();render()}
+function end(){render();sendKey();if(window.FXX)setTimeout(()=>FXX.bigWin('🏆 '+CN[G.over]+' WINS!',null,G.teams[G.over].name),900);try{tgNight('Spy Words',[G.teams[G.over].m,G.teams[1-G.over].m])}catch(e){}music('party')}
+if(window.TGB)TGB.init({game:'Spy Words',names:phoneNames,onAct:id=>{if(id==='pass'&&G&&G.over<0){G.turn=1-G.turn;render()}},onJoin:()=>{if(G)sendKey()}});
+shellInit({game:'Spy Words',style:'spooky',rain:['🕵️','💣','⭐']});
+</script>
+<script src="tg-depth.js"></script>
+<script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js"></script></body></html>

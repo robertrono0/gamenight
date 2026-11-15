@@ -80,14 +80,14 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">📱</span>Your phone is your steering wheel: hold <b>◀</b> or <b>▶</b> to steer. Your kart drives forward by itself!</div><div class="hc"><span class="i">💨</span>Hold <b>DRIFT</b> while turning to slide around corners. Let go for a <b>speed boost</b>!</div><div class="hc"><span class="i">🛹</span>Hit a ramp and tap DRIFT in the air for a <b>trick boost</b>.</div><div class="hc"><span class="i">❓</span>Drive through <b>? boxes</b> for items, then tap the item button: ⚡ boost, 🛡️ shield, 🛢️ oil slick, 🌶️ pepper rocket.</div><div class="hc"><span class="i">🏁</span>Most laps first wins! Off the road you slow down.</div><div class="hc"><span class="i">🏆</span>1st to 8th all score points for the Game Night leaderboard.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115b"></script>
+<script src="tg-shell.js?v=1115d"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js?v=1115b"></script>
+<script src="tg-party.js?v=1115d"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
 let cfg=LS.get('tg-kart-cfg',{l:3,k:'city',c:2});segs(cfg,'tg-kart-cfg',[['segL','l'],['segK','k'],['segC','c']]);
-PG.init({key:'tg-kart',game:'Party Kart',title:'🏎️ Party Kart',sub:'Scan to join! Your phone is the steering wheel.',min:1,style:'funk',rain:['🏎️','🏁','⭐']});
+PG.init({cpu:false,key:'tg-kart',game:'Party Kart',title:'🏎️ Party Kart',sub:'Scan to join! Your phone is the steering wheel.',min:1,style:'funk',rain:['🏎️','🏁','⭐']});
 const TRK={city:{g:'#3b6e2a',g2:'#2f5a22',r:'#4a4a52',pts:[[.12,.5],[.18,.18],[.4,.12],[.52,.32],[.66,.14],[.88,.2],[.9,.55],[.75,.62],[.84,.86],[.55,.9],[.42,.66],[.25,.88]]},
  beach:{g:'#e8d29a',g2:'#d9c07f',r:'#5a5a62',pts:[[.1,.4],[.25,.12],[.5,.2],[.72,.1],[.92,.3],[.85,.6],[.92,.85],[.6,.88],[.45,.65],[.3,.9],[.08,.75]]},
  snow:{g:'#e8f1f8',g2:'#d4e3ef',r:'#56606e',pts:[[.15,.3],[.35,.12],[.6,.22],[.85,.12],[.9,.45],[.7,.5],[.88,.8],[.6,.9],[.35,.75],[.12,.88],[.2,.6]]},
@@ -164,6 +164,7 @@ $('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidd
   PG.stage(`<div class="bigT">🏁 RESULTS</div>${answersGrid(fin.map((n,i)=>`${['🥇','🥈','🥉'][i]||i+1+'.'} <b>${esc(n)}</b>${gain[n]?`<span class="vt" style="float:right">+${gain[n]}</span>`:''}`))}`);await PG.next(h+1<heats.length?'NEXT HEAT ➜':'🏆 FINAL RESULTS')}
  PG.end()};
 </script>
-<script src="tg-depth.js?v=1115b"></script>
+<script src="tg-depth.js?v=1115d"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
+<script src="tg-night.js?v=1115d"></script>
 </body></html>

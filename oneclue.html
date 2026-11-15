@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🙈</span>One player is the <b>guesser</b>. Everyone else sees a secret word on their phone.</div><div class="hc"><span class="i">☝️</span>Each helper types <b>ONE word</b> as a clue.</div><div class="hc"><span class="i">❌</span><b>Matching clues cancel out!</b> If two people write "cheese", nobody sees it. Be creative!</div><div class="hc"><span class="i">📺</span>The TV shows the surviving clues. The guesser types one guess on their phone.</div><div class="hc"><span class="i">🤝</span>It's co-op: the whole room tries to get as many right as possible.</div><div class="hc"><span class="i">💯</span>Correct: guesser <b>+100</b>, each unique clue <b>+50</b>.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115b"></script>
+<script src="tg-shell.js?v=1115d"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js?v=1115b"></script>
+<script src="tg-party.js?v=1115d"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 const WORDS=["pizza", "guitar", "elephant", "rainbow", "volcano", "snowman", "camera", "pirate", "rocket", "banana", "castle", "dragon", "bicycle", "umbrella", "penguin", "hamburger", "spider", "airplane", "lighthouse", "cactus", "robot", "mermaid", "tornado", "donut", "giraffe", "ladder", "toothbrush", "crown", "popcorn", "kangaroo", "anchor", "candle", "octopus", "skateboard", "sandwich", "unicorn", "igloo", "parachute", "butterfly", "mustache", "treasure", "trampoline", "waterfall", "dinosaur", "lollipop", "helicopter", "hammock", "ghost", "telescope", "zebra", "campfire", "scarecrow", "magnet", "suitcase", "saxophone", "windmill", "jellyfish", "cupcake", "fireworks", "backpack", "lemonade", "dolphin", "tractor", "sunglasses", "hedgehog", "microphone", "mailbox", "pyramid", "snail", "birthday", "wedding", "camel", "falafel", "teapot", "soccer", "basketball", "beach", "hospital", "library", "keyboard", "battery", "fountain", "shark", "squirrel", "pumpkin", "turkey", "sleigh", "carousel", "bowling", "karate", "yoga", "zombie", "vampire", "wizard", "ninja", "astronaut", "chef", "dentist", "firefighter", "teacher", "doctor"];
@@ -103,6 +103,6 @@ $('#bStart').onclick=async()=>{ac();PG.reset();team=0;$('#setupOv').classList.ad
   award();show();right?(SFX.win(),burst()):SFX.sad();await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
  PG.stage(`<div class="bigT">🤝 TEAM SCORE: ${team} / ${cfg.r}</div><div class="status">${team>=cfg.r*.8?'🏆 Legendary teamwork!':team>=cfg.r*.5?'👏 Great job!':'😅 Room for improvement!'}</div>`);await PG.next('🏆 FINAL RESULTS');PG.end()};
 </script>
-<script src="tg-depth.js?v=1115b"></script>
+<script src="tg-depth.js?v=1115d"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js?v=1115b"></script></body></html>
+<script src="tg-night.js?v=1115d"></script></body></html>

@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="en"><head><script>
+/*tgNorm*/(function(){try{const J=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+const R=J('tg-roster')||[],N=J('tg-night');const pick={};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+R.forEach(n=>{const k=String(n).trim().toLowerCase();if(k&&!pick[k])pick[k]=String(n).trim()});
+if(N&&N.log){N.log.forEach(e=>Object.keys(e.aw||{}).forEach(n=>{const k=n.trim().toLowerCase();if(!pick[k]||(pick[k]===pick[k].toLowerCase()&&n!==n.toLowerCase()))if(!R.some(r=>String(r).trim().toLowerCase()===k))pick[k]=n.trim()}));
+ Object.keys(pick).forEach(k=>{if(pick[k]===pick[k].toLowerCase())pick[k]=cap(pick[k])});
+ let ch=false;N.log.forEach(e=>{const a={};Object.entries(e.aw||{}).forEach(([n,p])=>{const c=pick[n.trim().toLowerCase()]||n;if(c!==n)ch=true;a[c]=(a[c]||0)+p});e.aw=a});
+ if(ch)localStorage.setItem('tg-night',JSON.stringify(N))}
+const seen=new Set(),R2=[];R.forEach(n=>{const c=pick[String(n).trim().toLowerCase()]||String(n).trim();const k=c.toLowerCase();if(c&&!seen.has(k)){seen.add(k);R2.push(c)}});
+if(JSON.stringify(R2)!==JSON.stringify(R))localStorage.setItem('tg-roster',JSON.stringify(R2));
+['tg-avatars','tg-profiles'].forEach(key=>{const A=J(key);if(!A)return;let c3=false;Object.keys(A).forEach(n=>{const c=pick[n.trim().toLowerCase()];if(c&&c!==n){if(!A[c])A[c]=A[n];delete A[n];c3=true}});if(c3)localStorage.setItem(key,JSON.stringify(A))});
+const T=J('tg-night-teams');if(T&&T.teams){let ch2=false;T.teams.forEach(t=>{const s=new Set();t.m=t.m.map(n=>{const c=pick[String(n).trim().toLowerCase()]||n;if(c!==n)ch2=true;return c}).filter(n=>{const k=n.toLowerCase();if(s.has(k)){ch2=true;return false}s.add(k);return true})});if(ch2)localStorage.setItem('tg-night-teams',JSON.stringify(T))}
+}catch(e){}})();
+
 var TCOL=['#2ec4b6','#ff4d6d','#a78bfa','#ffb703'],TNM=['Team Fire 🔥','Team Ice ❄️','Team Yalla 🚀','Team Habibi 💛'];
 /*TGCLEAN*/try{if(!localStorage.getItem('tg-clean-v1')){['tg-hosts2','tg-jeop-edits'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('tg-clean-v1','1')}}catch(e){}</script><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%89%3C/text%3E%3C/svg%3E"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Game Night</title>
@@ -7,7 +21,7 @@ var TCOL=['#2ec4b6','#ff4d6d','#a78bfa','#ffb703'],TNM=['Team Fire 🔥','Team I
 <style>
 :root{--gold:#ffcc3d;--gold2:#ffa51f;--cream:#fff3dc;--ink:#2a0d12}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Fredoka',system-ui,sans-serif;color:var(--cream);min-height:100vh;background:radial-gradient(ellipse at 50% 120%,#7a2410 0%,#4a1420 40%,#1d0a10 80%) fixed;padding:28px 16px 60px}
+body{font-family:'Fredoka',system-ui,sans-serif;color:var(--cream);min-height:100vh;background:radial-gradient(ellipse at 50% 120%,#7a2410 0%,#4a1420 40%,#1d0a10 80%) fixed;padding:28px 16px 110px}
 .wrap{max-width:1100px;margin:0 auto}
 h1{font-family:'Bungee',Impact,sans-serif;font-weight:400;text-align:center;font-size:clamp(30px,6vw,64px);line-height:1;background:linear-gradient(180deg,#fff6c9,var(--gold) 45%,var(--gold2) 70%,#d1560c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #5a1505) drop-shadow(0 0 16px rgba(255,170,40,.45))}
 .sub{text-align:center;letter-spacing:.3em;text-transform:uppercase;font-weight:600;font-size:14px;opacity:.85;margin:10px 0 28px}
@@ -80,7 +94,7 @@ label:has(input:checked){opacity:.5;text-decoration:line-through}
 <h1>GAME<br>NIGHT</h1>
 <div class="sub" id="gcount">🎉 games, one place 🎉</div>
 <div class="topbar" id="settings">
- <button class="tg" data-s="kid">🧸 Kid mode</button><button class="tg" data-s="spicy">🌶️ Spicy (adults)</button><button class="tg" data-s="big">🔠 Big text</button><button class="tg" data-s="team">👥 Team night</button><button class="tg" id="plOn">🎬 Party playlist</button><button class="tg" id="thBtn">🎨 Theme</button><a class="tg" href="prize.html" style="text-decoration:none">🎡 Prize wheel</a><a class="tg" href="recap.html" style="text-decoration:none">📜 Night recap</a>
+ <button class="tg" data-s="spicy">🌶️ Spicy (adults)</button><button class="tg" data-s="big">🔠 Big text</button><button class="tg" data-s="team">👥 Team night</button><button class="tg" data-s="auto" title="Nobody has to host: games move on by themselves and the TV reads the host lines out loud">🤖 TV is the host</button><button class="tg" id="plOn">🎬 Party playlist</button><button class="tg" id="thBtn">🎨 Theme</button><a class="tg" href="prize.html" style="text-decoration:none">🎡 Prize wheel</a><a class="tg" href="recap.html" style="text-decoration:none">📜 Night recap</a>
 </div>
 <div id="thRow" style="display:none;flex-wrap:wrap;gap:6px;justify-content:center;margin:-6px 0 16px"></div>
 <div class="start">
@@ -213,7 +227,7 @@ $('lbReveal').onclick=()=>{const N=JSON.parse(localStorage.getItem('tg-night')||
    if(last){fan();$('revT').textContent='👑 '+n.toUpperCase()+' WINS GAME NIGHT! 👑'}else tone(330+40*(order.length-k),.18,.12,'triangle')},d))})};
 $('revClose').onclick=()=>{timers.forEach(clearTimeout);$('revOv').classList.remove('on')};})();</script>
 <!--HOUSE--><style>
-#hmBtn{position:fixed;left:18px;bottom:18px;z-index:500;border:0;border-radius:999px;padding:14px 22px;font:700 18px Fredoka,system-ui,sans-serif;color:#2a0d12;background:linear-gradient(180deg,#ffe07a,#ffb21e);box-shadow:0 6px 0 #a8620a,0 10px 24px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;gap:10px}
+#hmBtn{position:fixed;left:14px;bottom:14px;z-index:500;border:0;border-radius:999px;padding:9px 16px;font:700 15px Fredoka,system-ui,sans-serif;color:#2a0d12;background:linear-gradient(180deg,#ffe07a,#ffb21e);box-shadow:0 6px 0 #a8620a,0 10px 24px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;gap:10px}
 #hmBtn:active{transform:translateY(4px);box-shadow:0 2px 0 #a8620a}
 #hmBtn .eq{display:inline-flex;gap:3px;align-items:flex-end;height:20px}
 #hmBtn .eq i{width:4px;background:#2a0d12;border-radius:2px;height:4px}
@@ -334,7 +348,7 @@ const GAMES=[
  {f:'fastmoney.html',e:'💸',n:'Fast Money',d:'Two players, 5 survey questions, 20 seconds. Can you hit 200 points together?',t:'5-10 min',p:[2,40],ph:1,k:1,c:'show',nw:1},
  {f:'dond.html',e:'💼',n:'Deal or No Deal',d:'Pick a case, open the rest, and face the Banker. DEAL or NO DEAL?',t:'10-30 min',p:[1,40],ph:1,k:1,c:'show'},
  {f:'price.html',e:'💲',n:'The Price Is Right',d:'Guess the price of AirPods, Costco chicken and more. Closest without going over!',t:'10-20 min',p:[2,40],ph:0,k:1,c:'show'},
- {f:'spelling.html',e:'🐝',n:'Spelling Bee',d:'Starts easy, gets harder. Lifelines, heats and a champion podium.',t:'20-40 min',p:[2,30],ph:1,k:1,c:'show'},
+ {f:'spelling.html',e:'🐝',n:'Spelling Bee',d:'A real spelling bee: classic words from school level to national-bee finals, with definition, origin and sentence. Lifelines and heats.',t:'20-40 min',p:[2,30],ph:1,k:1,c:'show'},
  {f:'quiz.html',e:'⚡',n:'Quiz Race',d:'Everyone answers trivia on their phone. Faster correct answers score more!',t:'10-20 min',p:[2,50],ph:2,k:1,c:'phone',nw:1},
  {f:'blank.html',e:'✍️',n:'Fill in the Blank',d:'Write the funniest answer to a prompt, then vote. Clean or 🌶️ spicy.',t:'15-25 min',p:[3,30],ph:2,k:0,c:'phone',nw:1},
  {f:'whosaid.html',e:'🕵️',n:'Who Said It?',d:'Answer questions about yourself, then guess who wrote what.',t:'15-25 min',p:[3,25],ph:2,k:1,c:'phone',nw:1},
@@ -346,7 +360,7 @@ const GAMES=[
  {f:'oneclue.html',e:'☝️',n:'One Clue',d:'Co-op: give one-word clues to the guesser. Matching clues cancel out!',t:'10-20 min',p:[3,30],ph:2,k:1,c:'phone',nw:1},
  {f:'higherlower.html',e:'⬆️',n:'Higher or Lower',d:'Taller, faster, older? Vote on your phone and build a streak.',t:'10 min',p:[1,60],ph:2,k:1,c:'phone',nw:1},
  {f:'year.html',e:'📅',n:'Guess the Year',d:'When did it happen? Plus a Timeline mode: what came first?',t:'10-20 min',p:[1,60],ph:2,k:1,c:'phone',nw:1},
- {f:'traitors.html',e:'🗡️',n:'Traitors',d:'Secret Traitors murder at night. Find them at the round table. Doctor and Detective roles too.',t:'45-75 min',p:[5,30],ph:2,k:0,c:'deduce',x:'big showdown',nw:1},
+ {f:'traitors.html',e:'🗡️',n:'Traitors',d:'Like the TV show, from your seats: secret Traitors murder at night, missions win secret shields and a revive potion, banish at the round table.',t:'45-75 min',p:[5,30],ph:2,k:0,c:'deduce',x:'big showdown',nw:1},
  {f:'imposter.html',e:'🕵️',n:"Who's the Imposter?",d:'Everyone gets a secret word except the imposter. English, Arabic or both.',t:'15 min',p:[3,40],ph:2,k:1,c:'deduce'},
  {f:'sketch.html',e:'🎨',n:'Sketch Off',d:'Draw silly prompts on your phone. The gallery votes for the best.',t:'15-25 min',p:[2,30],ph:2,k:1,c:'draw',nw:1},
  {f:'livedraw.html',e:'✏️',n:'Draw & Guess',d:'One person draws live on the TV while everyone races to guess.',t:'15-30 min',p:[3,16],ph:2,k:1,c:'draw',nw:1},
@@ -418,7 +432,7 @@ document.getElementById('recBtn').onclick=()=>{const r=R(),on=window.TGB?TGB.pla
  document.getElementById('rec').innerHTML=(n?'':'<div class="hint2">Tip: check people in first for better picks!</div>')+sc.map(({g,why})=>`<a class="recC" href="${g.f}"><span class="e">${g.e}</span><span><b>${esc2(g.n)}</b><br><span>${esc2((why.slice(0,2).join(', ')||g.d))}. ⏱️ ${g.t}</span></span></a>`).join('')};
 loadExtra();savePL();
 </script>
-<script src="tg-night.js?v=1115b"></script><script>
+<script src="tg-night.js?v=1115d"></script><script>
 (function(){const row=document.getElementById('thRow');let S={};try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}catch(e){}
 const draw=()=>{const T=window.TG_THEMES||{};row.innerHTML=Object.entries(T).map(([k,v])=>`<button class="tg ${(S.theme||'classic')===k?'on':''}" data-th="${k}">${v[0]}</button>`).join('')+'<div style="flex-basis:100%;text-align:center;font-size:13px;opacity:.75">Changes the colors, falling decorations and music in every game.</div>';
  row.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};S.theme=b.dataset.th;localStorage.setItem('tg-settings',JSON.stringify(S));location.reload()})};

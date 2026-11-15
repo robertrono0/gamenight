@@ -1,7 +1,12 @@
 /* Game Night: shared theme + settings + playlist layer, loaded on every game page */
 (function(){
-let S={},P=null;try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};P=JSON.parse(localStorage.getItem('tg-playlist')||'null')}catch(e){}
-if(S.big)document.documentElement.style.zoom=1.12;
+let S={},P=null;try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};if(S.kid){delete S.kid;localStorage.setItem('tg-settings',JSON.stringify(S))}P=JSON.parse(localStorage.getItem('tg-playlist')||'null')}catch(e){}
+if(S.big){const hub=/(^|\/)(index\.html)?$/.test(location.pathname)||/recap\.html$/.test(location.pathname);if(hub)document.documentElement.style.zoom=1.12;/* game pages already scale to the TV, so no zoom there */}
+/* title emojis keep their real colors (gradient text turned them into gold blobs) */
+(function(){const css=document.createElement('style');css.textContent='.tEmo{-webkit-text-fill-color:initial!important;color:initial!important;background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;display:inline-block;filter:none}.qs>span b{all:unset;font-weight:800;color:var(--gold)}';document.head.appendChild(css);
+const re=/(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic}|\u200D[\u2640\u2642]\uFE0F?|[\u{1F3FB}-\u{1F3FF}])*)/gu;
+const wrap=()=>document.querySelectorAll('.title,h1').forEach(el=>{if(el.dataset.tEmo)return;el.dataset.tEmo=1;[...el.childNodes].forEach(n=>{if(n.nodeType===3&&re.test(n.data)){re.lastIndex=0;const sp=document.createElement('span');sp.innerHTML=n.data.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(re,'<span class="tEmo">$1</span>');n.replaceWith(...sp.childNodes)}})});
+if(document.readyState==='loading')addEventListener('DOMContentLoaded',wrap);else wrap()})();
 /* ---------- themes: [label, bgA, bgB, falling emojis, music style, accent] ---------- */
 const T=window.TG_THEMES={
  classic:['🎉 Classic',null,null,null,null,null],
@@ -45,3 +50,6 @@ const f=(location.pathname.split('/').pop()||'index.html');if(f==='index.html'||
 const b=document.createElement('a');b.href=n?n.f+'?from=playlist':'index.html';b.textContent=n?'▶ Next: '+n.n:'🏁 Back to standings';b.title='Party playlist';
 b.style.cssText='position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:9989;font:800 15px system-ui,sans-serif;padding:9px 18px;border-radius:30px;background:rgba(61,220,132,.92);color:#062;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.4)';
 const add=()=>document.body.appendChild(b);if(document.body)add();else addEventListener('DOMContentLoaded',add)})();
+/* setup panels: keep the start button visible even when the panel scrolls */
+(function(){const go=()=>{document.querySelectorAll('.panel,.card,.ovBox').forEach(p=>{const cs=getComputedStyle(p);if(!/(auto|scroll)/.test(cs.overflowY))return;const b=[...p.querySelectorAll('button')].find(x=>/START|SPIN THE WHEEL|SURVEY SAYS|ENTER THE CASTLE|OPEN THE LOBBY|LET'?S (GO|PLAY)|DEAL ME|BEGIN/i.test(x.textContent));if(!b)return;let w=b.parentElement;if(w===p)return;if(w.dataset.stk)return;w.dataset.stk=1;w.style.position='sticky';w.style.bottom='0';w.style.zIndex=5;w.style.padding='1.6vh 0 2.4vh';w.style.margin='1vh 0 0';w.style.background='linear-gradient(180deg,rgba(255,233,196,0),#ffe9c4 35%)'})};
+if(document.readyState==='loading')addEventListener('DOMContentLoaded',()=>setTimeout(go,50));else setTimeout(go,50)})();

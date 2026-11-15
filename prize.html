@@ -74,7 +74,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <div id="app"><div class="hdr"><div class="title">🎁 PRIZE WHEEL</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button></div></div>
 <div class="stage"><div class="wb"><div class="ptr"></div><canvas id="wc"></canvas><button class="hubb" id="spin">SPIN!</button></div>
 <div class="side"><div class="panel"><div class="kicker">🎁 PRIZES & DARES</div><p class="hint" style="margin:.6vh 0">One per line. Edit anything!</p><textarea class="field" id="pz" style="color:var(--ink)"></textarea><div class="btns" style="margin-top:1vh"><button class="bb gold" id="save">💾 Save wheel</button><button class="bb ghost" id="reset">↺ Default</button></div></div><div class="status" id="res"></div></div></div></div>
-<script src="tg-shell.js?v=1115b"></script><script>
+<script src="tg-shell.js?v=1115d"></script><script>
 const DEF=['$5 cash 💵','$10 cash 💵','Pick the next game 🎮','Skip one turn ⏭️','Dance for 10 seconds 💃','Sing a chorus 🎤','+3 leaderboard points 🏆','Free dessert first 🍰','Choose someone to do a dare 😈','Tell a joke 😂','$20 cash! 🤑','Spin again 🔁'];
 let P=LS.get('tg-prizes',DEF),ang=0,busy=false;$('#pz').value=P.join('\n');
 const C=['#e63946','#f4a261','#2a9d8f','#e9c46a','#8338ec','#3a86ff','#ff006e','#06d6a0','#fb5607','#4cc9f0'];const cv=$('#wc');let cx;
@@ -88,4 +88,4 @@ $('#save').onclick=()=>{P=$('#pz').value.split('\n').map(x=>x.trim()).filter(Boo
 $('#reset').onclick=()=>{P=DEF.slice();$('#pz').value=P.join('\n');LS.set('tg-prizes',P);draw(ang)};
 addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();$('#spin').click()}});
 shellInit({game:'Prize Wheel',style:'pop'});setTimeout(size,50);
-</script><script src="tg-depth.js?v=1115b"></script><script src="tg-night.js?v=1115b"></script></body></html>
+</script><script src="tg-depth.js?v=1115d"></script><script src="tg-night.js?v=1115d"></script></body></html>

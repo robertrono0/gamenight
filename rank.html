@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🎯</span>Each round, one player is in the <b>hot seat</b>.</div><div class="hc"><span class="i">📶</span>They secretly rank 5 things on their phone, like <b>"best pizza topping"</b>, from favorite to least favorite.</div><div class="hc"><span class="i">🤔</span>Everyone else guesses their <b>#1</b> and their <b>#5</b>.</div><div class="hc"><span class="i">✅</span><b>+100</b> for each correct guess.</div><div class="hc"><span class="i">🎤</span>The TV reveals their ranking from #5 up to #1. Defend your choices!</div><div class="hc"><span class="i">🏆</span>Most points wins. Find out who really knows each other.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115b"></script>
+<script src="tg-shell.js?v=1115d"></script>
 <script src="buzzer.js?v=1794800000"></script>
-<script src="tg-party.js?v=1115b"></script>
+<script src="tg-party.js?v=1115d"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -94,7 +94,7 @@ $('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidd
   PG.wait(`${who} is ranking...`,'Get ready to guess! 🤔','⏳');const rank=[];let left=shuffle(items);
   for(let k=0;k<4;k++){const sub=await PG.collect({id:'rk'+k,secs:40,who:[who],title:`<div class="kicker">ROUND ${r+1}: HOT SEAT</div><div style="display:flex;align-items:center;gap:1.4vw;font-family:var(--fd);font-size:5vh">${avHTML(who)} ${esc(who)}</div><div class="prompt popIn">is ranking: ${esc(topic)}</div>`,sub:`Pick #${k+1} of 5... 🤫`,spec:n=>({k:'choice',kicker:'Rank: '+topic,title:`Your #${k+1} ${k===0?'(favorite!)':''}`,opts:left.map(x=>({t:x,v:x}))})});
    const pk=sub[who]||left[0];rank.push(pk);left=left.filter(x=>x!==pk)}rank.push(left[0]);
-  const g1=await PG.collect({id:'g1',secs:25,who:others,title:`<div class="prompt popIn">What is ${esc(who)}'s <b style="color:var(--gold)">#1</b> ${esc(topic.toLowerCase())}?</div>${answersGrid(items.map(x=>esc(x)))}`,sub:'Guess their FAVORITE',spec:n=>({k:'choice',title:`${who}'s #1?`,body:topic,opts:items.map(x=>({t:x,v:x}))})});
+  const g1=await PG.collect({id:'g1',secs:25,who:others,title:`<div class="prompt popIn">What is ${esc(who)}'s <b style="color:var(--gold)">#1</b> pick?<div style="font-size:.55em;opacity:.85;margin-top:.6vh">${esc(topic)}</div></div>${answersGrid(items.map(x=>esc(x)))}`,sub:'Guess their FAVORITE',spec:n=>({k:'choice',title:`${who}'s #1?`,body:topic,opts:items.map(x=>({t:x,v:x}))})});
   const g5=await PG.collect({id:'g5',secs:25,who:others,title:`<div class="prompt popIn">What is ${esc(who)}'s <b style="color:#ff6b6b">#5</b> (least favorite)?</div>${answersGrid(items.map(x=>esc(x)))}`,sub:'Guess their LEAST favorite',spec:n=>({k:'choice',title:`${who}'s LAST place?`,body:topic,opts:items.map(x=>({t:x,v:x}))})});
   const gain={};others.forEach(n=>{let g=0;if(g1[n]===rank[0])g+=100;if(g5[n]===rank[4])g+=100;if(g){PG.add(n,g);gain[n]=g}});
   PG.stage(`<div class="prompt">${avHTML(who)} ${esc(who)}'s ${esc(topic)}</div><div id="rk" style="display:flex;flex-direction:column-reverse;gap:1vh;width:min(800px,90vw)"></div>`);music('tense');
@@ -102,6 +102,6 @@ $('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidd
   music('play');SFX.win();await PG.next('📊 SCORES');PG.stage(PG.board(gain));await PG.next(r+1>=cfg.r?'🏆 FINAL RESULTS':'NEXT ROUND ➜')}
  PG.end()};
 </script>
-<script src="tg-depth.js?v=1115b"></script>
+<script src="tg-depth.js?v=1115d"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js?v=1115b"></script></body></html>
+<script src="tg-night.js?v=1115d"></script></body></html>

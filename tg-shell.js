@@ -1,3 +1,6 @@
+
+window.tgAuto=()=>{try{return !!JSON.parse(localStorage.getItem('tg-settings')||'{}').auto}catch(e){return false}};
+window.tgSay=(txt)=>{try{if(!tgAuto()||!window.speechSynthesis||!txt)return;const u=new SpeechSynthesisUtterance(String(txt).replace(/<[^>]+>/g,'').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F]/gu,''));u.rate=1.02;u.pitch=1;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}};
 (function(){
 const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 window.tgRoster=()=>{const r=g('tg-roster');return Array.isArray(r)?r:[]};
@@ -111,6 +114,7 @@ const css=document.createElement('style');css.textContent=`
 @keyframes fxFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(.3) rotate(var(--r));opacity:0}}
 #fxOv{position:fixed;inset:0;z-index:9992;display:none;place-items:center;pointer-events:none}
 #fxOv.on{display:grid}
+#fxOv::before{content:'';position:absolute;inset:0;background:rgba(10,4,6,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:fxSpot 3.6s ease-out forwards}
 #fxOv .spot{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,215,90,.55),rgba(255,170,30,.18) 30%,rgba(0,0,0,.82) 70%);animation:fxSpot 3.6s ease-out forwards}
 #fxOv.loss .spot{background:radial-gradient(circle at 50% 45%,rgba(255,60,60,.35),rgba(120,0,0,.55) 45%,rgba(0,0,0,.85) 80%)}
 @keyframes fxSpot{0%{opacity:0}12%{opacity:1}80%{opacity:1}100%{opacity:0}}
@@ -178,7 +182,7 @@ function avHTML(n,cls='av'){const a=avatarOf(n);return a?`<img class="${cls}" sr
 .subs{display:flex;flex-wrap:wrap;gap:1vh;justify-content:center;max-width:92vw}
 .subs .pp{display:flex;align-items:center;gap:.6vw;padding:.6vh 1.2vw .6vh .6vh;border-radius:4vh;background:rgba(255,255,255,.08);font-weight:700;font-size:2vh;opacity:.45;transition:.3s}
 .subs .pp.in{opacity:1;background:rgba(61,220,132,.25);box-shadow:0 0 0 .25vh #3ddc84}
-html.tg-big body{zoom:1.12}`;document.head.appendChild(c)})();
+html.tg-big body{}`;document.head.appendChild(c)})();
 function lobbyHTML(title,sub){const L=window.TGB?TGB.link('p'):'';const q=window.TGB?TGB.qr(L):'';const ps=window.TGB?TGB.players():[];
  return`<div class="lobby"><div class="qrb"><b>📱 SCAN TO PLAY</b>${q}<div style="font-size:1.6vh;margin-top:.6vh;opacity:.7">Same Wi-Fi as the TV</div></div><div><h2>${title}</h2><div class="status" style="text-align:left;margin-bottom:1.4vh">${sub||''}</div><div class="who">${ps.map(n=>`<div class="pp">${avHTML(n)}${esc(n)}</div>`).join('')||'<div class="hint" style="font-size:2.2vh;opacity:.7">Waiting for phones... 📲 Tip: tap 📸 on your phone to add a selfie!</div>'}</div></div></div>`}
 function subsHTML(names,done){return`<div class="subs">${names.map(n=>`<div class="pp ${done.includes(n)?'in':''}">${avHTML(n)}${esc(n)}${done.includes(n)?' ✅':''}</div>`).join('')}</div>`}

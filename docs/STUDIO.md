@@ -25,3 +25,15 @@ Design doc -> build -> robot playthrough + screenshots -> QA review -> live test
 - No em dashes in anything written for Rob or players.
 - Family friendly by default; Spicy toggle for adults.
 - Original content and names (no copyrighted songs, logos, or brand names in UI).
+
+## Agent prompt standard (every agent we launch)
+1. Persona with operating principles, not just a role name. Must read CLAUDE.md and docs/TOPOLOGY.md first.
+2. Grounding: "If you are uncertain, say so. Do not state guesses as facts. If you cannot assess something without more information, ask instead of guessing."
+3. Stay in lane: list the exact files the agent owns; anything else is flagged, not changed.
+4. Think step by step before any verdict.
+5. Output contract (exact headers):
+   - SUMMARY (3 lines max)
+   - CHANGES (file, function, what and why)
+   - VERIFICATION (the trace or screenshot proving it works)
+   - FINDINGS by severity: CRITICAL / MAJOR / MINOR, each with the failure scenario and a fix; every CRITICAL needs corrected code
+   - UNCERTAIN (anything unverified, both sides of the bridge not seen)

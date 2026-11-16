@@ -17,35 +17,40 @@ const PG={opt:{},score:{},round:0,_c:null,_v:null,_timer:null,_handlers:{},log:[
   if(k==='choice'){const o=sp.opts||[];if(!o.length)return null;const i=Math.floor(Math.random()*o.length);return String(o[i].v!==undefined?o[i].v:i)}
   if(k==='text'){const fs=sp.fields||[{ph:sp.ph}];const vals=fs.map(f=>{const hint=((f.ph||'')+' '+(sp.title||'')+' '+(sp.body||'')).toLowerCase();if(f.num||sp.num||f.type==='number'||f.im==='decimal')return String(/year/.test(hint)?R(1950,2024):R(1,100));return this.WORDS[R(0,this.WORDS.length-1)]});return vals.length===1?vals[0]:vals}
   if(k==='dial')return R(0,100);return null},
- botsAnswer(names,spec,id,secs,kind){const bs=names.filter(n=>this.isBot(n));let nob=false;
-  bs.forEach(n=>{const sp=spec(n);const v=this.botValue(sp);if(v===null){nob=true;return}setTimeout(()=>{const c=kind==='c'?this._c:this._v;if(c&&c.id===id)this.onInput(n,id,v)},Math.min(secs*1000*.6,1500+Math.random()*Math.min(9000,secs*500)))});return nob},
+ botsAnswer(names,spec,id,secs,kind,tok){const bs=names.filter(n=>this.isBot(n));let nob=false;
+  bs.forEach(n=>{const sp=spec(n);const v=this.botValue(sp);if(v===null){nob=true;return}setTimeout(()=>{const c=kind==='c'?this._c:this._v;if(c&&c.id===id&&(!tok||c.tok===tok))this.onInput(n,id,v)},Math.min(secs*1000*.6,1500+Math.random()*Math.min(9000,secs*500)))});return nob},
  add(n,p){if(!n)return;this.score[n]=(this.score[n]||0)+p;this.save()},
  stage(h){$('#stage').innerHTML=h},
  wait(t,b,e){if(window.TGB)TGB.ask({k:'msg',key:'w'+Date.now(),emoji:e||'👀',title:t||'Look at the TV!',body:b||''})},
  /* ---------- lobby ---------- */
- lobby(){return new Promise(res=>{this.inLobby=true;this._go=()=>{if(this.players().length<(this.opt.min||2)){toast(`Need at least ${this.opt.min||2} players with phones`);return}this.inLobby=false;clearInterval(this._li);res(this.players())};
+ lobby(){return new Promise(res=>{this.inLobby=true;this._go=()=>{if(!this.inLobby)return;if(this.players().length<(this.opt.min||2)){toast(`Need at least ${this.opt.min||2} players with phones`);return}this.inLobby=false;clearInterval(this._li);clearInterval(this._la);res(this.players())};
   const steps=$$('#howOv .hc').slice(0,4).map((e,i)=>`<div class="qs"><b>${i+1}</b><span>${e.innerHTML.replace(/<span class="i">.*?<\/span>/,'')}</span></div>`).join('');
-  const draw=()=>{if(!this.inLobby)return;const n=this.players().length;this.stage(lobbyHTML(this.opt.title,this.opt.sub||'')+(steps?`<div class="qsteps">${steps}</div>`:'')+(this.opt.cpu===false?'':`<div class="cpuRow">🤖 CPU players: <button class="chip" id="cpuM">−</button> <b>${this.bots.length}</b> <button class="chip" id="cpuP">+</button> <span class="hint">${this.bots.length?this.bots.join(', ')+' will play too':'Short on people? Add computer players.'}</span></div>`)+`<button class="bb gold big" id="pgGo" ${n>=(this.opt.min||2)?'':'disabled'}>▶ START (${n} player${n===1?'':'s'})</button>`);$('#pgGo').onclick=this._go;if($('#cpuP')){$('#cpuP').onclick=()=>{this.setBots(this.bots.length+1);SFX.click()};$('#cpuM').onclick=()=>{this.setBots(this.bots.length-1);SFX.click()}}this.host('Lobby: '+n+' players',[{id:'go',label:'▶ Start',k:'y'}])};
-  this._ldraw=draw;draw();clearInterval(this._li);this._li=setInterval(draw,2500);this.wait('You\'re in! 🎉','Waiting for the host to start...','🎉')})},
+  const draw=()=>{if(!this.inLobby)return;const n=this.players().length;this.stage(lobbyHTML(this.opt.title,this.opt.sub||'')+(steps?`<div class="qsteps">${steps}</div>`:'')+(this.opt.cpu===false?'':`<div class="cpuRow">🤖 CPU players: <button class="chip" id="cpuM">−</button> <b>${this.bots.length}</b> <button class="chip" id="cpuP">+</button> <span class="hint">${this.bots.length?this.bots.join(', ')+' will play too':'Short on people? Add computer players.'}</span></div>`)+`<div class="status" id="pgAuto">${this.autoTxt()}</div><button class="bb gold big" id="pgGo" ${n>=(this.opt.min||2)?'':'disabled'}>▶ START (${n} player${n===1?'':'s'})</button>`);$('#pgGo').onclick=this._go;if($('#cpuP')){$('#cpuP').onclick=()=>{this.setBots(this.bots.length+1);SFX.click()};$('#cpuM').onclick=()=>{this.setBots(this.bots.length-1);SFX.click()}}this.host('Lobby: '+n+' players',[{id:'go',label:'▶ Start',k:'y'}])};
+  this._ldraw=draw;this._lN=-1;this._lJoin=Date.now();this._lSaid=0;draw();clearInterval(this._li);this._li=setInterval(draw,2500);
+  /* TV is the host: start by itself once enough players are in and nobody new has joined for 20 seconds */
+  clearInterval(this._la);this._la=setInterval(()=>{if(!this.inLobby){clearInterval(this._la);return}const n=this.players().length;if(n!==this._lN){if(this._lN>=0&&n>this._lN)this._lSaid=0;this._lN=n;this._lJoin=Date.now()}const e=$('#pgAuto');if(e)e.innerHTML=this.autoTxt();
+   const l=this.autoLeft();if(l===null)return;if(!this._lSaid&&l<=10){this._lSaid=1;window.tgSay&&tgSay('The game starts in 10 seconds. Last call to join!')}if(l<=0){window.tgSay&&tgSay("Let's play "+String(this.opt.title||'').replace(/<[^>]+>/g,'')+'!');this._go()}},500);this.wait('You\'re in! 🎉','Waiting for the host to start...','🎉')})},
+ autoLeft(){if(!(window.tgAuto&&tgAuto())||!this.inLobby)return null;const humans=window.TGB?TGB.players().length:0,n=this.players().length;if(humans<1||n<(this.opt.min||2))return null;return Math.max(0,20-Math.floor((Date.now()-(this._lJoin||Date.now()))/1000))},
+ autoTxt(){if(!(window.tgAuto&&tgAuto()))return'';const l=this.autoLeft(),m=this.opt.min||2;return l===null?`🤖 The TV is hosting. The game starts by itself once ${m} players have joined.`:`🤖 Starting by itself in <b>${l}</b>s. Someone new joining resets the clock.`},
  host(q,actions,a){if(window.TGB)TGB.host({title:this.opt.title,q,a:a||'',actions:actions||[],noBuzzBtns:true})},
  /* ---------- collect: every phone answers ---------- */
  collect({id,spec,secs=60,who,title,sub,show}){return new Promise(res=>{const names=who||this.players(),subs={},until=Date.now()+secs*1000;const key=id+'-'+Date.now();
-  const sp=n=>Object.assign({key,id,secs,until},spec(n));this._c={id,subs,names,spec:sp,res,until,secs};
-  if(window.TGB)TGB.askEach(Object.fromEntries(names.map(n=>[n,sp(n)])));this._c.nob=this.botsAnswer(names,sp,id,secs,'c');
+  const sp=n=>Object.assign({key,id,secs,until},spec(n));this._c={id,subs,names,spec:sp,res,until,secs,tok:key};
+  if(window.TGB)TGB.askEach(Object.fromEntries(names.map(n=>[n,sp(n)])));this._c.nob=this.botsAnswer(names,sp,id,secs,'c',key);
   this.stage(`${title||''}<div style="display:flex;gap:2vw;align-items:center;justify-content:center"><div class="ring" id="pgRing"><span>${secs}</span></div><div class="status" style="font-size:2.6vh">${sub||'Answer on your phone! 📱'}</div></div><div id="pgSubs">${subsHTML(names,[])}</div><button class="bb ghost" id="pgSkip">⏭ Time's up</button>`);
   $('#pgSkip').onclick=()=>this.skip();this.host((sub||'Phones are answering')+'',[{id:'skip',label:"⏭ Time's up",k:'no'}]);
-  this.tick(until,secs,()=>this.finishC());music('tense')})},
+  this.tick(until,secs,()=>this.finishC());music('tense');if(window.tgSay)tgSay(((title||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,220)+'. '+(sub||'Answer on your phone!')).replace(/^\. /,''))})},
  tick(until,secs,end){clearInterval(this._timer);this._timer=setInterval(()=>{const l=Math.max(0,(until-Date.now())/1000),r=$('#pgRing');if(r){r.style.setProperty('--p',l/secs);r.querySelector('span').textContent=Math.ceil(l);r.classList.toggle('low',l<=5)}if(l<=5&&l>0&&Math.abs(l-Math.round(l))<.05)SFX.tick(l<=3);if(l<=0){clearInterval(this._timer);end()}},100)},
  finishC(){const c=this._c;if(!c)return;this._c=null;clearInterval(this._timer);SFX.horn();this.wait('Time\'s up! ⏰','Look at the TV 👀','📺');c.res(c.subs)},
  /* ---------- vote ---------- */
  vote({id,opts,secs=40,who,title,sub,exclude}){return new Promise(res=>{const names=who||this.players(),votes={},until=Date.now()+secs*1000,key=id+'-'+Date.now();
   const specFor=n=>{const o=opts(n).filter(x=>!exclude||!exclude(n,x));return{k:'choice',key,id,secs,until,title:title||'Vote!',body:sub||'',opts:o,cols:o.length>4?2:1}};
-  this._v={id,votes,names,res,specFor};if(window.TGB)TGB.askEach(Object.fromEntries(names.map(n=>[n,specFor(n)])));this.botsAnswer(names,specFor,id,secs,'v');
+  this._v={id,votes,names,res,specFor,tok:key};if(window.TGB)TGB.askEach(Object.fromEntries(names.map(n=>[n,specFor(n)])));this.botsAnswer(names,specFor,id,secs,'v',key);
   const st=$('#pgVotes');if(st)st.innerHTML=`<div style="display:flex;gap:2vw;align-items:center;justify-content:center"><div class="ring" id="pgRing"><span>${secs}</span></div>${subsHTML(names,[])}</div>`;
-  this.host('Voting...',[{id:'skip',label:'⏭ End voting',k:'no'}]);this.tick(until,secs,()=>this.finishV())})},
+  this.host('Voting...',[{id:'skip',label:'⏭ End voting',k:'no'}]);window.tgSay&&tgSay((title||'Time to vote!').replace(/<[^>]+>/g,' ')+' '+(sub||'Vote on your phone.').replace(/<[^>]+>/g,' '));this.tick(until,secs,()=>this.finishV())})},
  finishV(){const v=this._v;if(!v)return;this._v=null;clearInterval(this._timer);this.wait('Votes are in! 🗳️','Look at the TV 👀','📺');v.res(v.votes)},
  skip(){if(this._c)this.finishC();else if(this._v)this.finishV()},
- stop(){clearInterval(this._timer);clearInterval(this._li);this._c=null;this._v=null},
+ stop(){clearInterval(this._timer);clearInterval(this._li);clearInterval(this._la);this._c=null;this._v=null},
  onInput(n,id,v){if(this._c&&id===this._c.id&&this._c.names.includes(n)&&this._c.subs[n]==null){this._c.subs[n]=v;SFX.click();const e=$('#pgSubs');if(e)e.innerHTML=subsHTML(this._c.names,Object.keys(this._c.subs));if(this._c.names.filter(x=>this.players().includes(x)&&!(this._c.nob&&this.isBot(x))).every(x=>this._c.subs[x]!=null))setTimeout(()=>this.finishC(),700);return}
   if(this._v&&id===this._v.id&&this._v.names.includes(n)){this._v.votes[n]=v;SFX.click();const e=$('#pgVotes .subs');if(e)e.outerHTML=subsHTML(this._v.names,Object.keys(this._v.votes));if(this._v.names.filter(x=>this.players().includes(x)).every(x=>this._v.votes[x]!=null))setTimeout(()=>this.finishV(),700);return}
   const h=this._handlers[id];if(h)h(n,v)},
@@ -58,7 +63,7 @@ const PG={opt:{},score:{},round:0,_c:null,_v:null,_timer:null,_handlers:{},log:[
  end(){this.stop();music('party');const r=this.ranked();try{tgNight(this.opt.game,tgPlaces(r.filter(([n])=>!this.isBot(n)).map(([n,p])=>({names:[n],v:p}))))}catch(e){}
   const top=r.slice(0,3),md=['🥇','🥈','🥉'],h=[46,36,28],vis=[top[1],top[0],top[2]].filter(Boolean);
   $('#endWrap').innerHTML=`<div class="bigT">🏆 ${r[0]?esc(r[0][0])+' WINS!':'GAME OVER'}</div><div class="podium">${vis.map(t=>{const k=top.indexOf(t);return`<div class="pod" style="--tc:${['#ffcc3d','#c0c0c0','#cd7f32'][k]};height:${h[k]}vh;animation-delay:${(2-k)*.3}s"><div class="md">${md[k]}</div><div style="margin:0 auto">${avHTML(t[0])}</div><h4>${esc(t[0])}</h4><div class="s">${t[1]}</div></div>`}).join('')}</div><div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;
-  $('#endOv').classList.remove('hidden');if(window.FXX&&r[0])FXX.bigWin('🏆 '+r[0][0].toUpperCase(),r[0][1]+' pts',this.opt.game+' champion!');else SFX.win();
+  $('#endOv').classList.remove('hidden');window.tgSay&&r[0]&&tgSay(r[0][0]+' wins with '+r[0][1]+' points!');if(window.FXX&&r[0])FXX.bigWin('🏆 '+r[0][0].toUpperCase(),r[0][1]+' pts',this.opt.game+' champion!');else SFX.win();
   if(window.TGB)TGB.askEach(Object.fromEntries(this.players().map(n=>{const k=r.findIndex(x=>x[0]===n);return[n,{k:'msg',key:'end'+n,emoji:['🥇','🥈','🥉'][k]||'🎉',title:k>=0?`You finished #${k+1}!`:'Thanks for playing!',body:`${this.score[n]||0} points`}]})));
   $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');this.reset();$('#setupOv').classList.remove('hidden');music('chill');if(window.TGB)TGB.clearUI()}}};
 /* helpers */

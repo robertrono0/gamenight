@@ -93,6 +93,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
  <h3>Mode</h3><div class="seg" id="segM"><button data-v="mix" class="on">🎲 Mix both</button><button data-v="mlt">👉 Most Likely To</button><button data-v="wyr">🤔 Would You Rather</button></div>
  <h3>Spice level 🌶️</h3><div class="seg" id="segS"><button data-v="mild" class="on">😇 Mild</button><button data-v="medium">🌶️ Medium</button><button data-v="spicy">🔥 Spicy (still family-safe)</button></div>
  <h3>How many cards?</h3><div class="seg" id="segN"><button data-v="10">10</button><button data-v="15" class="on">15</button><button data-v="25">25</button><button data-v="40">40</button></div>
+ <h3>🕵️ Guess who voted rounds <span class="hint">(after the votes, everyone guesses who voted for the winner; best with phones, works TV-only too)</span></h3><div class="seg" id="segG"><button data-v="0">Off</button><button data-v="3" class="on">Every 3rd card</button><button data-v="2">Every 2nd card</button><button data-v="1">Every card</button></div>
  <h3>Add your own <span class="hint">(optional; lines starting with "WYR:" use A | B)</span></h3>
  <textarea class="field" id="custom" placeholder="show up late to their own wedding&#10;WYR: eat only kubba forever | eat only dolma forever"></textarea>
  <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">LET'S GO! 🎉</button></div>
@@ -103,6 +104,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
  <div class="hc"><span class="i">🗣️</span>The winner gets 10 seconds to defend themselves. Or not. 😂</div>
  <div class="hc"><span class="i">🤔</span><b>Would You Rather:</b> on <b>GO!</b> everyone runs to the LEFT or RIGHT side of the room.</div>
  <div class="hc"><span class="i">⚖️</span>Host taps the side with more people. The smaller side has to explain themselves!</div>
+ <div class="hc"><span class="i">🕵️</span><b>Guess who voted:</b> on some cards the TV secretly picks a voter. Guess who it was (or which way they voted) on your phone. Right guesses earn <b>Game Night points</b>!</div>
  <div class="hc"><span class="i">🏆</span>At the end, everyone gets their trophies and we crown the <b>MVP</b>.</div>
 </div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
@@ -268,31 +270,74 @@ const WYR=[['Eat only pizza for a year','Never eat pizza again'],['Have dinner w
 const MLT2={medium:["ghost someone's text for a week", "say \"I'm on my way\" while still in bed", "stalk their crush's Instagram", "pretend to love a gift they hate", "re-gift a present", "fake a phone call to escape a conversation", "cry over a TikTok", "have a secret wedding Pinterest board", "lie about how much their outfit cost", "double text",  "fall in love on vacation", "leave the group chat on read", "send a 5-minute voice note", "still sleep with a stuffed animal", "fake laugh at the boss's jokes", "forget to call their mom back", "eat in their car so they don't have to share", "take a selfie at a funeral"],spicy:["slide into a celebrity's DMs", "get married in Vegas on a whim",  "get kicked out of a club", "show up to a party uninvited", "have a secret TikTok account", "lie on their resume",   "propose after one month", "get caught lying to their mom", "flirt with the waiter for a free dessert", "say \"I love you\" first", "get a tattoo of their partner's name", "go viral for something embarrassing", "sneak out of the house as a teen",  "get caught napping at work",  "start a fight at a wedding"]},WYR2={medium:[["Have your search history read out loud", "Have your camera roll shown on the TV"], ["Lose all your photos", "Lose all your contacts"], ["Only date someone your parents pick", "Stay single forever"], ["Give up coffee for a year", "Give up your phone for a week"], ["Be broke and happy", "Be rich and bored"],  ["Live with your in-laws for a year", "Live with no AC for a year"], ["Say everything you think for a day", "Not speak for a week"], ["Have Teta pick your outfit", "Have your little cousin pick your outfit"], ["Be 10 years older", "Be 10 years younger"]],spicy:[["Have your mom read your texts", "Have your boss read your texts"], ["Kiss a frog", "Eat a raw onion like an apple"], ["Never shower again", "Never brush your teeth again"],  ["Text your crush everything you think", "Say everything you think in front of your parents"], ["Wear the same outfit for a year", "Never wear the same outfit twice"], ["Only eat Teta's food forever", "Only eat fast food forever"], ["Get caught talking to yourself", "Get caught singing in the shower"], ["Have a reality show about your life", "Have your diary published"]]};
 setStyle('swing');
 let S=LS.get('tg-likely',null);/* UNDO: every save remembers the state before it (quick bursts like typing count as one step) */const UNDO_KEY='tg-likely',UNDO=[];let _uLast=S?JSON.stringify(S):'',_uT=0;const save=()=>{if(!S){UNDO.length=0;_uLast='';LS.set(UNDO_KEY,S);return}const c=JSON.stringify(S);if(_uLast&&c!==_uLast){const n=Date.now();if(n-_uT>900)UNDO.push(_uLast);_uT=n;if(UNDO.length>60)UNDO.shift()}_uLast=c;LS.set(UNDO_KEY,S)};const saveQuiet=()=>{_uLast=S?JSON.stringify(S):'';LS.set(UNDO_KEY,S)};
-let cfg=LS.get('tg-likely-cfg',{m:'mix',n:15,names:''});if(!cfg.sp)cfg.sp='mild';if(tgRoster().length)cfg.names=tgRoster().join('\n');$('#names').value=cfg.names;$('#names').oninput=e=>{cfg.names=e.target.value;LS.set('tg-likely-cfg',cfg);tgSetRoster(parseNames(cfg.names))};
-['segM:m','segN:n','segS:sp'].forEach(x=>{const[id,k]=x.split(':');$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(y=>y.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set('tg-likely-cfg',cfg);SFX.click()}})});
+let cfg=LS.get('tg-likely-cfg',{m:'mix',n:15,names:''});if(!cfg.sp)cfg.sp='mild';if(cfg.gw===undefined)cfg.gw=3;if(tgRoster().length)cfg.names=tgRoster().join('\n');$('#names').value=cfg.names;$('#names').oninput=e=>{cfg.names=e.target.value;LS.set('tg-likely-cfg',cfg);tgSetRoster(parseNames(cfg.names))};
+['segM:m','segN:n','segS:sp','segG:gw'].forEach(x=>{const[id,k]=x.split(':');$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(y=>y.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set('tg-likely-cfg',cfg);SFX.click()}})});
 $('#bStart').onclick=()=>{const names=parseNames(cfg.names);if(names.length<3){toast('Add at least 3 people 🙂');return}ac();
  const cm=[],cw=[];$('#custom').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach(l=>{if(/^wyr:/i.test(l)){const p=l.slice(4).split('|').map(x=>x.trim());if(p.length===2)cw.push(p)}else cm.push(l.replace(/^(who'?s )?most likely to /i,''))});
  const lv=cfg.sp==='spicy'?['medium','spicy']:cfg.sp==='medium'?['medium']:[];const PM=cfg.sp==='spicy'?shuffle(MLT2.spicy).concat(shuffle(MLT2.medium.concat(MLT))):cfg.sp==='medium'?shuffle(MLT2.medium).concat(shuffle(MLT)):shuffle(MLT),PW=cfg.sp==='spicy'?shuffle(WYR2.spicy).concat(shuffle(WYR2.medium.concat(WYR))):cfg.sp==='medium'?shuffle(WYR2.medium).concat(shuffle(WYR)):shuffle(WYR);
  let m=shuffle(cm).map(t=>({k:'mlt',t})).concat(PM.map(t=>({k:'mlt',t}))),w=shuffle(cw).map(t=>({k:'wyr',t})).concat(PW.map(t=>({k:'wyr',t})));
  let cards=cfg.m==='mlt'?m:cfg.m==='wyr'?w:[];if(cfg.m==='mix'){while(m.length||w.length){if(m.length)cards.push(m.shift());if(m.length)cards.push(m.shift());if(w.length)cards.push(w.shift())}}
- S={names,cards:cards.slice(0,cfg.n),i:0,phase:'show',titles:{},sel:[],side:null};names.forEach(n=>S.titles[n]=[]);save();$('#setupOv').classList.add('hidden');render();music('play')};
+ cards=cards.slice(0,cfg.n).map((c,i)=>cfg.gw&&(i+1)%cfg.gw===0?Object.assign({},c,{gw:1}):c);
+ S={names,cards,i:0,phase:'show',titles:{},sel:[],side:null,gp:{},t0:Date.now()};names.forEach(n=>S.titles[n]=[]);save();$('#setupOv').classList.add('hidden');render();music('play')};
+let busy=0;
 function render(){const c=S.cards[S.i],st=$('#stage'),prog=`<div class="prog">Card ${S.i+1} of ${S.cards.length}</div>`;
+ if(S.phase==='gw'||S.phase==='gwRev'){gwRender(c,st,prog);return}
  if(c.k==='mlt'){
   if(S.phase==='show'||S.phase==='pick'){st.innerHTML=`${prog}<div class="panel flipIn" style="max-width:92vw"><div class="kicker">WHO'S MOST LIKELY TO...</div><div class="prompt">${esc(c.t)}?</div></div>
    ${S.phase==='show'?`<button class="bb big gold" id="bCd">3... 2... 1... POINT! 👉</button>`:`<div class="status">Tap who got the most fingers (tap two for a tie)</div><div class="names">${S.names.map(n=>`<button class="nb${S.sel.includes(n)?' on':''}" data-n="${esc(n)}">${esc(n)}${S.titles[n].length?`<small>👑${S.titles[n].length}</small>`:''}</button>`).join('')}</div><div class="btns"><button class="bb ghost" id="bSkip">Skip card</button><button class="bb big" id="bCrown" ${S.sel.length?'':'disabled'}>👑 CROWN THEM</button></div>`}`;
-   if(S.phase==='show')$('#bCd').onclick=async()=>{await countdown(3,'POINT! 👉');S.phase='pick';save();render()};
+   if(S.phase==='show')$('#bCd').onclick=async()=>{if(busy)return;busy=1;const i0=S.i;try{await countdown(3,'POINT! 👉')}finally{busy=0}if(!S||S.i!==i0||S.phase!=='show')return;S.phase='pick';save();render()};
    else{$$('.nb').forEach(b=>b.onclick=()=>{const n=b.dataset.n;S.sel=S.sel.includes(n)?S.sel.filter(x=>x!==n):[...S.sel,n];SFX.click();save();render()});$('#bSkip').onclick=nextCard;$('#bCrown').onclick=crown}}
-  else if(S.phase==='crowned'){st.innerHTML=`<div class="crown">👑</div><div class="huge" style="color:var(--gold)">${S.sel.map(esc).join(' & ')}</div><div class="prompt" style="font-size:4.4vh">Most likely to <em>${esc(c.t)}</em></div><div class="status">🗣️ 10 seconds to defend yourself... GO!</div><button class="bb big" id="bNext">${S.i+1>=S.cards.length?'🏆 TROPHY TIME':'NEXT CARD ➜'}</button>`;$('#bNext').onclick=nextCard}}
+  else if(S.phase==='crowned'){st.innerHTML=`<div class="crown">👑</div><div class="huge" style="color:var(--gold)">${S.sel.map(esc).join(' & ')}</div><div class="prompt" style="font-size:4.4vh">Most likely to <em>${esc(c.t)}</em></div><div class="status">🗣️ 10 seconds to defend yourself... GO!</div>${nextBtn(c)}`;bindNext(c)}}
  else{const[L,R]=c.t,w=S.side;
   st.innerHTML=`${prog}<div class="kicker">🤔 WOULD YOU RATHER...</div><div class="wyr"><div class="side L ${w?w==='L'?'win':w==='R'?'lose':'':''}"><small>⬅️ LEFT SIDE</small>${esc(L)}</div><div class="or">OR</div><div class="side R ${w?w==='R'?'win':w==='L'?'lose':'':''}"><small>RIGHT SIDE ➡️</small>${esc(R)}</div></div>
-   ${S.phase==='show'?`<button class="bb big gold" id="bCd">3... 2... 1... PICK A SIDE! 🏃</button>`:S.phase==='pick'?`<div class="status">Which side has more people?</div><div class="btns"><button class="bb" id="sL">⬅️ LEFT wins</button><button class="bb ghost" id="sT">🤝 Tie</button><button class="bb" id="sR" style="background:linear-gradient(#5aa0ff,#123a8a);box-shadow:0 .6vh 0 #0b2a6b">RIGHT wins ➡️</button></div>`:`<div class="status">${w==='T'?'🤝 A perfect split!':'😂 The smaller side has to explain themselves!'}</div><button class="bb big" id="bNext">${S.i+1>=S.cards.length?'🏆 TROPHY TIME':'NEXT CARD ➜'}</button>`}`;
-  if(S.phase==='show')$('#bCd').onclick=async()=>{await countdown(3,'MOVE! 🏃');S.phase='pick';save();render()};
+   ${S.phase==='show'?`<button class="bb big gold" id="bCd">3... 2... 1... PICK A SIDE! 🏃</button>`:S.phase==='pick'?`<div class="status">Which side has more people?</div><div class="btns"><button class="bb" id="sL">⬅️ LEFT wins</button><button class="bb ghost" id="sT">🤝 Tie</button><button class="bb" id="sR" style="background:linear-gradient(#5aa0ff,#123a8a);box-shadow:0 .6vh 0 #0b2a6b">RIGHT wins ➡️</button></div>`:`<div class="status">${w==='T'?'🤝 A perfect split!':'😂 The smaller side has to explain themselves!'}</div>${nextBtn(c)}`}`;
+  if(S.phase==='show')$('#bCd').onclick=async()=>{if(busy)return;busy=1;const i0=S.i;try{await countdown(3,'MOVE! 🏃')}finally{busy=0}if(!S||S.i!==i0||S.phase!=='show')return;S.phase='pick';save();render()};
   else if(S.phase==='pick'){const f=s=>()=>{S.side=s;S.phase='done';save();SFX.ding();if(s!=='T')burst(innerWidth*(s==='L'?.25:.75),innerHeight*.45,90);render()};$('#sL').onclick=f('L');$('#sR').onclick=f('R');$('#sT').onclick=f('T')}
-  else $('#bNext').onclick=nextCard}}
+  else bindNext(c)}}
+
+/* ---------------- GUESS WHO VOTED ----------------
+ S.gw = {mode:'who'|'what'|'side', m: mystery player, tgt: who they voted for (who mode), ans: right answer or null (TV-only), known: phone votes exist, opts}
+ S.g = phone guesses {name:value}; S.ok = names the host marks as right; S.gp = running guess points */
+const gwOn=c=>c&&c.gw&&S.names.length>=3;
+function nextBtn(c){return gwOn(c)?`<button class="bb big gold" id="bGW">🕵️ GUESS WHO VOTED ➜</button>`:`<button class="bb big" id="bNext">${S.i+1>=S.cards.length?'🏆 TROPHY TIME':'NEXT CARD ➜'}</button>`}
+function bindNext(c){if(gwOn(c))$('#bGW').onclick=gwStart;else $('#bNext').onclick=nextCard}
+function gwPlayers(){try{return window.TGB?TGB.players():[]}catch(e){return[]}}
+function gwStart(){const c=S.cards[S.i],vt=(S.vi===S.i&&S.v)||{},voters=Object.keys(vt).filter(n=>vt[n]!=null&&vt[n]!==''),known=voters.length>=2;let g;
+ if(c.k==='mlt'){if(known){const fw=voters.filter(n=>S.sel.includes(vt[n]));if(fw.length){const m=pick(fw);g={mode:'who',m,tgt:vt[m],ans:m}}else{const m=pick(voters);g={mode:'what',m,ans:vt[m]}}}else g={mode:'what',m:pick(S.names),ans:null}}
+ else{if(known){const m=pick(voters);g={mode:'side',m,ans:vt[m]}}else g={mode:'side',m:pick(S.names),ans:null}}
+ g.known=known;g.all=[...new Set([...S.names,...voters])];g.opts=g.mode==='who'?voters.slice():g.all;S.gw=g;S.g={};S.ok=[];S.phase='gw';save();SFX.whoosh();render()}
+function gwQ(g,c){const m=`<em>${esc(g.m)}</em>`;
+ if(g.mode==='who')return`Someone secretly voted for <em>${esc(g.tgt)}</em>.<br>Who was it?`;
+ if(g.mode==='what')return g.known?`Who did ${m} vote for?`:`Who did ${m} point at?`;
+ return`Which side did ${m} pick?`}
+function gwAnsLabel(g,c,v){if(g.mode==='side')return v==='L'?'⬅️ '+c.t[0]:v==='R'?'➡️ '+c.t[1]:'';return v||''}
+function gwReveal(){const g=S.gw;S.ok=g.known?Object.keys(S.g).filter(n=>n!==g.m&&String(S.g[n])===String(g.ans)):[];S.phase='gwRev';save();SFX.roll(800);setTimeout(()=>{SFX.win();burst(innerWidth/2,innerHeight/3,110,['🕵️','🤫','🎉','⭐'])},800);render()}
+function gwCommit(){const g=S.gw;if(!g||S.gwDone===S.i)return;S.gwDone=S.i;S.gp=S.gp||{};S.ok.forEach(n=>S.gp[n]=(S.gp[n]||0)+1);
+ const tot=Object.keys(S.g||{}).filter(n=>n!==g.m).length;if(g.known&&tot&&S.ok.length*2<tot)S.gp[g.m]=(S.gp[g.m]||0)+1;
+ if(S.ok.length)toast('🕵️ +1 for '+S.ok.join(', '))}
+function gwRender(c,st,prog){const g=S.gw,tag=`<div class="kicker">🕵️ GUESS WHO VOTED</div>`;
+ const side=c.k==='wyr'?`<div class="prog" style="font-size:2.2vh">⬅️ ${esc(c.t[0])} &nbsp; OR &nbsp; ${esc(c.t[1])} ➡️</div>`:`<div class="prog" style="font-size:2.2vh">Most likely to ${esc(c.t)}</div>`;
+ if(S.phase==='gw'){const ps=gwPlayers().filter(n=>n!==g.m),inN=Object.keys(S.g||{}).filter(n=>n!==g.m);
+  st.innerHTML=`${prog}<div class="panel flipIn" style="max-width:92vw">${tag}<div class="prompt" style="font-size:6vh">${gwQ(g,c)}</div>${side}</div>
+  ${g.known?`<div class="status">📱 Guess on your phone! <b>${inN.length}</b> of ${Math.max(ps.length,inN.length)} guesses in${g.mode!=='who'?` · 🤫 ${esc(g.m)}, keep a straight face`:''}</div><div class="names">${[...new Set([...ps,...inN])].map(n=>`<span class="nb${inN.includes(n)?' on':''}" style="font-size:2vh;padding:1vh 1.8vh">${inN.includes(n)?'✅ ':'⏳ '}${esc(n)}</span>`).join('')}</div>`
+   :`<div class="status">📵 No phone votes this round. Everyone shout your guess! ${esc(g.m)}, stay quiet until the reveal 🤐</div>`}
+  <div class="btns"><button class="bb ghost" id="gwSkip">Skip</button><button class="bb big gold" id="gwRev">🔍 REVEAL</button></div>`;
+  $('#gwRev').onclick=gwReveal;$('#gwSkip').onclick=nextCard;return}
+ const ans=g.ans==null?null:gwAnsLabel(g,c,g.ans);let head;
+ if(g.mode==='who')head=`<div class="huge" style="color:var(--gold);font-size:7vh">🕵️ ${esc(g.m)}</div><div class="prompt" style="font-size:3.6vh">voted for <em>${esc(g.tgt)}</em>!</div>`;
+ else if(ans)head=`<div class="prompt" style="font-size:4vh">${esc(g.m)} ${g.mode==='side'?'picked':'voted for'}</div><div class="huge" style="color:var(--gold);font-size:${g.mode==='side'?5:7}vh">${esc(ans)}</div>`;
+ else head=`<div class="prompt" style="font-size:5vh">${esc(g.m)}, ${g.mode==='side'?'which side did you pick?':'who did you point at?'}<br><em>Say it out loud!</em></div>`;
+ const tot=Object.keys(S.g||{}).filter(n=>n!==g.m).length,fool=g.known&&tot&&S.ok.length*2<tot;
+ const who=(g.all||g.opts).filter(n=>n!==g.m);
+ st.innerHTML=`${prog}${tag}${head}<div class="status">${g.known?`✅ ${S.ok.length} of ${tot} guessed right${fool?` · 🥷 ${esc(g.m)} fooled the room: +1`:''}. Tap to fix anyone who said it out loud.`:'Tap everyone who guessed right (+1 point each)'}</div>
+ <div class="names">${who.map(n=>{const gv=S.g&&S.g[n]!=null?gwAnsLabel(g,c,String(S.g[n])):'';return`<button class="nb${S.ok.includes(n)?' on':''}" data-gw="${esc(n)}">${S.ok.includes(n)?'✅ ':''}${esc(n)}${gv?`<small>${esc(g.mode==='side'?gv.slice(0,2):gv)}</small>`:''}</button>`}).join('')}</div>
+ <button class="bb big" id="bNext">${S.i+1>=S.cards.length?'🏆 TROPHY TIME':'NEXT CARD ➜'}</button>`;
+ $$('[data-gw]').forEach(b=>b.onclick=()=>{const n=b.dataset.gw;S.ok=S.ok.includes(n)?S.ok.filter(x=>x!==n):[...S.ok,n];SFX.click();save();render()});
+ $('#bNext').onclick=()=>{gwCommit();nextCard()}}
 function crown(){const c=S.cards[S.i];S.sel.forEach(n=>S.titles[n].push(c.t));S.phase='crowned';save();SFX.roll(900);setTimeout(()=>{SFX.win();burst(innerWidth/2,innerHeight/3,140,['👑','👉','🎉','⭐'])},900);render()}
-function nextCard(){S.i++;S.sel=[];S.side=null;S.phase='show';if(S.i>=S.cards.length){end();return}save();render();SFX.whoosh()}
-function end(){music('party');SFX.win();const arr=S.names.map(n=>[n,S.titles[n]]).sort((a,b)=>b[1].length-a[1].length);try{tgNight('Most Likely To',tgPlaces(arr.filter(x=>x[1].length).map(x=>({names:[x[0]],v:x[1].length}))))}catch(e){}const mvp=arr[0][1].length?arr.filter(a=>a[1].length===arr[0][1].length).map(a=>a[0]):[];
- $('#endWrap').innerHTML=`<div class="bigT">🏆 TROPHY TIME</div>${mvp.length?`<div class="subT" style="font-size:3vh;margin:1vh 0 2vh">👑 MVP${mvp.length>1?'s':''}: <b style="color:var(--gold)">${mvp.map(esc).join(' & ')}</b> with ${arr[0][1].length} titles</div>`:''}
+function nextCard(){S.i++;S.sel=[];S.side=null;S.gw=null;S.g={};S.ok=[];S.phase='show';if(S.i>=S.cards.length){end();return}save();render();SFX.whoosh()}
+function end(){music('party');SFX.win();const arr=S.names.map(n=>[n,S.titles[n]]).sort((a,b)=>b[1].length-a[1].length);try{tgNight('Most Likely To',tgPlaces(arr.filter(x=>x[1].length).map(x=>({names:[x[0]],v:x[1].length}))))}catch(e){}const gpA=Object.entries(S.gp||{}).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);if(gpA.length)try{tgNight('Guess Who Voted',tgPlaces(gpA.map(([n,v])=>({names:[n],v}))),'gw'+(S.t0||JSON.stringify(gpA)))}catch(e){}const mvp=arr[0][1].length?arr.filter(a=>a[1].length===arr[0][1].length).map(a=>a[0]):[];
+ $('#endWrap').innerHTML=`<div class="bigT">🏆 TROPHY TIME</div>${mvp.length?`<div class="subT" style="font-size:3vh;margin:1vh 0 2vh">👑 MVP${mvp.length>1?'s':''}: <b style="color:var(--gold)">${mvp.map(esc).join(' & ')}</b> with ${arr[0][1].length} titles</div>`:''}${gpA.length?`<div class="subT" style="font-size:2.4vh;margin:0 0 1.6vh">🕵️ Best guessers: ${gpA.slice(0,5).map(([n,v])=>`<b style="color:var(--gold)">${esc(n)}</b> ${v}`).join(' · ')}</div>`:''}
  <div class="awards">${arr.map(([n,t])=>`<div class="aw"><h4>${t.length?'👑 ':''}${esc(n)}</h4>${t.length?`<ul>${t.map(x=>`<li>Most likely to ${esc(x)}</li>`).join('')}</ul>`:'<div class="hint">Flew under the radar 🥷</div>'}</div>`).join('')}</div>
  <div class="ctr"><button class="bb gold big" id="eAgain">🔁 Play again</button></div>`;$('#endOv').classList.remove('hidden');burst(innerWidth/2,innerHeight/3,240,['👑','🏆','⭐']);
  $('#eAgain').onclick=()=>{$('#endOv').classList.add('hidden');S=null;save();$('#setupOv').classList.remove('hidden');music('chill')}}
@@ -304,14 +349,21 @@ if(S){$('#setupOv').classList.add('hidden');if(S.i>=S.cards.length)end();else re
 </script><script src="buzzer.js?v=1794900000"></script>
 <script>
 (function(){if(!window.TGB)return;let V={},vi=-1;
-function spec(){if(!S||S.i>=S.cards.length)return;if(vi!==S.i){V={};vi=S.i}const c=S.cards[S.i];
+function spec(){if(!S||S.i>=S.cards.length)return;if(vi!==S.i){V=(S.vi===S.i&&S.v)?Object.assign({},S.v):{};vi=S.i}const c=S.cards[S.i];
+ if(S.phase==='gw'&&S.gw){const g=S.gw,key='gw'+S.i;if(!g.known){TGB.ask({k:'msg',key:key+'x',emoji:'🕵️',title:'Shout your guess!',body:g.mode==='side'?'Which side did '+g.m+' pick?':'Who did '+g.m+' point at?'});return}
+  const base=g.mode==='side'?{k:'choice',key,id:key,kicker:'🕵️ Guess who voted',title:'Which side did '+g.m+' pick?',opts:[{t:'⬅️ '+c.t[0],v:'L'},{t:'➡️ '+c.t[1],v:'R'}],change:1}
+   :{k:'choice',key,id:key,kicker:'🕵️ Guess who voted',title:g.mode==='who'?'Someone voted for '+g.tgt+'. Who was it?':'Who did '+g.m+' vote for?',opts:g.opts.map(n=>({t:n,v:n,img:TGB.avatar(n)})),cols:2,change:1};
+  TGB.ask(base);const map={};if(g.mode==='who')TGB.players().forEach(p=>{if(p!==g.m)map[p]=Object.assign({},base,{opts:base.opts.filter(o=>o.v!==p)})});
+  map[g.m]={k:'msg',key:key+'m',emoji:'🤫',title:g.mode==='who'?"You're the mystery voter!":'Everyone is guessing your pick!',body:'Keep a straight face 😐'};TGB.askEach(map);return}
+ if(S.phase==='gwRev'&&S.gw){const g=S.gw,key='gr'+S.i+'_'+S.ok.length;TGB.ask({k:'msg',key,emoji:'🕵️',title:'The answer is on the TV!',body:''});const map={};
+  TGB.players().forEach(p=>{if(p===g.m)return;if(S.ok.includes(p))map[p]={k:'msg',key:key+'y',emoji:'✅',title:'You got it! +1',body:'Game Night points coming your way'};else if(S.g&&S.g[p]!=null)map[p]={k:'msg',key:key+'n',emoji:'❌',title:'Not this time',body:'Answer on the TV 👀'}});TGB.askEach(map);return}
  if(S.phase==='pick'&&c.k==='mlt')TGB.ask({k:'choice',key:'mv'+S.i,id:'mv'+S.i,kicker:"👉 Who's most likely to...",title:c.t+'?',opts:S.names.map(n=>({t:n,v:n,img:TGB.avatar(n)})),cols:2,change:1});
  else if(S.phase==='pick'&&c.k==='wyr')TGB.ask({k:'choice',key:'wv'+S.i,id:'wv'+S.i,kicker:'🤔 Would you rather...',title:'Pick a side!',opts:[{t:'⬅️ '+c.t[0],v:'L'},{t:'➡️ '+c.t[1],v:'R'}],change:1});
  else TGB.ask({k:'msg',key:'lw'+S.i+S.phase,emoji:'👉',title:'Look at the TV!',body:S.phase==='show'?'Get ready to vote on your phone...':'Results on the TV 👀'})}
 function tally(){const c=S.cards[S.i],cnt={};Object.values(V).forEach(v=>cnt[v]=(cnt[v]||0)+1);
  if(c.k==='mlt'){const mx=Math.max(0,...Object.values(cnt));S.sel=mx?Object.keys(cnt).filter(k=>cnt[k]===mx):[];save();_r();$$('.nb').forEach(b=>{const k=cnt[b.dataset.n];if(k)b.insertAdjacentHTML('beforeend',` <b style="color:#ffcc3d">🗳️${k}</b>`)})}
  else{const st=$('.status');if(st)st.innerHTML=`📱 Phone votes: ⬅️ <b>${cnt.L||0}</b> · <b>${cnt.R||0}</b> ➡️`;const ps=TGB.players();if(ps.length&&ps.every(p=>V[p])){const s=(cnt.L||0)>(cnt.R||0)?'L':(cnt.R||0)>(cnt.L||0)?'R':'T';S.side=s;S.phase='done';save();SFX.ding();render()}}}
-TGB.init({game:'Most Likely To',names:()=>[...new Set([...tgRoster(),...TGB.players()])],onJoin:spec,onInput:(n,id,v)=>{if(!S||S.phase!=='pick')return;if(id!=='mv'+S.i&&id!=='wv'+S.i)return;V[n]=v;SFX.click();tally()}});
+TGB.init({game:'Most Likely To',names:()=>[...new Set([...tgRoster(),...TGB.players()])],onJoin:spec,onInput:(n,id,v)=>{if(!S)return;if(S.phase==='gw'&&S.gw&&id==='gw'+S.i){if(n===S.gw.m)return;S.g=S.g||{};S.g[n]=v;saveQuiet();SFX.click();_r();return}if(S.phase!=='pick')return;if(id!=='mv'+S.i&&id!=='wv'+S.i)return;V[n]=v;if(S.vi!==S.i){S.v={};S.vi=S.i}S.v[n]=v;saveQuiet();SFX.click();tally()}});
 const _r=render;render=function(){_r();spec();if(S&&S.phase==='pick'&&Object.keys(V).length&&vi===S.i)tally()};if(S)spec()})();</script>
 <script>/*TGDEPTH*//* Game Night 3D depth layer: stage lights, 3D floor, depth particles, interactive tilt, press + light bursts */
 (function(){

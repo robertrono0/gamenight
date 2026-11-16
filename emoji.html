@@ -85,6 +85,10 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
  <div id="teamSetup"></div>
  <h3>Categories</h3><div class="chips" id="cats"></div>
  <h3>How many puzzles?</h3><div class="seg" id="segN"><button data-v="10">10</button><button data-v="15" class="on">15</button><button data-v="20">20</button><button data-v="30">30</button></div>
+ <h3>✏️ Add your own puzzles <span class="hint">(optional, one per line: emoji clue | answer | category)</span></h3>
+ <textarea class="field" id="custom" placeholder="🏖️🌮🌴 | San Diego | Places&#10;👨‍👩‍👧‍👦🦃🏈 | Thanksgiving&#10;🧔🏻📸💪 | Rob"></textarea>
+ <div style="display:flex;gap:1vw;align-items:center;flex-wrap:wrap;margin-top:1vh"><div class="seg" id="segC"><button data-v="mix" class="on">🎲 Mix them in</button><button data-v="only">✏️ Only my puzzles</button></div><span id="custInfo" style="font-size:1.8vh;font-weight:700"></span></div>
+ <div id="custErr" class="hint" style="margin-top:.6vh;color:#b42318"></div>
  <p class="bz" style="color:var(--ink);margin-top:1.4vh">🔔 Players buzz in on <b>Multibuzzer</b>. First to buzz gets to answer.</p>
  <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">DECODE! 🎉</button></div>
 </div></div>
@@ -269,12 +273,29 @@ let cfg=LS.get('tg-emoji-cfg',{n:15,cats:Object.keys(P)});
 $$('#segN button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===cfg.n);b.onclick=()=>{$$('#segN button').forEach(y=>y.classList.remove('on'));b.classList.add('on');cfg.n=+b.dataset.v;LS.set('tg-emoji-cfg',cfg)}});
 $('#cats').innerHTML=Object.entries(P).map(([k,d])=>`<button class="chip${cfg.cats.includes(k)?' on':''}" data-c="${k}">${d.e} ${d.n} (${d.l.length})</button>`).join('');
 $$('#cats .chip').forEach(b=>b.onclick=()=>{const k=b.dataset.c;cfg.cats=cfg.cats.includes(k)?cfg.cats.filter(x=>x!==k):[...cfg.cats,k];b.classList.toggle('on');LS.set('tg-emoji-cfg',cfg)});
-$('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('Add at least 2 players 🙂');return}ac();
- const cats=cfg.cats.length?cfg.cats:Object.keys(P);let all=[];cats.forEach(k=>P[k].l.forEach(([e,a])=>all.push({e,a,c:k})));
- S={teams,q:shuffle(all).slice(0,cfg.n),i:0,phase:'ready',out:[],hint:false};save();$('#setupOv').classList.add('hidden');render();music('play')};
-const hintOf=a=>a.split(' ').map(w=>w.replace(/[A-Za-z0-9]/g,(ch,i)=>i===0?ch:'_')).join('  ');
+/* ---- Add your own puzzles: "emoji clue | answer | category (optional)" ---- */
+const CUST_KEY='tg-emoji-custom';if(!cfg.cm)cfg.cm='mix';
+const EMO_RE=/\p{Extended_Pictographic}|\p{Regional_Indicator}/u;
+function parseCustom(txt){const ok=[],bad=[];String(txt||'').split('\n').forEach((raw,i)=>{const l=raw.trim();if(!l||l.startsWith('#'))return;const p=l.split('|').map(x=>x.trim());
+ if(p.length<2){bad.push(`Line ${i+1}: add a | between the emojis and the answer`);return}
+ if(!EMO_RE.test(p[0])){bad.push(`Line ${i+1}: the clue needs at least one emoji`);return}
+ if(!/[\p{L}\p{N}]/u.test(p[1])){bad.push(`Line ${i+1}: the answer is missing`);return}
+ if(p[0].length>60||p[1].length>80){bad.push(`Line ${i+1}: that one is too long for the TV`);return}
+ ok.push({e:p[0].replace(/\s+/g,''),a:p[1],cn:(p[2]||'').slice(0,30)})});return{ok,bad}}
+function catOf(q){if(q&&q.c==='custom'){const m=q.cn&&Object.values(P).find(d=>d.n.toLowerCase()===q.cn.toLowerCase());return m?{e:m.e,n:m.n}:{e:'✏️',n:q.cn||'Custom'}}return P[q&&q.c]||{e:'❓',n:'Puzzle'}}
+const custBox=$('#custom');custBox.value=LS.get(CUST_KEY,'')||'';
+function custDraw(){const{ok,bad}=parseCustom(custBox.value);$('#custInfo').innerHTML=ok.length?`✅ ${ok.length} custom puzzle${ok.length>1?'s':''} ready`:(custBox.value.trim()?'⚠️ No valid puzzles yet':'<span class="hint">No custom puzzles yet</span>');
+ $('#custErr').innerHTML=bad.slice(0,4).map(esc).join('<br>')+(bad.length>4?`<br>...and ${bad.length-4} more`:'');$('#segC').style.opacity=ok.length?1:.5}
+custBox.oninput=()=>{LS.set(CUST_KEY,custBox.value);custDraw()};custDraw();
+$$('#segC button').forEach(b=>{b.classList.toggle('on',b.dataset.v===cfg.cm);b.onclick=()=>{$$('#segC button').forEach(y=>y.classList.remove('on'));b.classList.add('on');cfg.cm=b.dataset.v;LS.set('tg-emoji-cfg',cfg);SFX.click()}});
+$('#bStart').onclick=()=>{const teams=TS.teams();if(TS.names().length<2){toast('Add at least 2 players 🙂');return}
+ const mine=parseCustom(custBox.value).ok.map(x=>({e:x.e,a:x.a,c:'custom',cn:x.cn}));if(cfg.cm==='only'&&!mine.length){toast('Add a custom puzzle first, or pick Mix them in');return}ac();
+ const cats=cfg.cats.length?cfg.cats:Object.keys(P);let all=[];if(cfg.cm!=='only')cats.forEach(k=>P[k].l.forEach(([e,a])=>all.push({e,a,c:k})));
+ const own=shuffle(mine).slice(0,cfg.n),q=shuffle(own.concat(shuffle(all).slice(0,cfg.n-own.length)));
+ S={teams,q,i:0,phase:'ready',out:[],hint:false};save();$('#setupOv').classList.add('hidden');render();music('play')};
+const hintOf=a=>a.split(' ').map(w=>w.replace(/[\p{L}\p{N}]/gu,(ch,i)=>i===0?ch:'_')).join('  ');
 let timer=null;
-function render(){$('#scores').innerHTML=scoreBar(S.teams,-1);const q=S.q[S.i],st=$('#stage'),d=P[q.c];const worth=S.hint?150:300;
+function render(){$('#scores').innerHTML=scoreBar(S.teams,-1);const q=S.q[S.i],st=$('#stage'),d=catOf(q);const worth=S.hint?150:300;
  if(S.phase==='ready'){st.innerHTML=`<div class="panel popIn"><div class="kicker">PUZZLE ${S.i+1} OF ${S.q.length}</div><div class="huge" style="margin:2vh 0">${d.e} ${d.n}</div><button class="bb big gold" id="bGo">REVEAL THE EMOJIS 👀</button></div>`;$('#bGo').onclick=start;return}
  const emo=[...new Intl.Segmenter().segment(q.e)].map((s,i)=>`<span style="animation-delay:${i*.25}s">${s.segment}</span>`).join('');
  if(S.phase==='play'){st.innerHTML=`<div class="kicker">PUZZLE ${S.i+1} OF ${S.q.length}</div><div class="catTag">${d.e} ${d.n}</div><div class="emo">${emo}</div><div class="hintL">${S.hint?esc(hintOf(q.a)):''}</div>
@@ -301,7 +322,7 @@ const tI=n=>S&&S.teams?S.teams.findIndex(t=>t.m.includes(n)):-1;
 let key='';
 function hl(){$$('[data-ok],[data-no]').forEach(e=>e.style.outline='');const f=window.TGB&&TGB.first();if(!f)return;const i=tI(f);$$(`[data-ok="${i}"]`).forEach(e=>{e.style.outline='.5vh solid #ffcc3d';e.style.boxShadow='0 0 3vh #ffcc3d'})}
 function hv(){if(!window.TGB)return;if(!S){TGB.host({title:'😎 Emoji Decode',note:'Set up the game on the TV',actions:[],noBuzzBtns:true});return}
- const q=S.q[S.i];if(!q)return;const d=P[q.c];
+ const q=S.q[S.i];if(!q)return;const d=catOf(q);
  if(S.phase==='ready')TGB.host({title:`Puzzle ${S.i+1} of ${S.q.length} · ${d.e} ${d.n}`,a:q.a,note:'Answer shown only to you',actions:[{id:'go',label:'👀 Show the emojis',k:'y'}],noBuzzBtns:true});
  else if(S.phase==='play')TGB.host({title:`Puzzle ${S.i+1} · ${d.e} ${d.n} · worth ${S.hint?150:300}`,q:q.e,a:q.a,actions:[{id:'right',label:'✅ Right',k:'ok'},{id:'wrong',label:'❌ Wrong',k:'no'},{id:'none',label:'🤷 Nobody'}]});
  else TGB.host({title:`Puzzle ${S.i+1} done`,q:q.e,a:q.a,actions:[{id:'next',label:S.i+1>=S.q.length?'🏆 Final results':'Next puzzle ➜',k:'y'}],noBuzzBtns:true})}

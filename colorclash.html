@@ -75,10 +75,10 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div>
 <div class="ov" id="setupOv"><div class="card">
  <h2>🃏 Color Clash</h2>
- <h3>Mode</h3><div class="seg" id="segM"><button data-v="classic" class="on">🃏 Classic</button><button data-v="junior" class="">🧸 Junior</button><button data-v="daynight" class="">🌗 Day & Night</button><button data-v="allwild" class="">🌈 All Wild</button><button data-v="nomercy" class="">💀 No Mercy</button><button data-v="cannon" class="">💥 Card Cannon</button><button data-v="spin" class="">🎡 Spin</button><button data-v="double" class="">✌️ Double Match</button></div><h3>Turn timer</h3><div class="seg" id="segT"><button data-v="30" class="">30s</button><button data-v="20" class="on">20s</button><button data-v="12" class="">12s (big groups)</button></div><h3>Jump-in (play an identical card out of turn)</h3><div class="seg" id="segJ"><button data-v="1" class="on">On ⚡</button><button data-v="0" class="">Off</button></div><p class="hint">Cards are dealt to everyone's phone. Extra decks are added automatically for big groups. The game ends when 3 players run out of cards.</p>
+ <h3>Mode</h3><div class="seg" id="segM"><button data-v="classic" class="on">🃏 Classic</button><button data-v="junior" class="">🧸 Junior</button><button data-v="daynight" class="">🌗 Day & Night</button><button data-v="allwild" class="">🌈 All Wild</button><button data-v="nomercy" class="">💀 No Mercy</button><button data-v="cannon" class="">💥 Card Cannon</button><button data-v="spin" class="">🎡 Spin</button><button data-v="double" class="">✌️ Double Match</button><button data-v="flex" class="">✦ Flex Power</button><button data-v="dare" class="">🎭 Dare</button><button data-v="party" class="">🎉 Party Teams</button><button data-v="triple" class="">🔺 Triple Pile</button><button data-v="dos" class="">➕ Add It Up</button></div><p class="hint" id="modeHow" style="margin-top:.8vh;font-size:1.9vh;opacity:.9"></p><div id="partyOpts" class="hidden"><h3>Party Teams: how many teams, how many rounds</h3><div class="seg" id="segTm"><button data-v="0">Auto (by group size)</button><button data-v="2">2 teams</button><button data-v="3">3 teams</button><button data-v="4">4 teams</button></div> <div class="seg" id="segPr"><button data-v="1">1 round</button><button data-v="2">2 rounds</button><button data-v="3">3 rounds</button></div></div><h3>Turn timer</h3><div class="seg" id="segT"><button data-v="30" class="">30s</button><button data-v="20" class="on">20s</button><button data-v="12" class="">12s (big groups)</button></div><h3>Jump-in (play an identical card out of turn)</h3><div class="seg" id="segJ"><button data-v="1" class="on">On ⚡</button><button data-v="0" class="">Off</button></div><p class="hint">Cards are dealt to everyone's phone. Extra decks are added automatically for big groups. Most modes end when 3 players run out of cards.</p>
  <div class="ctr"><button class="bb ghost" data-how style="color:var(--ink);background:#ffd9a8">❓ How to play</button><button class="bb big" id="bStart">OPEN THE LOBBY 📱</button></div>
 </div></div>
-<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🃏</span>Everyone gets 7 cards on their phone. Match the top card by <b>color</b> or <b>number/symbol</b>.</div><div class="hc"><span class="i">⊘ ⇄ +2</span><b>Skip</b> the next player, <b>Reverse</b> direction, <b>+2</b> makes the next player draw 2.</div><div class="hc"><span class="i">🌈</span><b>Wild</b> picks a new color. <b>Wild +4</b> also makes the next player draw 4.</div><div class="hc"><span class="i">🗣️</span>Down to 2 cards? Tap <b>LAST CARD!</b> before you play, or draw 2 as a penalty.</div><div class="hc"><span class="i">⚡</span><b>Jump-in:</b> have the exact same card as the top one? Play it any time, even out of turn!</div><div class="hc"><span class="i">🏆</span>First 3 players to empty their hand win. Each mode adds its own twist (see the mode list).</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
+<div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc" id="howMode"></div><div class="hc"><span class="i">🃏</span>Everyone gets 7 cards on their phone. Match the top card by <b>color</b> or <b>number/symbol</b>.</div><div class="hc"><span class="i">⊘ ⇄ +2</span><b>Skip</b> the next player, <b>Reverse</b> direction, <b>+2</b> makes the next player draw 2.</div><div class="hc"><span class="i">🌈</span><b>Wild</b> picks a new color. <b>Wild +4</b> also makes the next player draw 4.</div><div class="hc"><span class="i">🗣️</span>Down to 2 cards? Tap <b>LAST CARD!</b> before you play, or draw 2 as a penalty.</div><div class="hc"><span class="i">⚡</span><b>Jump-in:</b> have the exact same card as the top one? Play it any time, even out of turn!</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
 <script src="tg-shell.js?v=1115e"></script>
 <script src="buzzer.js?v=1794900000"></script>
@@ -86,104 +86,241 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
-let cfg=LS.get('tg-cc2-cfg',{m:'classic',t:20,j:1});segs(cfg,'tg-cc2-cfg',[['segM','m'],['segT','t'],['segJ','j']]);
+let cfg=Object.assign({m:'classic',t:20,j:1,tm:0,pr:2},LS.get('tg-cc2-cfg',{}));segs(cfg,'tg-cc2-cfg',[['segM','m'],['segT','t'],['segJ','j'],['segTm','tm'],['segPr','pr']]);
+const MODES={
+ classic:['🃏','Classic','Match the top card by color or number. Skip, Reverse, +2, Wild and Wild +4. First 3 players to empty their hand win.'],
+ junior:['🧸','Junior','Numbers and Wilds only, no nasty cards. Perfect for little kids.'],
+ daynight:['🌗','Day & Night','A Flip card turns every card to its Night side, with +5, Skip Everyone and the Color Hunt wild.'],
+ allwild:['🌈','All Wild','Every card is wild, so you can always play. Pure chaos with Skips, +2s and +4s.'],
+ nomercy:['💀','No Mercy','Stack draw cards on each other, a 7 swaps hands, a 0 passes every hand along. Reach 25 cards and you are out.'],
+ cannon:['💥','Card Cannon','Drawing fires the cannon: you get 0 to 6 cards. +2 and +4 cards add a cannon blast too.'],
+ spin:['🎡','Spin','Spin cards trigger a random wheel event for the whole table.'],
+ double:['✌️','Double Match','Play two identical numbers at once: tap both, then tap Play 2.'],
+ flex:['✦','Flex Power','Flex cards show a second colored square. While your Power is ON 🟢 you may play one on its square color for a bonus power, then your Power turns OFF 🔴. Numbers with 🔄 flip your Power.'],
+ dare:['🎭','Dare','Play a 🎭 Dare card and the next player must do the dare shown on the TV, or draw 4 and lose their turn.'],
+ party:['🎉','Party Teams','For big groups: 2 to 4 teams sit spread around the circle. When anyone empties their hand, their team scores the points left in the other teams\' hands. Team totals are on the TV.'],
+ triple:['🔺','Triple Pile','Three piles, each with its own color. Play on any pile you match. Beat the shared clock: when it hits zero, everyone draws 1.'],
+ dos:['➕','Add It Up','Two center cards. Match one by NUMBER, or play two cards that ADD UP to it (tap both, then Play). Match the color too and the next player draws 1. # is any number. No match even after drawing? Add a card to the center row.']};
+function showMode(){const m=MODES[cfg.m]||MODES.classic;$('#modeHow').innerHTML=`<b>${m[0]} ${m[1]}:</b> ${esc(m[2])}`;$('#howMode').innerHTML=`<span class="i">${m[0]}</span><b>${m[1]}:</b> ${esc(m[2])}`;$('#partyOpts').classList.toggle('hidden',cfg.m!=='party')}
+$$('#segM button').forEach(b=>b.addEventListener('click',showMode));showMode();
+
 PG.init({key:'tg-cc2',game:'Color Clash',title:'🃏 Color Clash',sub:'Scan to join! Your cards appear on your phone.',min:2,style:'funk',rain:['🃏','🌈','⭐']});
 const CN={R:'Red',Y:'Yellow',G:'Green',B:'Blue',P:'Pink',T:'Teal',O:'Orange',V:'Purple'},CH={R:'#e63946',Y:'#f9c80e',G:'#2a9d58',B:'#3a86ff',W:'#222',P:'#ff4fa3',T:'#00b4b4',O:'#ff8a00',V:'#7b2ff7'};
-const LBL={S:'⊘',R:'⇄','+2':'+2','+4':'+4','+5':'+5','+6':'+6','+10':'+10',W:'🌈',SA:'⊘⊘',SP:'🎡',F:'🌗',D:'🎯'};
-const lab=c=>LBL[c.v]||c.v;
-let G=null;
+const SQ={R:'🟥',Y:'🟨',G:'🟩',B:'🟦',P:'🩷',T:'🩵',O:'🟧',V:'🟪'};
+const LBL={S:'⊘',R:'⇄','+2':'+2','+4':'+4','+5':'+5','+6':'+6','+10':'+10',W:'🌈',SA:'⊘⊘',SP:'🎡',F:'🌗',D:'🎯',DR:'🎭',WD:'🎭',WA:'ALL',WT:'🎯2',WF:'🔄'};
+const lab=f=>(LBL[f.v]||f.v)+(f.fl?'🔄':'')+(f.fx?SQ[f.fx]:'');
+const FLEXD={S:'Skip everyone and go again',R:'Reverse and skip the next player','+2':'Everyone else draws 1',WA:'Everyone else draws 2',WT:'Pick a player to draw 2','+4':'Pick a player to draw 4'};
+const REGD={S:'Skip the next player',R:'Reverse direction','+2':'Next player draws 2',WA:'Wild: pick a color',WT:'Wild: pick a color','+4':'Wild +4: pick a color'};
+const DARES=['Do your best chicken dance for 10 seconds.','Speak in a robot voice until your next turn.','Sing the chorus of any song the group picks.','Do 10 jumping jacks.','Introduce the player on your left like a movie trailer voice.','Walk like a penguin across the room and back.','Tell a joke. If nobody laughs, tell another one!','Do your best impression of someone in the room.','Hold a plank for 15 seconds.','Say the alphabet backwards from M to A.','Talk like a pirate until your next turn.','Do a silly runway walk across the room.','Make the funniest face you can and hold it for 5 seconds.','Stand on one foot until your next turn.','Give every player a one sentence compliment.','Act out your favorite animal until someone guesses it.','Sing "Happy Birthday" like an opera star.','Do 5 squats while shouting "Color Clash!"','Name 5 fruits in 10 seconds.','Report on this game like a TV news anchor for 15 seconds.','Do the robot dance for 10 seconds.','Say "red lorry, yellow lorry" three times fast.','Give the host a high five and a big thank you.','Swap seats with the player across from you.','Show everyone your best dance move.','Speak only in questions until your next turn.','Strike your best superhero landing pose.','Hum a song and let the group guess it.','Do your best evil villain laugh for 5 seconds.','Wave both arms like a windmill and shout "I love this game!"'];
+const TEAMS=[['Team Red Hot','R'],['Team Blue Wave','B'],['Team Green Machine','G'],['Team Gold Rush','Y']];
+let G=null,tTimer=null,cTimer=null,tUntil=0;
+function stopGame(){if(G){G.over=true;G.wait=null;G.dare=null}clearInterval(tTimer);clearInterval(cTimer);$('#scores').innerHTML=''}
+{const _r=PG.reset.bind(PG);PG.reset=function(){stopGame();return _r()}}
 function deck(mode,n){const d=[],D=Math.max(1,Math.ceil(n/7)),cols=['R','Y','G','B'];
  for(let k=0;k<D;k++){
   if(mode==='allwild'){for(let i=0;i<14;i++)['W','S','R','+2','+4','SA'].forEach(v=>d.push({c:'W',v}));continue}
+  if(mode==='dos'){cols.forEach(c=>{for(let x=1;x<=10;x++)d.push({c,v:String(x)},{c,v:String(x)});d.push({c,v:'#'},{c,v:'#'})});continue}
   cols.forEach(c=>{d.push({c,v:'0'});for(let x=1;x<=9;x++){d.push({c,v:String(x)},{c,v:String(x)})}
-   if(mode!=='junior')['S','R','+2'].forEach(v=>d.push({c,v},{c,v}));if(mode==='spin')d.push({c,v:'SP'},{c,v:'SP'});if(mode==='daynight')d.push({c,v:'F'});if(mode==='nomercy')d.push({c,v:'SA'},{c,v:'+2'})});
+   if(mode==='flex'){const oc=cols.filter(x=>x!==c);['S','R','+2'].forEach(v=>d.push({c,v},{c,v,fx:pick(oc)},{c,v,fx:pick(oc)}))}
+   else if(mode!=='junior')['S','R','+2'].forEach(v=>d.push({c,v},{c,v}));
+   if(mode==='dare')d.push({c,v:'DR'},{c,v:'DR'});
+   if(mode==='spin')d.push({c,v:'SP'},{c,v:'SP'});if(mode==='daynight')d.push({c,v:'F'});if(mode==='nomercy')d.push({c,v:'SA'},{c,v:'+2'})});
   for(let i=0;i<4;i++){d.push({c:'W',v:'W'});if(mode!=='junior')d.push({c:'W',v:'+4'})}
+  if(mode==='flex'){d.splice(d.length-8,8);d.push({c:'W',v:'W'},{c:'W',v:'W'},{c:'W',v:'+4'},{c:'W',v:'+4'},{c:'W',v:'+4',fx:pick(cols)},{c:'W',v:'+4',fx:pick(cols)},{c:'W',v:'WA',fx:pick(cols)},{c:'W',v:'WA',fx:pick(cols)},{c:'W',v:'WT',fx:pick(cols)},{c:'W',v:'WT',fx:pick(cols)},{c:'W',v:'WF'},{c:'W',v:'WF'})}
+  if(mode==='dare')d.push({c:'W',v:'WD'},{c:'W',v:'WD'});
   if(mode==='nomercy'){d.push({c:'W',v:'+6'},{c:'W',v:'+6'},{c:'W',v:'+10'})}}
+ if(mode==='flex')d.forEach(x=>{if(/^[1-9]$/.test(x.v)&&Math.random()<.2)x.fl=1});
  if(mode==='daynight'){const nc=['P','T','O','V'],nv=['1','2','3','4','5','6','7','8','9','+5','SA','R','F','D','W'];d.forEach(x=>{const v=pick(nv);x.nc=['W','D'].includes(v)?'W':pick(nc);x.nv=v;if(x.nv==='W'||x.nv==='D')x.nc='W'})}
  return shuffle(d)}
-const face=c=>G.night&&c.nv?{c:c.nc,v:c.nv}:{c:c.c,v:c.v};
-const topC=()=>face(G.pile[G.pile.length-1]);
-function canPlay(c){const f=face(c),t=topC();if(G.pend>0){if(cfg.m==='nomercy')return /^\+/.test(f.v)&&drawN(f.v)>=drawN(t.v);return false}return f.c==='W'||f.c===G.color||f.v===t.v}
+const face=c=>G&&G.night&&c.nv?{c:c.nc,v:c.nv}:{c:c.c,v:c.v,fx:c.fx,fl:c.fl};
+const pTop=(i=G.pi)=>{const p=G.piles[i];return face(p[p.length-1])};
+const topC=()=>pTop(G.pi);
+const PI=()=>G.piles.map((_,i)=>i);
 const drawN=v=>({'+2':2,'+4':4,'+5':5,'+6':6,'+10':10}[v]||0);
+function regOK(c,i){const f=face(c),t=pTop(i);return f.c==='W'||f.c===G.cols[i]||f.v===t.v}
+function flexOK(c,i,n=G.order[G.cur]){return cfg.m==='flex'&&!!c.fx&&!!G.pw[n]&&c.fx===G.cols[i]}
+function canOn(c,i){const f=face(c),t=pTop(i);
+ if(cfg.m==='dos')return !G.matched.includes(i)&&(f.v==='#'||f.v===t.v);
+ if(G.pend>0){if(cfg.m==='nomercy')return /^\+/.test(f.v)&&drawN(f.v)>=drawN(t.v);return false}
+ return regOK(c,i)||flexOK(c,i)}
+const canPlay=c=>PI().some(i=>canOn(c,i));
+function exactOn(c,i){const f=face(c),t=pTop(i);return cfg.m!=='dos'&&G.pend===0&&f.c!=='W'&&f.c===t.c&&f.v===t.v}
+/* Add It Up (two center cards, sums) */
+function dosFit(cs,i){if(G.matched.includes(i))return false;const T=+pTop(i).v,v=cs.map(c=>face(c).v);if(cs.length===1)return v[0]==='#'||+v[0]===T;const w=v.filter(x=>x==='#').length;if(w===2)return T>=2;if(w===1)return +v.find(x=>x!=='#')<T;return +v[0]+ +v[1]===T}
+function dosOpts(h){const o=[];PI().forEach(i=>{if(G.matched.includes(i))return;const t=pTop(i);h.forEach((a,x)=>{if(dosFit([a],i))o.push({ix:[x],i,s:1+(face(a).c===t.c?2:0)});h.forEach((b,y)=>{if(y>x&&dosFit([a,b],i))o.push({ix:[x,y],i,s:2.5+(face(a).c===t.c&&face(b).c===t.c?2:0)})})})});return o}
+function dosCard(){for(let k=0;k<60;k++){if(!G.deck.length)reshuffle();if(!G.deck.length)G.deck=deck('dos',4);const c=G.deck.pop();if(/^\d+$/.test(c.v))return c;G.deck.unshift(c)}return{c:pick(['R','Y','G','B']),v:String(1+rnd(9))}}
 function alive(){return G.order.filter(n=>!G.done.includes(n)&&!G.out.includes(n))}
 function nextIdx(from,steps=1){let i=from;const al=alive();if(!al.length)return from;for(let s=0;s<steps;){i=(i+G.dir+G.order.length)%G.order.length;if(al.includes(G.order[i]))s++}return i}
-function draw1(n){if(!G.deck.length){const t=G.pile.pop();G.deck=shuffle(G.pile.map(x=>x.c==='W'||x.nc==='W'?x:x));G.pile=[t];if(!G.deck.length)G.deck=deck(cfg.m,4)}G.hands[n].push(G.deck.pop())}
-function give(n,k){for(let i=0;i<k;i++)draw1(n);if(cfg.m==='nomercy'&&G.hands[n].length>=25){G.out.push(n);log(`💀 ${n} hit 25 cards and is OUT!`);SFX.sad()}}
+function reshuffle(){const rest=[];(G.piles||[]).forEach((p,i)=>{if(p.length>1){rest.push(...p.slice(0,-1));G.piles[i]=[p[p.length-1]]}});rest.push(...(G.disc||[]));G.disc=[];G.deck=shuffle(rest)}
+function draw1(n){if(!G.deck.length)reshuffle();if(!G.deck.length)G.deck=deck(cfg.m,4);G.hands[n].push(G.deck.pop())}
+function give(n,k){for(let i=0;i<k;i++)draw1(n);if(cfg.m==='nomercy'&&G.hands[n].length>=25&&!G.out.includes(n)){G.out.push(n);log(`💀 ${n} hit 25 cards and is OUT!`);SFX.sad()}}
 function log(m){G.log.unshift(m);G.log=G.log.slice(0,6)}
-$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());
- G={order:ps,hands:{},deck:deck(cfg.m,ps.length),pile:[],dir:1,cur:0,color:null,pend:0,night:false,done:[],out:[],log:[],called:{},drew:false,ver:0,mode:cfg.m};
- ps.forEach(n=>{G.hands[n]=[];for(let i=0;i<7;i++)draw1(n)});
- let f;do{f=G.deck.pop();G.pile.push(f)}while(face(f).c==='W'||!/^\d$/.test(face(f).v));G.color=face(f).c;
- log('🃏 Cards dealt! '+G.order[0]+' goes first.');music('play');sync();startTurn()};
-let tTimer=null,tUntil=0;
-function startTurn(){G.drew=false;clearInterval(tTimer);tUntil=Date.now()+cfg.t*1000;sync();G.tn=(G.tn||0)+1;{const tk=G.tn;if(PG.isBot(G.order[G.cur]))setTimeout(()=>botTurn(tk),1300+Math.random()*1000)}
- tTimer=setInterval(()=>{const l=Math.max(0,(tUntil-Date.now())/1000),r=$('#tRing');if(r){r.style.setProperty('--p',l/cfg.t);r.querySelector('span').textContent=Math.ceil(l);r.classList.toggle('low',l<=5)}if(l<=0){clearInterval(tTimer);timeout()}},200)}
-function timeout(){const n=G.order[G.cur];if(G.pend>0){take(n);return}if(!G.drew){give(n,1);log(`⏰ ${n} ran out of time and drew 1`)}advance(1)}
+const hand=n=>G.hands[n]||[];
+const cpts=c=>{const f=face(c);if(f.c==='W')return 50;if(/^\d+$/.test(f.v))return +f.v;return 20};
+/* Party Teams */
+const teamOf=n=>G&&G.teams?G.teams.find(t=>t.m.includes(n)):null;
+const mates=(a,b)=>!!(G.teams&&teamOf(a)===teamOf(b));
+function setupTeams(ps){const k=Math.max(2,Math.min(4,ps.length,cfg.tm||(ps.length>=12?4:ps.length>=9?3:2)));
+ G.teams=TEAMS.slice(0,k).map(([name,c])=>({name,c,m:[],pts:0,wins:0}));ps.forEach((n,i)=>G.teams[i%k].m.push(n));
+ const order=[];for(let r=0;r<Math.ceil(ps.length/k);r++)G.teams.forEach(t=>{if(t.m[r])order.push(t.m[r])});G.order=order}
+function deal(){Object.assign(G,{deck:deck(cfg.m,G.order.length),disc:[],hands:{},piles:[[]],cols:['R'],pi:0,done:[],out:[],called:{},pend:0,night:false,dir:1,matched:[],bonus:0,wait:null,dare:null,busy:false,roundOver:false});document.body.classList.remove('night');
+ G.order.forEach(n=>{G.hands[n]=[];for(let i=0;i<7;i++)draw1(n);G.pw[n]=1});
+ const np=cfg.m==='triple'?3:cfg.m==='dos'?2:1;G.piles=[];G.cols=[];
+ for(let i=0;i<np;i++){const pl=[];let f;do{f=G.deck.pop();pl.push(f)}while(face(f).c==='W'||!/^\d+$/.test(face(f).v));G.piles.push(pl);G.cols.push(face(f).c)}
+ clearInterval(cTimer);if(cfg.m==='triple'){const g=G;G.clock=Date.now()+clockLen();cTimer=setInterval(()=>{if(G!==g||g.over){clearInterval(cTimer);return}const l=Math.max(0,Math.ceil((g.clock-Date.now())/1000)),e=$('#tClock');if(e)e.textContent=l;if(l<=0&&!g.busy){alive().forEach(x=>give(x,1));log('⏰ The shared clock ran out! Everyone draws 1');SFX.buzz();g.clock=Date.now()+clockLen();if(!checkEnd())sync()}},250)}}
+const clockLen=()=>(40+rnd(31))*1000;
+$('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidden');music('chill');const ps=shuffle(await PG.lobby());stopGame();
+ G={order:ps,mode:cfg.m,cur:0,pw:{},log:[],ver:0,round:1,drew:false,tn:0};
+ if(cfg.m==='party')setupTeams(ps);deal();
+ log(G.teams?`🎉 ${G.teams.length} teams, round 1 of ${cfg.pr}! ${G.order[0]} goes first.`:'🃏 Cards dealt! '+G.order[0]+' goes first.');music('play');startTurn()};
+function startTurn(){if(!G||G.over)return;const g=G;G.drew=false;G.addRow=false;G.matched=[];G.bonus=0;clearInterval(tTimer);tUntil=Date.now()+cfg.t*1000;sync();G.tn=(G.tn||0)+1;{const tk=G.tn;if(PG.isBot(G.order[G.cur]))setTimeout(()=>{if(G===g)botTurn(tk)},1300+Math.random()*1000)}
+ tTimer=setInterval(()=>{if(G!==g||g.over){clearInterval(tTimer);return}const l=Math.max(0,(tUntil-Date.now())/1000),r=$('#tRing');if(r){r.style.setProperty('--p',l/cfg.t);r.querySelector('span').textContent=Math.ceil(l);r.classList.toggle('low',l<=5)}if(l<=0){clearInterval(tTimer);timeout()}},200)}
+function timeout(){if(!G||G.over||G.busy)return;const n=G.order[G.cur];
+ if(cfg.m==='dos'){if(G.addRow){const c=pick(hand(n).filter(c=>face(c).v!=='#'));if(c){addToRow(n,c);return}}if(!G.drew&&!G.matched.length){give(n,1);log(`⏰ ${n} ran out of time and drew 1`)}endDosTurn(n);return}
+ if(G.pend>0){take(n);return}if(!G.drew){give(n,1);log(`⏰ ${n} ran out of time and drew 1`)}advance(1)}
 function take(n){give(n,G.pend);log(`😩 ${n} draws ${G.pend}!`);SFX.sad();G.pend=0;advance(1)}
-function advance(steps){if(checkEnd())return;G.cur=nextIdx(G.cur,steps);startTurn()}
-function checkEnd(){const al=alive();if(G.done.length>=Math.min(3,G.order.length-1)||al.length<=1){finish();return true}return false}
+function advance(steps){if(!G||G.over)return;if(checkEnd())return;G.cur=nextIdx(G.cur,steps);startTurn()}
+function checkEnd(){if(cfg.m==='party')return false;const al=alive();if(G.done.length>=Math.min(3,G.order.length-1)||al.length<=1){finish();return true}return false}
 function cannon(){const k=Math.random()<.5?0:1+rnd(6);return k}
-function hand(n){return G.hands[n]||[]}
-function onPlay(n,idxs){if(!G||G.over)return;const turn=G.order[G.cur]===n;const h=hand(n);idxs=[].concat(idxs).map(Number).filter(i=>i>=0&&i<h.length);if(!idxs.length)return;
- const c=h[idxs[0]],t=topC();const exact=face(c).c===t.c&&face(c).v===t.v&&face(c).c!=='W';
- if(!turn){if(!(cfg.j&&exact&&G.pend===0))return;G.cur=G.order.indexOf(n);log(`⚡ ${n} JUMPED IN!`);SFX.horn()}
- else if(!canPlay(c))return;
+/* phone choices (one at a time) */
+function askP(n,id,spec,bot,dflt,ms){const g=G;return new Promise(res=>{if(PG.isBot(n)){res(bot());return}const w={n,id,res};g.wait=w;if(window.TGB)TGB.ask(Object.assign({k:'choice',key:id+Date.now(),id},spec),[n]);setTimeout(()=>{if(g.wait===w){g.wait=null;res(dflt())}},ms||15000)})}
+['col','swap','pile','flexq','tgt','dare'].forEach(id=>PG._handlers[id]=(n,v)=>{if(G&&G.wait&&G.wait.n===n&&G.wait.id===id){const r=G.wait.res;G.wait=null;r(v)}});
+function askColor(n){const cols=G.night?['P','T','O','V']:['R','Y','G','B'];return askP(n,'col',{title:'🌈 Pick a color',opts:cols.map(c=>({t:CN[c],v:c})),cols:2,colors:G.night?0:1},()=>{const cnt={};hand(n).forEach(c=>{const f=face(c);if(cols.includes(f.c))cnt[f.c]=(cnt[f.c]||0)+1});const best=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];return best?best[0]:pick(cols)},()=>pick(cols),12000)}
+function askSwap(n){const al=alive().filter(x=>x!==n);return askP(n,'swap',{title:'🔁 Swap hands with who?',opts:al.map(x=>({t:`${x} (${hand(x).length} cards)`,v:x,img:avatarOf(x)}))},()=>al.slice().sort((x,y)=>hand(x).length-hand(y).length)[0]||null,()=>null,12000)}
+function pileName(i){return cfg.m==='dos'?`Center ${i+1}: ${SQ[pTop(i).c]} ${pTop(i).v}`:`Pile ${i+1}: ${SQ[G.cols[i]]||''} ${CN[G.cols[i]]} ${lab(pTop(i))}`}
+function askPile(n,fits,c){return askP(n,'pile',{title:'Which pile?',body:`Your ${lab(face(c))} fits more than one pile.`,opts:fits.map(i=>({t:pileName(i),v:String(i)}))},()=>fits.includes(G.botPile)?G.botPile:pick(fits),()=>fits[0])}
+function askFlex(n,c){const v=face(c).v;return askP(n,'flexq',{title:'✦ Use your Flex power?',body:'Using it turns your Power OFF.',opts:[{t:'✦ FLEX: '+FLEXD[v],v:'flex'},{t:'Regular: '+REGD[v],v:'reg'}]},()=>'flex',()=>'reg')}
+function askTarget(n,k){const al=alive().filter(x=>x!==n&&!mates(n,x)),best=()=>al.slice().sort((x,y)=>hand(x).length-hand(y).length)[0]||null;return askP(n,'tgt',{title:`🎯 Who draws ${k}?`,opts:al.map(x=>({t:`${x} (${hand(x).length} cards)`,v:x,img:avatarOf(x)}))},best,best)}
+function doDare(n,who){const g=G;return new Promise(res=>{g.dused=g.dused||[];let pool=DARES.filter(d=>!g.dused.includes(d));if(!pool.length){g.dused=[];pool=DARES}const text=pick(pool);g.dused.push(text);let fired=false;
+ const fin=v=>{if(fired)return;fired=true;if(g.wait&&g.wait.id==='dare')g.wait=null;g.dare=null;res(v)};g.dare={who,by:n,text,fin};render();SFX.horn();
+ if(PG.isBot(who))setTimeout(()=>fin(Math.random()<.6?'do':'draw'),4000);
+ else{g.wait={n:who,id:'dare',res:fin};if(window.TGB)TGB.ask({k:'choice',key:'dare'+Date.now(),id:'dare',kicker:`🎭 Dare from ${n}`,title:text,body:'Do it now in front of everyone, or draw 4 and lose your turn.',opts:[{t:'✅ I did it!',v:'do'},{t:'🃏 Draw 4 instead',v:'draw'}]},[who])}
+ setTimeout(()=>fin('draw'),45000)})}
+function pwCheck(){const al=alive();if(al.length&&al.every(x=>!G.pw[x])){al.forEach(x=>G.pw[x]=1);log('🟢 Everyone was OFF, so every Power flips back ON')}}
+async function onPlay(n,idxs){if(!G||G.over||G.busy||G.wait||G.dare||G.roundOver)return;if(G.out.includes(n)||G.done.includes(n))return;const g=G,turn=G.order[G.cur]===n,h=hand(n);
+ idxs=[...new Set([].concat(idxs).map(Number))].filter(i=>i>=0&&i<h.length);if(!idxs.length)return;
+ if(cfg.m==='dos'){if(turn)dosPlay(n,idxs.slice(0,2));return}
+ const c=h[idxs[0]];let fits;
+ if(!turn){if(!cfg.j||G.pend>0)return;fits=PI().filter(i=>exactOn(c,i));if(!fits.length)return;G.cur=G.order.indexOf(n);G.drew=false;log(`⚡ ${n} JUMPED IN!`);SFX.horn()}
+ else{fits=PI().filter(i=>canOn(c,i));if(!fits.length)return}
+ clearInterval(tTimer);G.busy=true;
+ let pi=fits[0];if(fits.length>1){pi=+(await askPile(n,fits,c));if(G!==g||g.over)return;if(!fits.includes(pi))pi=fits[0]}
+ G.pi=pi;let flex=false;
+ if(flexOK(c,pi,n)){flex=regOK(c,pi)?(await askFlex(n,c))==='flex':true;if(G!==g||g.over)return}
+ if(!hand(n).includes(c)){G.busy=false;startTurn();return}
  let cards=[c];if(idxs.length===2&&cfg.m==='double'){const c2=h[idxs[1]];if(c2&&face(c2).v===face(c).v&&/^\d$/.test(face(c).v))cards.push(c2)}
- if(h.length-cards.length===1&&!G.called[n]){give(n,2);log(`🗣️ ${n} forgot to call LAST CARD! +2`);SFX.buzz()}
- G.hands[n]=h.filter(x=>!cards.includes(x));cards.forEach(x=>G.pile.push(x));G.called[n]=false;SFX.click();
- const f=face(cards[cards.length-1]);if(f.c!=='W')G.color=f.c;if(cards.length>1)log(`✌️ ${n} played a DOUBLE!`);
- clearInterval(tTimer);
- if(!G.hands[n].length){G.done.push(n);log(`🏆 ${n} is out of cards! #${G.done.length}`);if(window.FXX)FXX.win(`🏆 ${n.toUpperCase()}`,null,'finished #'+G.done.length);else SFX.win()}
- effect(n,f)}
-async function effect(n,f){let steps=1;const v=f.v,nm=G.order.length;
- if(f.c==='W'){const col=await askColor(n);G.color=col;log(`🌈 ${n} picked ${CN[col]}`)}
+ if(hand(n).length-cards.length===1&&!G.called[n]){give(n,2);log(`🗣️ ${n} forgot to call LAST CARD! +2`);SFX.buzz()}
+ G.hands[n]=hand(n).filter(x=>!cards.includes(x));cards.forEach(x=>G.piles[pi].push(x));G.called[n]=false;SFX.click();
+ const f=face(cards[cards.length-1]);if(f.c!=='W'&&!flex)G.cols[pi]=f.c;if(cards.length>1)log(`✌️ ${n} played a DOUBLE!`);
+ if(!G.hands[n].length){if(cfg.m==='party'){roundEnd(n);return}G.done.push(n);log(`🏆 ${n} is out of cards! #${G.done.length}`);if(window.FXX)FXX.win(`🏆 ${n.toUpperCase()}`,null,'finished #'+G.done.length);else SFX.win()}
+ effect(n,f,flex)}
+async function effect(n,f,flex){const g=G;G.busy=true;let steps=1;const v=f.v,ok=()=>G===g&&!g.over;
+ const go=s=>{if(!ok())return;G.busy=false;if(s===0){if(checkEnd())return;startTurn();return}advance(s)};
+ if(flex){G.pw[n]=0;const others=alive().filter(x=>x!==n);
+  if(v==='S'){log(`✦ FLEX SKIP! ${n} skips everyone and goes again`);steps=0}
+  else if(v==='R'){G.dir*=-1;log('✦ FLEX REVERSE! Direction flips and the next player is skipped');steps=2}
+  else if(v==='+2'){others.forEach(x=>give(x,1));log('✦ FLEX +2! Everyone else draws 1');SFX.sad()}
+  else if(v==='WA'){others.forEach(x=>give(x,2));log('✦ FLEX ALL DRAW! Everyone else draws 2');SFX.sad()}
+  else if(v==='WT'||v==='+4'){const k=v==='WT'?2:4,tg=await askTarget(n,k);if(!ok())return;if(tg){give(tg,k);log(`✦ FLEX TARGET! ${n} makes ${tg} draw ${k}`);SFX.sad()}}
+  pwCheck();go(steps);return}
+ if(f.c==='W'){const col=await askColor(n);if(!ok())return;G.cols[G.pi]=col;log(`🌈 ${n} picked ${CN[col]}`)}
+ if(f.fl){G.pw[n]=G.pw[n]?0:1;log(`🔄 ${n} flips their Power ${G.pw[n]?'ON 🟢':'OFF 🔴'}`);pwCheck()}
+ if(v==='WF'){alive().forEach(x=>G.pw[x]=G.pw[x]?0:1);log('🔄 WILD ALL FLIP! Everyone flips their Power');pwCheck()}
  if(v==='S')steps=2;
- if(v==='R'){G.dir*=-1;if(alive().length===2)steps=2;else steps=1;log('⇄ Reverse!')}
+ if(v==='R'){G.dir*=-1;steps=alive().length===2?2:1;log('⇄ Reverse!')}
  if(v==='SA'){steps=0;log(`⊘⊘ ${n} skipped EVERYONE!`)}
- if(drawN(v)){if(cfg.m==='nomercy'){G.pend+=drawN(v);log(`📈 Stack: +${G.pend}!`);if(G.done.includes(n)&&!alive().length){finish();return}advance(1);return}
+ if(drawN(v)){if(cfg.m==='nomercy'){G.pend+=drawN(v);log(`📈 Stack: +${G.pend}!`);if(G.done.includes(n)&&!alive().length){G.busy=false;finish();return}go(1);return}
   const nx=G.order[nextIdx(G.cur,1)];let k=drawN(v);if(cfg.m==='cannon')k+=cannon();give(nx,k);log(`😩 ${nx} draws ${k}!`);steps=2;SFX.sad()}
- if(v==='F'){G.night=!G.night;document.body.classList.toggle('night',G.night);log(G.night?'🌙 NIGHT SIDE! Things get nasty...':'☀️ Back to the DAY side!');SFX.horn();const t=face(G.pile[G.pile.length-1]);if(t.c!=='W')G.color=t.c;else G.color=pick(G.night?['P','T','O','V']:['R','Y','G','B'])}
- if(v==='D'){const nx=G.order[nextIdx(G.cur,1)];let k=0;while(k<30){draw1(nx);k++;if(face(hand(nx)[hand(nx).length-1]).c===G.color)break}log(`🎯 ${nx} drew ${k} cards hunting for ${CN[G.color]}!`);steps=2}
+ if(v==='F'){G.night=!G.night;document.body.classList.toggle('night',G.night);log(G.night?'🌙 NIGHT SIDE! Things get nasty...':'☀️ Back to the DAY side!');SFX.horn();const t=topC();if(t.c!=='W')G.cols[G.pi]=t.c;else G.cols[G.pi]=pick(G.night?['P','T','O','V']:['R','Y','G','B'])}
+ if(v==='D'){const nx=G.order[nextIdx(G.cur,1)];let k=0;while(k<30){draw1(nx);k++;if(face(hand(nx)[hand(nx).length-1]).c===G.cols[G.pi])break}log(`🎯 ${nx} drew ${k} cards hunting for ${CN[G.cols[G.pi]]}!`);steps=2}
  if(v==='SP'){const ev=pick(['all1','most2','swap','again','next3']);const al=alive();
   if(ev==='all1'){al.forEach(x=>give(x,1));log('🎡 SPIN: Everyone draws 1!')}
   if(ev==='most2'){const m=al.slice().sort((a,b)=>hand(b).length-hand(a).length)[0];G.hands[m].splice(0,2).forEach(x=>G.deck.unshift(x));log(`🎡 SPIN: ${m} (most cards) dumps 2!`)}
   if(ev==='swap'){const o=pick(al.filter(x=>x!==n));if(o){[G.hands[n],G.hands[o]]=[G.hands[o],G.hands[n]];log(`🎡 SPIN: ${n} swaps hands with ${o}!`)}}
   if(ev==='again'){steps=0;log(`🎡 SPIN: ${n} plays again!`)}
   if(ev==='next3'){const nx=G.order[nextIdx(G.cur,1)];give(nx,3);log(`🎡 SPIN: ${nx} draws 3!`)}SFX.horn()}
- if(cfg.m==='nomercy'&&v==='7'&&hand(n).length){const o=await askSwap(n);if(o){[G.hands[n],G.hands[o]]=[G.hands[o],G.hands[n]];log(`🔁 ${n} swapped hands with ${o}!`)}}
+ if(cfg.m==='nomercy'&&v==='7'&&hand(n).length){const o=await askSwap(n);if(!ok())return;if(o&&G.hands[o]){[G.hands[n],G.hands[o]]=[G.hands[o],G.hands[n]];log(`🔁 ${n} swapped hands with ${o}!`)}}
  if(cfg.m==='nomercy'&&v==='0'){const al=alive(),hs=al.map(x=>G.hands[x]);al.forEach((x,i)=>G.hands[x]=hs[(i-G.dir+al.length)%al.length]);log('🔄 Everyone passes their hand!')}
- if(steps===0){if(checkEnd())return;startTurn();return}advance(steps)}
-function botTurn(tk){if(!G||G.over||G.tn!==tk)return;const n=G.order[G.cur];if(!PG.isBot(n))return;const h=hand(n);
- const ok=h.map((c,i)=>[c,i]).filter(([c])=>canPlay(c)).sort((a,b)=>(face(a[0]).c==='W')-(face(b[0]).c==='W'));
+ if(v==='DR'||v==='WD'){const nx=G.order[nextIdx(G.cur,1)];if(nx!==n){const r=await doDare(n,nx);if(!ok())return;if(r==='do'){log(`🎭 ${nx} did the dare! They keep their turn`);SFX.horn();steps=1}else{give(nx,4);log(`🃏 ${nx} skipped the dare and draws 4!`);SFX.sad();steps=2}}}
+ go(steps)}
+/* Add It Up turn flow */
+function addToRow(n,c){if(!c||face(c).v==='#'){sync();return}G.addRow=false;G.hands[n]=hand(n).filter(x=>x!==c);G.piles.push([c]);G.cols.push(face(c).c);log(`📥 ${n} adds a ${face(c).v} to the center row`);SFX.click();if(!G.hands[n].length){G.done.push(n);log(`🏆 ${n} is out of cards! #${G.done.length}`)}endDosTurn(n)}
+async function dosPlay(n,idxs){const g=G,h=hand(n),cs=idxs.map(i=>h[i]);if(G.addRow){addToRow(n,cs[0]);return}const fits=PI().filter(i=>dosFit(cs,i));if(!fits.length){sync();return}
+ G.busy=true;let pi=fits[0];if(fits.length>1){pi=+(await askPile(n,fits,cs[0]));if(G!==g||g.over)return;if(!fits.includes(pi))pi=fits[0]}
+ if(!cs.every(c=>hand(n).includes(c))){G.busy=false;sync();return}
+ const t=pTop(pi),bonus=cs.every(c=>face(c).c===t.c);
+ if(hand(n).length-cs.length===1&&!G.called[n]){give(n,2);log(`🗣️ ${n} forgot to call LAST CARD! +2`);SFX.buzz()}
+ G.hands[n]=hand(n).filter(x=>!cs.includes(x));cs.forEach(x=>G.piles[pi].push(x));G.matched.push(pi);G.called[n]=false;SFX.click();
+ log(cs.length===2?`➕ ${n} made ${t.v} with ${cs.map(c=>face(c).v).join(' + ')}!`:`🎯 ${n} matched the ${t.v}!`);
+ if(bonus){G.bonus++;log('🎨 Color match too! Next player draws 1');SFX.horn()}
+ G.busy=false;
+ if(!G.hands[n].length){G.done.push(n);log(`🏆 ${n} is out of cards! #${G.done.length}`);if(window.FXX)FXX.win(`🏆 ${n.toUpperCase()}`,null,'finished #'+G.done.length);else SFX.win();endDosTurn(n);return}
+ if(dosOpts(G.hands[n]).length){sync();if(PG.isBot(n)){const tk=G.tn;setTimeout(()=>{if(G===g)botTurn(tk)},1100)}}else endDosTurn(n)}
+function endDosTurn(n){if(!G||G.over)return;clearInterval(tTimer);G.addRow=false;G.matched.slice().sort((a,b)=>b-a).forEach(i=>{G.disc.push(...G.piles[i]);G.piles.splice(i,1);G.cols.splice(i,1)});G.matched=[];while(G.piles.length<2){const c=dosCard();G.piles.push([c]);G.cols.push(face(c).c)}
+ if(G.bonus){const nx=G.order[nextIdx(G.cur,1)];if(nx!==n&&!G.done.includes(nx)){give(nx,G.bonus);log(`🎨 ${nx} draws ${G.bonus} for the color match`)}G.bonus=0}advance(1)}
+/* Party Teams round end */
+async function roundEnd(n){const g=G;G.busy=true;G.roundOver=true;clearInterval(tTimer);const T=teamOf(n);let pts=0;G.order.forEach(x=>{if(teamOf(x)!==T)pts+=hand(x).reduce((s,c)=>s+cpts(c),0)});T.pts+=pts;T.wins++;
+ log(`🎉 ${n} went out! ${T.name} scores ${pts}`);if(window.FXX)FXX.win(`🎉 ${T.name.toUpperCase()}`,null,'+'+pts+' points');else SFX.win();
+ const last=G.round>=cfg.pr;teamBar(n);
+ PG.stage(`<div class="panel" style="min-width:50vw"><div class="kicker">ROUND ${G.round} OF ${cfg.pr}</div><div class="huge" style="font-size:6vh;color:${CH[T.c]}">${esc(T.name)}</div><div class="subT">${avHTML(n)} ${esc(n)} emptied their hand: <b>+${pts}</b> points from the other teams' cards</div>
+  <div style="display:flex;flex-direction:column;gap:.8vh">${G.teams.slice().sort((a,b)=>b.pts-a.pts).map(t=>`<div style="display:flex;justify-content:space-between;gap:2vw;padding:1vh 1.6vw;border-radius:1.4vh;background:rgba(255,255,255,.07);border-left:1vh solid ${CH[t.c]};font-size:2.6vh;font-weight:700"><span>${esc(t.name)} <span class="hint">${t.m.map(esc).join(', ')}</span></span><span style="font-family:var(--fd)">${t.pts}</span></div>`).join('')}</div></div>`);
+ if(window.TGB)TGB.askEach(Object.fromEntries(G.order.map(x=>[x,{k:'msg',key:'rd'+G.round+x,emoji:teamOf(x)===T?'🎉':'😅',title:teamOf(x)===T?'Your team won the round!':`${T.name} won the round`,body:`${n} emptied their hand. Look at the TV 👀`}])));
+ await PG.next(last?'FINAL RESULTS ➜':'NEXT ROUND ➜');if(G!==g||g.over)return;
+ if(last){G.busy=false;G.roundOver=false;finish();return}
+ G.round++;const start=(G.order.indexOf(n)+1)%G.order.length;deal();G.cur=start;log(`🃏 Round ${G.round} of ${cfg.pr}! ${G.order[G.cur]} goes first.`);music('play');startTurn()}
+/* CPU players */
+function botTurn(tk){if(!G||G.over||G.tn!==tk||G.busy||G.wait||G.dare||G.roundOver)return;const n=G.order[G.cur];if(!PG.isBot(n))return;
+ if(cfg.m==='dos'&&G.addRow){const h=hand(n);let bi=-1;h.forEach((c,i)=>{if(face(c).v!=='#'&&(bi<0||+face(c).v>+face(h[bi]).v))bi=i});onPlay(n,[Math.max(0,bi)]);return}
+ if(cfg.m==='dos'){const o=dosOpts(hand(n)).sort((a,b)=>b.s-a.s||b.ix.length-a.ix.length)[0];if(o){G.botPile=o.i;if(hand(n).length-o.ix.length===1)G.called[n]=true;onPlay(n,o.ix);return}if(G.drew||G.matched.length){endDosTurn(n);return}PG._handlers.draw(n);return}
+ const h=hand(n),nx=G.order[nextIdx(G.cur,1)];
+ const sc=c=>{const f=face(c);let s=0;if(f.c==='W')s-=5;if(PI().some(i=>flexOK(c,i,n)))s+=3;if(G.teams){const bad=/^(S|\+\d+|DR|WD|SA)$/.test(f.v);if(bad)s+=mates(n,nx)?-8:2}return s};
+ const ok=h.map((c,i)=>[c,i]).filter(([c])=>canPlay(c)).sort((a,b)=>sc(b[0])-sc(a[0]));
  if(G.pend>0&&!ok.length){take(n);return}
- if(ok.length){if(h.length===2){G.called[n]=true;log(`🗣️ ${n}: LAST CARD!`)}onPlay(n,[ok[0][1]]);return}
- PG._handlers.draw(n);setTimeout(()=>{if(!G||G.over||G.order[G.cur]!==n||!G.drew)return;const h2=hand(n),l=h2[h2.length-1];if(l&&canPlay(l)){if(h2.length===2)G.called[n]=true;onPlay(n,[h2.length-1])}else advance(1)},900)}
-function askColor(n){return new Promise(res=>{const cols=G.night?['P','T','O','V']:['R','Y','G','B'];if(PG.isBot(n)){const cnt={};hand(n).forEach(c=>{const f=face(c);if(cols.includes(f.c))cnt[f.c]=(cnt[f.c]||0)+1});const best=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];res(best?best[0]:pick(cols));return}G.waitCol={n,res};if(window.TGB)TGB.ask({k:'choice',key:'col'+Date.now(),id:'col',title:'🌈 Pick a color',opts:cols.map(c=>({t:CN[c],v:c})),cols:2,colors:G.night?0:1},[n]);
- setTimeout(()=>{if(G.waitCol&&G.waitCol.n===n){G.waitCol=null;res(pick(cols))}},12000)})}
-function askSwap(n){return new Promise(res=>{const al=alive().filter(x=>x!==n);if(PG.isBot(n)){res(al.slice().sort((x,y)=>hand(x).length-hand(y).length)[0]||null);return}G.waitSwap={n,res};if(window.TGB)TGB.ask({k:'choice',key:'sw'+Date.now(),id:'swap',title:'🔁 Swap hands with who?',opts:al.map(x=>({t:`${x} (${hand(x).length} cards)`,v:x,img:avatarOf(x)}))},[n]);setTimeout(()=>{if(G.waitSwap&&G.waitSwap.n===n){G.waitSwap=null;res(null)}},12000)})}
+ if(ok.length){if(h.length===2){G.called[n]=true;log(`🗣️ ${n}: LAST CARD!`)}const c=ok[0][0];G.botPile=pick(PI().filter(i=>canOn(c,i)));onPlay(n,[ok[0][1]]);return}
+ const g=G;PG._handlers.draw(n);setTimeout(()=>{if(G!==g||G.over||G.busy||G.order[G.cur]!==n||!G.drew)return;const h2=hand(n),l=h2[h2.length-1];if(l&&canPlay(l)){if(h2.length===2)G.called[n]=true;onPlay(n,[h2.length-1])}else advance(1)},900)}
 PG._handlers.play=(n,v)=>onPlay(n,v);PG._handlers.play2=(n,v)=>onPlay(n,v);
-PG._handlers.draw=n=>{if(!G||G.order[G.cur]!==n||G.drew)return;if(G.pend>0){take(n);return}let k=cfg.m==='cannon'?cannon():1;if(cfg.m==='cannon'){if(k){give(n,k);log(`💥 CARD CANNON fires ${k} at ${n}!`);SFX.sad()}else{log(`💥 Cannon misfire! ${n} is safe`);give(n,0)}}else give(n,1);G.drew=true;
+PG._handlers.draw=n=>{if(!G||G.over||G.busy||G.wait||G.roundOver||G.order[G.cur]!==n||G.drew)return;
+ if(cfg.m==='dos'){if(G.matched.length)return;give(n,1);G.drew=true;log(`🂠 ${n} drew a card`);if(!dosOpts(hand(n)).length){if(!hand(n).some(c=>face(c).v!=='#')){endDosTurn(n);return}G.addRow=true;log(`📥 No match for ${n}: add a card to the center row`)}sync();if(PG.isBot(n)){const g=G,tk=G.tn;setTimeout(()=>{if(G===g)botTurn(tk)},900)}return}
+ if(G.pend>0){take(n);return}let k=cfg.m==='cannon'?cannon():1;if(cfg.m==='cannon'){if(k){give(n,k);log(`💥 CARD CANNON fires ${k} at ${n}!`);SFX.sad()}else{log(`💥 Cannon misfire! ${n} is safe`);give(n,0)}}else give(n,1);G.drew=true;
+ if(G.out.includes(n)){advance(1);return}
  const last=hand(n)[hand(n).length-1];if(!last||!canPlay(last)||cfg.m==='cannon'){advance(1)}else sync()};
-PG._handlers.pass=n=>{if(G&&G.order[G.cur]===n&&G.drew)advance(1)};
-PG._handlers.last=n=>{if(G){G.called[n]=true;log(`🗣️ ${n}: LAST CARD!`);SFX.horn();sync()}};
-PG._handlers.col=(n,v)=>{if(G&&G.waitCol&&G.waitCol.n===n){const r=G.waitCol.res;G.waitCol=null;r(v)}};
-PG._handlers.swap=(n,v)=>{if(G&&G.waitSwap&&G.waitSwap.n===n){const r=G.waitSwap.res;G.waitSwap=null;r(v)}};
-function cardHTML(c,big){const f=face(c);return`<div style="width:${big?'18vh':'6vh'};height:${big?'26vh':'8.6vh'};border-radius:${big?'2.4vh':'1vh'};border:${big?'.8vh':'.3vh'} solid #fff;display:grid;place-items:center;font-family:var(--fd);font-size:${big?(String(lab(f)).length>2?'6vh':'10vh'):'2.4vh'};color:#fff;text-shadow:0 .6vh 0 rgba(0,0,0,.45);background:${f.c==='W'?'conic-gradient(#e63946 0 25%,#f9c80e 0 50%,#2a9d58 0 75%,#3a86ff 0)':CH[f.c]};box-shadow:0 1.4vh 3vh rgba(0,0,0,.5)">${lab(f)}</div>`}
-function sync(){if(!G)return;G.ver++;const cur=G.order[G.cur],t=topC();
- if(window.TGB){const map={};G.order.forEach(n=>{if(G.done.includes(n)){map[n]={k:'msg',key:'dn'+n,emoji:'🏆',title:`You finished #${G.done.indexOf(n)+1}!`,body:'Watch the rest from the TV 👀'};return}if(G.out.includes(n)){map[n]={k:'msg',key:'ot'+n,emoji:'💀',title:"You're out!",body:'25 cards... ouch.'};return}
-  if(G.waitCol&&G.waitCol.n===n)return;if(G.waitSwap&&G.waitSwap.n===n)return;
-  const myTurn=n===cur,h=hand(n);map[n]={k:'hand',key:'h'+G.ver+n,id:'hand',kicker:myTurn?'🟢 YOUR TURN!':`Waiting for ${cur}...`,title:`Top: ${lab(t)} ${G.color?'· '+CN[G.color]:''}${G.pend?' · STACK +'+G.pend:''}`,body:myTurn&&G.drew?'Play the card you drew, or pass.':myTurn&&G.pend?(cfg.m==='nomercy'?`Stack a draw card or draw ${G.pend}!`:''):'',turn:myTurn,
-   cards:h.map(c=>{const f=face(c),ex=cfg.j&&f.c===t.c&&f.v===t.v&&f.c!=='W'&&G.pend===0;return{c:f.c,l:lab(f),ok:myTurn?(G.drew?c===h[h.length-1]&&canPlay(c):canPlay(c)):ex,j:!myTurn&&ex}}),
-   canDraw:myTurn&&!G.drew,canPass:myTurn&&G.drew,last:h.length===2&&!G.called[n],dbl:cfg.m==='double'&&myTurn}});TGB.askEach(map)}
+PG._handlers.pass=n=>{if(!G||G.over||G.busy||G.wait||G.order[G.cur]!==n)return;if(cfg.m==='dos'){if(!G.addRow&&(G.drew||G.matched.length))endDosTurn(n)}else if(G.drew)advance(1)};
+PG._handlers.last=n=>{if(G&&!G.over){G.called[n]=true;log(`🗣️ ${n}: LAST CARD!`);SFX.horn();sync()}};
+function cardHTML(c,big,sc=1){const f=face(c),L=String(lab(f)),w=big?18*sc:6,hh=big?26*sc:8.6,fs=big?(L.length>2?6:L.length===2?8:10)*sc:2.4;return`<div style="width:${w}vh;height:${hh}vh;border-radius:${big?2.4*sc:1}vh;border:${big?.8*sc:.3}vh solid #fff;display:grid;place-items:center;font-family:var(--fd);font-size:${fs}vh;color:#fff;text-shadow:0 .6vh 0 rgba(0,0,0,.45);background:${f.c==='W'?'conic-gradient(#e63946 0 25%,#f9c80e 0 50%,#2a9d58 0 75%,#3a86ff 0)':CH[f.c]};box-shadow:0 1.4vh 3vh rgba(0,0,0,.5)">${esc(L)}</div>`}
+function sync(){if(!G||G.over||G.roundOver)return;G.ver++;const cur=G.order[G.cur];
+ if(window.TGB){const map={},single=G.piles.length===1;
+  const title=cfg.m==='dos'?`Center: ${PI().map(i=>G.matched.includes(i)?'✅':SQ[pTop(i).c]+' '+pTop(i).v).join('  ·  ')}`:single?`Top: ${lab(pTop(0))} ${G.cols[0]?'· '+CN[G.cols[0]]:''}${G.pend?' · STACK +'+G.pend:''}`:`Piles: ${PI().map(i=>SQ[G.cols[i]]+' '+lab(pTop(i))).join('  ·  ')}`;
+  G.order.forEach(n=>{if(G.done.includes(n)){map[n]={k:'msg',key:'dn'+n,emoji:'🏆',title:`You finished #${G.done.indexOf(n)+1}!`,body:'Watch the rest from the TV 👀'};return}if(G.out.includes(n)){map[n]={k:'msg',key:'ot'+n,emoji:'💀',title:"You're out!",body:'25 cards... ouch.'};return}
+  if(G.wait&&G.wait.n===n)return;if(G.dare&&G.dare.who===n)return;
+  const myTurn=n===cur&&!G.busy,h=hand(n),T=teamOf(n);
+  const dset=cfg.m==='dos'&&myTurn?new Set(G.addRow?h.map((c,i)=>face(c).v==='#'?-1:i):dosOpts(h).flatMap(o=>o.ix)):null;
+  let body=myTurn&&G.drew&&cfg.m!=='dos'?'Play the card you drew, or pass.':myTurn&&G.pend&&cfg.m==='nomercy'?`Stack a draw card or draw ${G.pend}!`:'';
+  if(cfg.m==='dos'&&myTurn)body=G.addRow?'No match. Tap a card to add it to the center row.':G.matched.length?'Nice! Match the other center card too, or pass.':'Tap 1 card with the same number, or 2 cards that add up to a center card, then press Play.';
+  if(cfg.m==='flex')body=(body?body+' ':'')+(G.pw[n]?'Power ON 🟢: a card with a colored square can be played on that color for its Flex bonus.':'Power OFF 🔴: a 🔄 number flips it back ON.');
+  if(cfg.m==='triple'&&myTurn&&!body)body='Play on any pile you match.';
+  map[n]={k:'hand',key:'h'+G.ver+n,id:'hand',kicker:(T?T.name+' · ':'')+(myTurn?'🟢 YOUR TURN!':`Waiting for ${cur}...`),title,body,turn:myTurn,
+   cards:h.map((c,i)=>{const f=face(c),ex=!myTurn&&cfg.j&&PI().some(p=>exactOn(c,p));return{c:f.c,l:lab(f),ok:myTurn?(dset?dset.has(i):G.drew?c===h[h.length-1]&&canPlay(c):canPlay(c)):ex,j:ex}}),
+   canDraw:myTurn&&!G.drew&&!(cfg.m==='dos'&&G.matched.length),canPass:myTurn&&!G.addRow&&(G.drew||(cfg.m==='dos'&&G.matched.length>0)),last:h.length===2&&!G.called[n],dbl:(cfg.m==='double'||(cfg.m==='dos'&&!G.addRow))&&myTurn}});TGB.askEach(map)}
  render()}
-function render(){if(!G)return;const cur=G.order[G.cur],t=topC();
- PG.stage(`<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:3vw;align-items:center;width:min(1600px,96vw)">
-  <div style="display:flex;flex-direction:column;gap:.6vh;max-height:68vh;overflow:hidden">${G.order.map((n,i)=>`<div style="display:flex;align-items:center;gap:.8vw;padding:.6vh 1vw;border-radius:2vh;font-weight:700;font-size:${G.order.length>12?1.7:2.2}vh;background:${n===cur?'rgba(61,220,132,.3)':'rgba(255,255,255,.06)'};${n===cur?'box-shadow:0 0 0 .3vh #3ddc84':''};${G.done.includes(n)||G.out.includes(n)?'opacity:.45':''}">${avHTML(n)}${esc(n)}<span style="margin-left:auto;font-family:var(--fd)">${G.done.includes(n)?'🏆#'+(G.done.indexOf(n)+1):G.out.includes(n)?'💀':'🃏'+hand(n).length}${G.called[n]?' 🗣️':''}</span></div>`).join('')}</div>
-  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.4vh"><div style="display:flex;gap:2vw;align-items:center"><div style="width:12vh;height:17vh;border-radius:1.6vh;background:repeating-linear-gradient(45deg,#2a0d12 0 1vh,#5a1220 1vh 2vh);border:.6vh solid #fff;display:grid;place-items:center;font-family:var(--fd);font-size:2.4vh">${G.deck.length}</div>${cardHTML(G.pile[G.pile.length-1],1)}</div>
-   <div style="font-family:var(--fd);font-size:3vh;color:${CH[G.color]||'#fff'}">● ${CN[G.color]||''} ${G.dir>0?'↻':'↺'}${G.pend?` · <span style="color:#ff6b6b">STACK +${G.pend}</span>`:''}${G.night?' · 🌙 NIGHT':''}</div>
-   <div style="display:flex;align-items:center;gap:1vw;font-family:var(--fd);font-size:3vh">${avHTML(cur)} ${esc(cur)}'s turn <div class="ring" id="tRing" style="width:8vh;height:8vh"><span style="width:6.4vh;height:6.4vh;font-size:2.6vh">${cfg.t}</span></div></div></div>
-  <div style="display:flex;flex-direction:column;gap:.6vh">${G.log.map((m,i)=>`<div style="padding:.6vh 1vw;border-radius:1.2vh;background:rgba(255,255,255,${i?.05:.14});font-size:${i?1.9:2.4}vh;font-weight:${i?500:800}">${esc(m)}</div>`).join('')}</div></div>`)}
-function finish(){if(G.over)return;G.over=true;clearInterval(tTimer);const rest=alive().sort((a,b)=>hand(a).length-hand(b).length);const order=[...G.done,...rest,...G.out];
+function teamBar(cur){$('#scores').innerHTML=G&&G.teams?G.teams.map(t=>`<div class="sc ${teamOf(cur)===t?'on':''}" style="--tc:${CH[t.c]}"><div style="min-width:0"><div class="n">${esc(t.name)}</div><div class="m">${t.m.map(esc).join(', ')}</div></div><div class="s">${t.pts}</div></div>`).join(''):''}
+function render(){if(!G||G.roundOver)return;const cur=G.order[G.cur],m=MODES[cfg.m]||MODES.classic,np=G.piles.length,many=G.order.length>10;teamBar(cur);
+ const list=G.order.map(n=>{const T=teamOf(n);return`<div style="display:flex;align-items:center;gap:.6vw;padding:${many?.4:.6}vh .8vw;border-radius:1.6vh;font-weight:700;font-size:${many?1.6:2.2}vh;min-width:0;background:${n===cur?'rgba(61,220,132,.3)':'rgba(255,255,255,.06)'};${n===cur?'box-shadow:0 0 0 .3vh #3ddc84;':''}${T?`border-left:.7vh solid ${CH[T.c]};`:''}${G.done.includes(n)||G.out.includes(n)?'opacity:.45':''}">${avHTML(n)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n)}</span><span style="margin-left:auto;font-family:var(--fd);white-space:nowrap">${cfg.m==='flex'?(G.pw[n]?'🟢':'🔴'):''}${G.done.includes(n)?'🏆#'+(G.done.indexOf(n)+1):G.out.includes(n)?'💀':'🃏'+hand(n).length}${G.called[n]?' 🗣️':''}</span></div>`}).join('');
+ let center;
+ if(G.dare)center=`<div class="panel" style="max-width:40vw;padding:2.4vh 2vw"><div class="kicker">🎭 DARE FOR ${esc(G.dare.who.toUpperCase())}</div><div style="font-family:var(--fd);font-size:3.4vh;line-height:1.2;margin:1.4vh 0">${esc(G.dare.text)}</div><div style="font-size:2vh;opacity:.85">Do it now, or draw 4 and lose the turn.</div><div class="btns" style="margin-top:1.6vh"><button class="bb ok" id="bDareY">✅ Done it</button><button class="bb bad" id="bDareN">🃏 Draw 4</button></div></div>`;
+ else{const sc=np>=6?.42:np>=4?.5:np===3?.62:np===2?.8:1;
+  const piles=G.piles.map((p,i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:.8vh;${cfg.m==='dos'&&G.matched.includes(i)?'opacity:.6':''}">${cardHTML(p[p.length-1],1,sc)}${np>1?`<div style="font-family:var(--fd);font-size:2vh;color:${CH[G.cols[i]]}">${cfg.m==='dos'?(G.matched.includes(i)?'✅ MATCHED':'MATCH '+esc(pTop(i).v)):'● '+CN[G.cols[i]]}</div>`:''}</div>`).join('');
+  center=`<div style="display:flex;gap:${np>1?1.4:2}vw;align-items:flex-start"><div style="width:${12*sc}vh;height:${17*sc}vh;border-radius:1.6vh;background:repeating-linear-gradient(45deg,#2a0d12 0 1vh,#5a1220 1vh 2vh);border:.6vh solid #fff;display:grid;place-items:center;font-family:var(--fd);font-size:2.4vh">${G.deck.length}</div>${piles}</div>
+   <div style="font-family:var(--fd);font-size:3vh;color:${np===1?CH[G.cols[0]]||'#fff':'#fff'}">${np===1?'● '+(CN[G.cols[0]]||''):''} ${cfg.m==='dos'?'':G.dir>0?'↻':'↺'}${G.pend?` · <span style="color:#ff6b6b">STACK +${G.pend}</span>`:''}${G.night?' · 🌙 NIGHT':''}${cfg.m==='triple'?` ⏳ Shared clock <span id="tClock">${Math.max(0,Math.ceil((G.clock-Date.now())/1000))}</span>s`:''}</div>`}
+ PG.stage(`<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:2.4vw;align-items:center;width:min(1600px,96vw)">
+  <div style="display:grid;grid-template-columns:${many?'1fr 1fr':'1fr'};${many?`grid-template-rows:repeat(${Math.ceil(G.order.length/2)},auto);grid-auto-flow:column;`:''}gap:.5vh .5vw;max-height:${G.teams?58:68}vh;overflow:hidden">${list}</div>
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.4vh">${center}
+   <div style="display:flex;align-items:center;gap:1vw;font-family:var(--fd);font-size:3vh">${avHTML(cur)} ${esc(cur)}'s turn <div class="ring" id="tRing" style="width:8vh;height:8vh"><span style="width:6.4vh;height:6.4vh;font-size:2.6vh">${cfg.t}</span></div></div>
+   <div style="font-size:1.6vh;opacity:.8;max-width:34vw;line-height:1.35">${m[0]} <b>${m[1]}:</b> ${esc(m[2])}</div></div>
+  <div style="display:flex;flex-direction:column;gap:.6vh">${G.log.map((x,i)=>`<div style="padding:.6vh 1vw;border-radius:1.2vh;background:rgba(255,255,255,${i?.05:.14});font-size:${i?1.9:2.4}vh;font-weight:${i?500:800}">${esc(x)}</div>`).join('')}</div></div>`);
+ const y=$('#bDareY');if(y&&G.dare){const d=G.dare;y.onclick=()=>d.fin('do');$('#bDareN').onclick=()=>d.fin('draw')}}
+function finish(){if(!G||G.over)return;G.over=true;G.busy=false;clearInterval(tTimer);clearInterval(cTimer);
+ if(G.teams){const ts=G.teams.slice().sort((a,b)=>b.pts-a.pts);G.teams.forEach(t=>t.m.forEach(n=>PG.add(n,t.pts)));$('#scores').innerHTML='';const bw=window.FXX&&FXX.bigWin;if(bw)FXX.bigWin=()=>bw.call(FXX,'🏆 '+ts[0].name.toUpperCase(),ts[0].pts+' pts','Color Clash champions!');try{PG.end()}finally{if(bw)FXX.bigWin=bw}const b=$('#endWrap .bigT');if(b)b.textContent=`🏆 ${ts[0].name.toUpperCase()} WINS!`;const w=$('#endWrap .podium');if(w)w.insertAdjacentHTML('beforebegin',`<div class="subT">${ts.map(t=>`<b style="color:${CH[t.c]}">${esc(t.name)}</b> ${t.pts}`).join(' · ')}</div>`);return}
+ const rest=alive().sort((a,b)=>hand(a).length-hand(b).length);const order=[...G.done,...rest,...G.out];
  order.forEach((n,i)=>PG.add(n,Math.max(0,(order.length-i)*10)));PG.end()}
 document.head.insertAdjacentHTML('beforeend','<style>body.night #bg{background:radial-gradient(ellipse at 50% 0,#1b2350,#0a0d22 55%,#020208)!important}</style>');
 </script>

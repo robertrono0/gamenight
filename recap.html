@@ -72,7 +72,7 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 .cardR{background:rgba(255,255,255,.08);border-radius:2vh;padding:1.6vh 1.4vw;border:.25vh solid rgba(255,204,61,.35)}.cardR h4{font-family:var(--fd);color:var(--gold);font-size:2.2vh;margin-bottom:.8vh}
 .row{display:flex;align-items:center;gap:.8vw;font-size:2vh;margin:.4vh 0}.row b{margin-left:auto;font-family:var(--fd)}</style></head><body><div id="bg"></div><canvas id="fx"></canvas><div class="t2" id="t2"></div><div id="toast"></div>
 <div id="app"><div class="hdr"><div class="title">📜 GAME NIGHT RECAP</div><div class="tools"><a class="ib" href="index.html" title="All games">🏠</a><button class="ib musicBtn" title="Music">🎵</button><button class="ib" id="bFull" title="Full screen">⛶</button></div></div><div class="stage" id="stage"></div></div>
-<script src="tg-shell.js?v=1115d"></script><script>
+<script src="tg-shell.js?v=1115e"></script><script>
 /*tgNorm*/(function(){try{const J=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 const R=J('tg-roster')||[],N=J('tg-night');const pick={};
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -100,4 +100,4 @@ else{const[c,cp]=ranked[0];const most=Object.entries(wins).sort((a,b)=>b[1]-a[1]
  <div class="hint" style="font-size:1.8vh">📸 Tip: take a screenshot of this page and send it to the group chat!</div>`;
  setTimeout(()=>{if(window.FXX)FXX.bigWin('👑 '+c.toUpperCase(),cp+' pts','Game Night Champion!');else burst()},600)}
 shellInit({game:'Recap',style:'pop'});
-</script><script src="tg-depth.js?v=1115d"></script><script src="tg-night.js?v=1115d"></script></body></html>
+</script><script src="tg-depth.js?v=1115e"></script><script src="tg-night.js?v=1115e"></script></body></html>

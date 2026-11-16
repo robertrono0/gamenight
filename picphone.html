@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">✍️</span>Everyone writes a <b>secret phrase</b> (or gets a random one).</div><div class="hc"><span class="i">🎨</span>Your phrase goes to the next person, who has to <b>draw</b> it.</div><div class="hc"><span class="i">🤔</span>The drawing goes to the next person, who <b>guesses</b> what it is.</div><div class="hc"><span class="i">🔁</span>Draw, guess, draw, guess... the message gets more and more scrambled!</div><div class="hc"><span class="i">📺</span>At the end, the TV reveals every chain step by step. Prepare to laugh. 😂</div><div class="hc"><span class="i">🗳️</span>Vote for the funniest chain. Everyone in that chain gets <b>+100</b>.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115d"></script>
+<script src="tg-shell.js?v=1115e"></script>
 <script src="buzzer.js?v=1794900000"></script>
-<script src="tg-party.js?v=1115d"></script>
+<script src="tg-party.js?v=1115e"></script>
 <script>
 function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -105,6 +105,6 @@ $('#bStart').onclick=async()=>{ac();PG.reset();$('#setupOv').classList.add('hidd
  const cnt=chains.map(()=>0);Object.values(votes).forEach(v=>cnt[+v]++);const mx=Math.max(...cnt);chains.forEach((ch,i)=>{if(mx&&cnt[i]===mx)[...new Set(ch.map(x=>x.by))].forEach(p=>PG.add(p,100))});
  ps.forEach(p=>PG.add(p,0));PG.end()};
 </script>
-<script src="tg-depth.js?v=1115d"></script>
+<script src="tg-depth.js?v=1115e"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js?v=1115d"></script></body></html>
+<script src="tg-night.js?v=1115e"></script></body></html>

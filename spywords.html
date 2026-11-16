@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">🟥🟦</span>Two teams. Each has a <b>spymaster</b> who sees the secret key on their phone.</div><div class="hc"><span class="i">🗣️</span>The spymaster says <b>ONE word and a number</b>, like "Ocean, 2", to point at their team's words.</div><div class="hc"><span class="i">👆</span>The team talks it over and the host taps their guesses on the TV, one at a time.</div><div class="hc"><span class="i">⬜</span>Hit a neutral word or the other team's word and your turn ends.</div><div class="hc"><span class="i">💣</span>Hit the <b>BOMB</b> and your team loses instantly!</div><div class="hc"><span class="i">🏆</span>First team to find all their words wins.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115d"></script>
+<script src="tg-shell.js?v=1115e"></script>
 <script src="buzzer.js?v=1794900000"></script>
-<script src="tg-party.js?v=1115d"></script>
+<script src="tg-party.js?v=1115e"></script>
 <script>
 const KEY='tg-spy';function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -111,6 +111,6 @@ function end(){render();sendKey();if(window.FXX)setTimeout(()=>FXX.bigWin('🏆 
 if(window.TGB)TGB.init({game:'Spy Words',names:phoneNames,onAct:id=>{if(id==='pass'&&G&&G.over<0){G.turn=1-G.turn;render()}},onJoin:()=>{if(G)sendKey()}});
 shellInit({game:'Spy Words',style:'spooky',rain:['🕵️','💣','⭐']});
 </script>
-<script src="tg-depth.js?v=1115d"></script>
+<script src="tg-depth.js?v=1115e"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js?v=1115d"></script></body></html>
+<script src="tg-night.js?v=1115e"></script></body></html>

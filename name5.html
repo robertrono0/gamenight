@@ -80,9 +80,9 @@ textarea.field{min-height:11vh;resize:vertical;line-height:1.45}
 </div></div>
 <div class="ov hidden" id="howOv"><div class="card"><h2>📜 How to Play</h2><div class="howg"><div class="hc"><span class="i">👥</span>Split into teams. One player from the team goes up each turn.</div><div class="hc"><span class="i">📢</span>A category appears, like <b>"5 things in a fridge"</b>.</div><div class="hc"><span class="i">⏱️</span>Shout out <b>5 answers in 10 seconds</b>!</div><div class="hc"><span class="i">✋</span>Host taps how many they got (0 to 5), or presses 0 to 5 on the keyboard.</div><div class="hc"><span class="i">⭐</span>All 5 = <b>+2 bonus</b>.</div><div class="hc"><span class="i">🏆</span>Team with the most points wins.</div></div><div class="ctr"><button class="bb" id="howClose">GOT IT! 🎉</button></div></div></div>
 <div class="ov hidden" id="endOv"><div class="endWrap" id="endWrap"></div></div>
-<script src="tg-shell.js?v=1115d"></script>
+<script src="tg-shell.js?v=1115e"></script>
 <script src="buzzer.js?v=1794900000"></script>
-<script src="tg-party.js?v=1115d"></script>
+<script src="tg-party.js?v=1115e"></script>
 <script>
 const KEY='tg-n5';function segs(cfg,key,ids){ids.forEach(([id,k])=>$$('#'+id+' button').forEach(b=>{const val=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;b.classList.toggle('on',val===cfg[k]);b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cfg[k]=val;LS.set(key,cfg);SFX.click()}}))}
 
@@ -106,6 +106,6 @@ $('#bStart').onclick=async()=>{teams=TS.teams();if(TS.names().length<2){toast('A
   t2(`${c===5?'🔥':c?'✅':'😬'} ${c} / 5<small>+${pts} for ${esc(T.name)}</small>`,1400);await sleep(1500)}
  teamEnd(teams)};
 </script>
-<script src="tg-depth.js?v=1115d"></script>
+<script src="tg-depth.js?v=1115e"></script>
 <script>/*TGWAKE*/(function(){if(!("wakeLock" in navigator))return;let l=null;const req=async()=>{try{if(document.visibilityState==="visible"&&!l){l=await navigator.wakeLock.request("screen");l.addEventListener("release",()=>{l=null})}}catch(e){}};addEventListener("pointerdown",req,{passive:true});document.addEventListener("visibilitychange",req);req()})();</script>
-<script src="tg-night.js?v=1115d"></script></body></html>
+<script src="tg-night.js?v=1115e"></script></body></html>

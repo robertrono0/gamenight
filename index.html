@@ -432,7 +432,7 @@ document.getElementById('recBtn').onclick=()=>{const r=R(),on=window.TGB?TGB.pla
  document.getElementById('rec').innerHTML=(n?'':'<div class="hint2">Tip: check people in first for better picks!</div>')+sc.map(({g,why})=>`<a class="recC" href="${g.f}"><span class="e">${g.e}</span><span><b>${esc2(g.n)}</b><br><span>${esc2((why.slice(0,2).join(', ')||g.d))}. ⏱️ ${g.t}</span></span></a>`).join('')};
 loadExtra();savePL();
 </script>
-<script src="tg-night.js?v=1115d"></script><script>
+<script src="tg-night.js?v=1115e"></script><script>
 (function(){const row=document.getElementById('thRow');let S={};try{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{}}catch(e){}
 const draw=()=>{const T=window.TG_THEMES||{};row.innerHTML=Object.entries(T).map(([k,v])=>`<button class="tg ${(S.theme||'classic')===k?'on':''}" data-th="${k}">${v[0]}</button>`).join('')+'<div style="flex-basis:100%;text-align:center;font-size:13px;opacity:.75">Changes the colors, falling decorations and music in every game.</div>';
  row.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{S=JSON.parse(localStorage.getItem('tg-settings')||'{}')||{};S.theme=b.dataset.th;localStorage.setItem('tg-settings',JSON.stringify(S));location.reload()})};
